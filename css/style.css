@@ -1248,7 +1248,7 @@ h1, h2, h3, h4, h5,
   color: #fff; }
 
 .ftco-blocks-cover-1 .ftco-service-image-1 {
-  margin-top: -70px;
+  margin-top: 1px;
   position: static; }
 
 .owl-carousel-wrapper {
@@ -1256,12 +1256,66 @@ h1, h2, h3, h4, h5,
   min-height: 600px;
   position: relative; }
 
+    /* CSS untuk Hero Section */
+    .hero {
+      height: 30vh;
+      background-image: url('../images/bg.jpg');
+      background-size: cover;
+      background-position: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: yellow;
+      position: relative;
+    }
+  
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.9);
+      /* Ubah transparansi menjadi lebih gelap */
+      z-index: 1;
+    }
+  
+    .hero h1 {
+      font-size: 4rem;
+      z-index: 4;
+      position: relative;
+      margin: 0;
+      color: white;
+      text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+    }
+  
+    .hero p {
+      font-size: 1.5rem;
+      z-index: 5;
+      margin-top: 20px;
+      color: rgb(242, 79, 79);
+      text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+    }
+
 .ftco-cover-1 {
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
   position: relative; }
   .ftco-cover-1, .ftco-cover-1 .container > .row {
+    height: 100vh;
+    min-height: 600px; }
+    .ftco-cover-1, .ftco-cover-1 .container > .row {
     height: 100vh;
     min-height: 600px; }
   .ftco-cover-1 > .container {
