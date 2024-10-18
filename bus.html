@@ -27,13 +27,65 @@
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <style>
-      thead {
-        background-color: yellow;
-      }
-      .preloader {
-        display: none;
+      .seatki {
+        width: 50px;
+        height: 50px;
+        background-image: url("images/1.png"); /* Ganti dengan path gambar kursi */
+        background-size: contain; /* Mengatur ukuran gambar untuk sesuai dengan area kursi */
+        background-repeat: no-repeat; /* Mengulang gambar ke kanan */
+        background-position: bottom center; /* Memusatkan gambar */
+        background-color: #ffcccb;
+        border: 2px solid black; /* Border lebih tebal */
         text-align: center;
-        margin-top: 20px;
+        vertical-align: middle;
+        font-weight: bold;
+        margin: 0 0px; /* Memberikan ruang (space) di antara kursi */
+      }
+      .seat {
+        width: 50px;
+        height: 50px;
+        background-image: url("images/3.png"); /* Ganti dengan path gambar kursi */
+        background-size: contain; /* Mengatur ukuran gambar untuk sesuai dengan area kursi */
+        background-repeat: repeat-x; /* Mengulang gambar ke kanan */
+        background-position: bottom center; /* Memusatkan gambar */
+        background-color: #ffcccb;
+        border: 2px solid black; /* Border lebih tebal */
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+        margin: 0 0px; /* Memberikan ruang (space) di antara kursi */
+      }
+      .seatka {
+        width: 50px;
+        height: 50px;
+        background-image: url("images/2.png"); /* Ganti dengan path gambar kursi */
+        background-size: contain; /* Mengatur ukuran gambar untuk sesuai dengan area kursi */
+        background-repeat: no-repeat; /* Mengulang gambar ke kanan */
+        background-position: bottom center; /* Memusatkan gambar */
+        background-color: #ffcccb;
+        border: 2px solid black; /* Border lebih tebal */
+        text-align: center;
+        vertical-align: middle;
+        font-weight: bold;
+        margin: 0 0px; /* Memberikan ruang (space) di antara kursi */
+      }
+      .space {
+        background-color: transparent;
+        border: none;
+        height: 20px;
+      }
+      .driver,
+      .conductor {
+        width: 50px;
+        height: 50px;
+        background-color: #ffcccb;
+        font-weight: bold;
+        text-align: center;
+        border: 2px solid black; /* Border lebih tebal */
+      }
+      table {
+        width: auto;
+        margin: 0 auto; /* Untuk membuat tabel berada di tengah */
       }
     </style>
   </head>
@@ -139,32 +191,140 @@
                 </div>
               </div>
             </div>
-            <div class="col-md-8 mr-auto blog-content">
+            <div class="col-md-3 mr-auto blog-content">
               <div class="container">
-                <h2 class="mb-4">RUNDOWN</h2>
-                <h3 id="waktuna">SABTU, 30 November 2024</h3>
-                <div class="table-responsive">
-                  <!-- Preloader -->
-                  <div id="preloader" class="preloader">
-                    <img src="images/loading.gif" alt="Loading..." width="50" />
-                    <p>Loading data...</p>
-                  </div>
-
-                  <table
-                    id="dataTable"
-                    class="table table-bordered table-striped"
-                  >
-                    <thead>
-                      <tr>
-                        <th class="text-center">No</th>
-                        <th colspan="2" class="text-center">Waktu</th>
-                        <th>Nama Acara</th>
-                        <th class="text-center">Tempat</th>
-                        <th class="text-center">Keterangan</th>
-                      </tr>
-                    </thead>
+                <h2 class="text-center my-4">Bus Seat Layout</h2>
+                <div class="row justify-content-center">
+                  <table class="table table-borderless">
                     <tbody>
-                      <!-- Data will be appended here -->
+                      <!-- Baris 1 - Supir dan Kondektur -->
+                      <tr>
+                        <td class="space"></td>
+                        <td class="space"></td>
+                        <td class="conductor">AT</td>
+                        <td class="space"></td>
+                        <td class="driver">DR</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 2 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K01</td>
+                        <td class="seatka">K02</td>
+                        <td class="space"></td>
+                        <td class="seatki">K03</td>
+                        <td class="seat">K04</td>
+                        <td class="seatka">K05</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 3 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K06</td>
+                        <td class="seatka">K07</td>
+                        <td class="space"></td>
+                        <td class="seatki">K08</td>
+                        <td class="seat">K09</td>
+                        <td class="seatka">K10</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 4 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K11</td>
+                        <td class="seatka">K12</td>
+                        <td class="space"></td>
+                        <td class="seatki">K13</td>
+                        <td class="seat">K14</td>
+                        <td class="seatka">K15</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 5 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K16</td>
+                        <td class="seatka">K17</td>
+                        <td class="space"></td>
+                        <td class="seatki">K18</td>
+                        <td class="seat">K19</td>
+                        <td class="seatka">K20</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 6 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K21</td>
+                        <td class="seatka">K22</td>
+                        <td class="space"></td>
+                        <td class="seatki">K23</td>
+                        <td class="seat">K24</td>
+                        <td class="seatka">K25</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 7 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K26</td>
+                        <td class="seatka">K27</td>
+                        <td class="space"></td>
+                        <td class="seatki">K28</td>
+                        <td class="seat">K29</td>
+                        <td class="seatka">K30</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 8 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K31</td>
+                        <td class="seatka">K32</td>
+                        <td class="space"></td>
+                        <td class="seatki">K33</td>
+                        <td class="seat">K34</td>
+                        <td class="seatka">K35</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 9 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K36</td>
+                        <td class="seatka">K37</td>
+                        <td class="space"></td>
+                        <td class="seatki">K38</td>
+                        <td class="seat">K39</td>
+                        <td class="seatka">K40</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 10 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K41</td>
+                        <td class="seatka">K42</td>
+                        <td class="space"></td>
+                        <td class="seatki">K43</td>
+                        <td class="seat">K44</td>
+                        <td class="seatka">K45</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 11 - 2 kursi, space, 3 kursi -->
+                      <tr>
+                        <td class="seatki">K46</td>
+                        <td class="seatka">K47</td>
+                        <td class="space"></td>
+                        <td class="seatki">K48</td>
+                        <td class="seat">K49</td>
+                        <td class="seatka">K50</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 12 - 2 kursi kosong (untuk pintu) -->
+                      <tr>
+                        <td class="space"></td>
+                        <td class="space"></td>
+                        <td class="space"></td>
+                        <td class="seatki">K51</td>
+                        <td class="seat">K52</td>
+                        <td class="seatka">K53</td>
+                      </tr>
+                      <tr class="space"></tr>
+                      <!-- Baris 13 - Full kursi -->
+                      <tr>
+                        <td class="seatki">K54</td>
+                        <td class="seat">K55</td>
+                        <td class="seat">K56</td>
+                        <td class="seat">K57</td>
+                        <td class="seat">K58</td>
+                        <td class="seatka">K59</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
