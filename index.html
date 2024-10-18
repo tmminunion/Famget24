@@ -394,6 +394,34 @@
 
     <script src="js/main.js"></script>
 
+ <script>
+    $(document).ready(function() {
+        // URL API Google Apps Script
+        var apiUrl = "https://script.google.com/macros/s/AKfycbzM0MSV0X-0RfRT0dqwCwTHvL_HKzipsOH2gUwlskSqyrrSCdVtdgNCEMrXFaM7UIT4/exec?nama=kode"; // Ganti dengan URL Web App API Anda
+
+        // Panggilan AJAX otomatis saat halaman dimuat
+        $.ajax({
+            url: apiUrl,
+            type: 'GET',
+            dataType: 'json',
+            success: function(response) {
+                // Cek jika response memiliki kode dan simpan hanya value-nya
+                if (response.kode) {
+                    localStorage.setItem('kode', response.kode); // Menyimpan nilai 'kode' langsung
+                    $('#hasil').text("Data tersimpan: " + response.kode);
+                } else {
+                    $('#hasil').text("Kode tidak ditemukan.");
+                }
+            },
+            error: function(error) {
+                $('#hasil').text("Error memuat data.");
+                console.log("Error:", error);
+            }
+        });
+    });
+</script>
+
+</scrip>
   </body>
 
 </html>

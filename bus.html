@@ -27,6 +27,43 @@
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <style>
+      .pastel-box {
+        background-color: #fddde6; /* Pastel pink */
+        padding: 20px;
+        border-radius: 10px;
+        margin: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .pastel-box:hover {
+        transform: scale(1.05);
+      }
+
+      /* Warna pastel yang berbeda untuk setiap BUS */
+      .pastel-1 {
+        background-color: #ffddcc; /* Pastel peach */
+      }
+      .pastel-2 {
+        background-color: #ffefcc; /* Pastel yellow */
+      }
+      .pastel-3 {
+        background-color: #d4f1f4; /* Pastel blue */
+      }
+      .pastel-4 {
+        background-color: #e6e6fa; /* Pastel lavender */
+      }
+      .pastel-5 {
+        background-color: #f0f8ff; /* Pastel light blue */
+      }
+      .pastel-6 {
+        background-color: #eaffd0; /* Pastel green */
+      }
+      .pastel-7 {
+        background-color: #ffe4e1; /* Pastel rose */
+      }
+    </style>
+    <style>
       .seatki {
         width: 50px;
         height: 50px;
@@ -164,7 +201,7 @@
                   data-aos="fade-up"
                   data-aos-delay="100"
                 >
-                  Rundown Acara
+                  Bus Seat
                 </h1>
               </div>
             </div>
@@ -172,28 +209,87 @@
         </div>
       </div>
 
+      <div class="container mt-4">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=1">BUS 1</a>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=2">BUS 2</a>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=3">BUS 3</a>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=4">BUS 4</a>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=5">BUS 5</a>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=6">BUS 6</a>
+                </div>
+              </div>
+              <div class="col text-center">
+                <div class="pastel-box pastel-2">
+                  <a href="bus.html?sheet=7">BUS 7</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="site-section">
-        <div class="container-fluid">
+        <div class="container">
           <div class="row">
-            <div class="col-md-3 sidebar">
-              <div class="sidebar-box">
-                <div class="categories">
-                  <h3>DAY EVENT</h3>
-                  <li>
-                    <a href="rundown.html?date=sabtu">SABTU</a>
-                  </li>
-                  <li>
-                    <a href="rundown.html?date=sarasehan">SARASEHAN </a>
-                  </li>
-                  <li>
-                    <a href="rundown.html?date=minggu">MINGGU</a>
-                  </li>
+            <div class="col-md-8 mr-auto blog-content">
+              <div class="container">
+                <h2 class="mb-4" id="manifest">AKOMODASI BUS 1</h2>
+
+                <div class="table-responsive">
+                  <!-- Preloader -->
+                  <div id="preloader" class="preloader">
+                    <img src="images/loading.gif" alt="Loading..." width="50" />
+                    <p>Loading data...</p>
+                  </div>
+
+                  <table
+                    id="dataTable"
+                    class="table table-bordered table-striped"
+                  >
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 5%">No</th>
+                        <th>Nama</th>
+                        <th class="text-center" style="width: 10%">Jumlah</th>
+                        <th class="text-center" style="width: 30%">Seat</th>
+                        <th class="text-center" style="width: 5%">Note</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data will be appended here -->
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
             <div class="col-md-3 mr-auto blog-content">
               <div class="container">
-                <h2 class="text-center my-4">Bus Seat Layout</h2>
+                <h2 class="text-center my-4">Seat Layout</h2>
                 <div class="row justify-content-center">
                   <table class="table table-borderless">
                     <tbody>
@@ -394,12 +490,11 @@
         }
 
         // Get the 'date' parameter from URL and set default if not provided
-        const sheetName = getParameterByName("date") || "sabtu"; // Default to 'sabtu' if not provided
-        if (sheetName == "minggu") {
-          $("#waktuna").text("MINGGU, 1 Desember 2024");
-        }
+        const sheetName = getParameterByName("sheet") || "1"; // Default to 'sabtu' if not provided
+
+        $("#manifest").text("MANIFEST BUS " + sheetName);
         // Example var "kode"
-        const kode = "tuirwwewesqw"; // This can be anything that you want
+        const kode = "aswewdfsdfseassdd"; // This can be anything that you want
 
         // Combine kode and sheetName to form the localStorage key
         const localStorageKey = kode + sheetName; // e.g., 'tuiminggu'
@@ -412,15 +507,13 @@
           $.each(data, function (index, user) {
             $("#dataTable tbody").append(
               "<tr><td class='text-right'>" +
-                user.No +
-                "</td><td class='text-center'>" +
-                user.mulai +
-                "</td><td class='text-center'>" +
-                user.selesai +
+                user.no +
                 "</td><td>" +
-                user.acara +
+                user.nama +
+                "</td><td class='text-center'>" +
+                user.jumlah +
                 "</td><td>" +
-                user.tempat +
+                user.seat +
                 "</td><td>" +
                 user.keterangan +
                 "</td></tr>"
@@ -435,7 +528,7 @@
           populateTable(parsedData);
         } else {
           // If data does not exist, fetch it from the API
-          const apiUrl = `https://script.google.com/macros/s/AKfycbxgMPLZDQ_kq_n7OibpZqyBdXLaNONoUtIsDQONqkB0Hly8GfuFO5tbBN8LHLOcXdE/exec?sheet=${sheetName}`;
+          const apiUrl = `https://script.google.com/macros/s/AKfycby-cN3-mn8KbB530Ok-fL-dqHFkuxQEnIk-2OijE63wo4j4sVv1DK5Pm4n0S6dbxilv/exec?sheet=${sheetName}`;
 
           $.ajax({
             url: apiUrl,

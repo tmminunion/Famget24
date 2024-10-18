@@ -239,7 +239,7 @@
           $("#waktuna").text("MINGGU, 1 Desember 2024");
         }
         // Example var "kode"
-        const kode = "tuirwwewesqw"; // This can be anything that you want
+        const kode = localStorage.getItem("kode") + "rundown"; // This can be anything that you want
 
         // Combine kode and sheetName to form the localStorage key
         const localStorageKey = kode + sheetName; // e.g., 'tuiminggu'
