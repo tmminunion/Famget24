@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <title>Family Gathering 20024</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+
+    <link rel="icon" type="image/x-icon" href="/images/fav.png" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Mansalva|Roboto&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="fonts/icomoon/style.css" />
+
+    <link rel="stylesheet" href="css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/animate.min.css" />
+    <link rel="stylesheet" href="css/jquery.fancybox.min.css" />
+    <link rel="stylesheet" href="css/owl.carousel.min.css" />
+    <link rel="stylesheet" href="css/owl.theme.default.min.css" />
+    <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css" />
+    <link rel="stylesheet" href="css/aos.css" />
+
+    <!-- MAIN CSS -->
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      thead {
+        background-color: yellow;
+      }
+      .preloader {
+        display: none;
+        text-align: center;
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+
+  <body data-spy="scroll" data-target=".site-navbar-target" data-offset="300">
+    <div class="site-wrap" id="home-section">
+      <div class="site-mobile-menu site-navbar-target">
+        <div class="site-mobile-menu-header">
+          <div class="site-mobile-menu-close mt-3">
+            <span class="icon-close2 js-menu-toggle"></span>
+          </div>
+        </div>
+        <div class="site-mobile-menu-body"></div>
+      </div>
+
+      <!--  <div class="bg-primary py-3 top-bar shadow d-none d-md-block">
+       <div class="container">
+         <div class="row">
+           <div class="col-md-6 text-md-left pl-0">
+             <a href="#" class=" pr-3 pl-0">Home</a>
+             <a href="#" class="p-3">Dashboard</a>
+             <a href="#" class="p-3">Input Absensi</a>
+           </div>
+           <div class="col-md-6 text-md-right">
+             <a href="#" class="p-3"><span class="icon-twitter"></span></a>
+             <a href="#" class="p-3"><span class="icon-facebook"></span></a>
+           </div>
+         </div>
+       </div>
+     </div> -->
+      <header
+        class="site-navbar site-navbar-target bg-secondary shadow"
+        role="banner"
+      >
+        <div class="container">
+          <div class="row align-items-center position-relative">
+            <div class="site-logo">
+              <a href="index.html" class="text-white">Famget 2024</a>
+            </div>
+
+            <nav class="site-navigation text-left ml-auto" role="navigation">
+              <ul
+                class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block"
+              >
+                <li class="active">
+                  <a href="index.html" class="nav-link">Home</a>
+                </li>
+                <li><a href="peserta.html" class="nav-link">Peserta</a></li>
+                <li><a href="rundown.html" class="nav-link">Rundown</a></li>
+                <li><a href="sarasehan.html" class="nav-link">Sarasehan</a></li>
+                <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
+                <li><a href="absensi.html" class="nav-link">Absensi</a></li>
+
+                <li><a href="admin.html" class="nav-link">Admin</a></li>
+              </ul>
+            </nav>
+
+            <div class="ml-auto toggle-button d-inline-block d-lg-none">
+              <a
+                href="#"
+                class="site-menu-toggle py-5 js-menu-toggle text-white"
+                ><span class="icon-menu h3 text-white"></span
+              ></a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="hero">
+        <div>
+          <div class="container">
+            <div class="row align-items-center justify-content-center">
+              <div class="col-lg-12 text-center">
+                <h1
+                  class="mb-4 text-cursive h1"
+                  data-aos="fade-up"
+                  data-aos-delay="100"
+                >
+                  Rundown Acara
+                </h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-section">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-3 sidebar">
+              <div class="sidebar-box">
+                <div class="categories">
+                  <h3>DAY EVENT</h3>
+                  <li>
+                    <a href="rundown.html?date=sabtu">SABTU</a>
+                  </li>
+                  <li>
+                    <a href="rundown.html?date=sarasehan">SARASEHAN </a>
+                  </li>
+                  <li>
+                    <a href="rundown.html?date=minggu">MINGGU</a>
+                  </li>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-8 mr-auto blog-content">
+              <div class="container">
+                <h2 class="mb-4">RUNDOWN</h2>
+                <h3 id="waktuna">SABTU, 30 November 2024</h3>
+                <div class="table-responsive">
+                  <!-- Preloader -->
+                  <div id="preloader" class="preloader">
+                    <img src="images/loading.gif" alt="Loading..." width="50" />
+                    <p>Loading data...</p>
+                  </div>
+
+                  <table
+                    id="dataTable"
+                    class="table table-bordered table-striped"
+                  >
+                    <thead>
+                      <tr>
+                        <th class="text-center">No</th>
+                        <th colspan="2" class="text-center">Waktu</th>
+                        <th>Nama Acara</th>
+                        <th class="text-center">Tempat</th>
+                        <th class="text-center">Keterangan</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data will be appended here -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="site-section">
+        <div class="container">
+          <div class="d-md-flex cta-20101 align-self-center bg-light p-5">
+            <div class="">
+              <h2 class="text-cursive">
+                "Care Each Other, One Happiness with Big Family: Tumbuh Bersama,
+                Bersinar Bersama"
+              </h2>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer class="site-footer bg-dark">
+        <div class="container">
+          <div class="row mt-1 text-center">
+            <div class="col-md-12">
+              <div class="pt-1 text-white">
+                Copyright &copy;
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                All rights reserved | Powered
+                <i class="icon-heart text-danger" aria-hidden="true"></i> by
+                <a href="https://nufat.id" target="_blank" class="text-white"
+                  >Nufat.id</a
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <script src="js/jquery.sticky.js"></script>
+    <script src="js/jquery.waypoints.min.js"></script>
+    <script src="js/jquery.animateNumber.min.js"></script>
+    <script src="js/jquery.fancybox.min.js"></script>
+    <script src="js/jquery.easing.1.3.js"></script>
+    <script src="js/aos.js"></script>
+
+    <script src="js/main.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Function to get URL parameters
+        function getParameterByName(name) {
+          const url = window.location.href;
+          name = name.replace(/[\[\]]/g, "\\$&");
+          const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+          if (!results) return null;
+          if (!results[2]) return "";
+          return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        // Get the 'date' parameter from URL and set default if not provided
+        const sheetName = getParameterByName("date") || "sabtu"; // Default to 'sabtu' if not provided
+        if (sheetName == "minggu") {
+          $("#waktuna").text("MINGGU, 1 Desember 2024");
+        }
+        // Example var "kode"
+        const kode = localStorage.getItem("kode") + "rundown"; // This can be anything that you want
+
+        // Combine kode and sheetName to form the localStorage key
+        const localStorageKey = kode + sheetName; // e.g., 'tuiminggu'
+        $("#preloader").show();
+        // Check if data already exists in localStorage
+        const localData = localStorage.getItem(localStorageKey);
+
+        // Function to populate the table with data
+        function populateTable(data) {
+          $.each(data, function (index, user) {
+            $("#dataTable tbody").append(
+              "<tr><td class='text-right'>" +
+                user.No +
+                "</td><td class='text-center'>" +
+                user.mulai +
+                "</td><td class='text-center'>" +
+                user.selesai +
+                "</td><td>" +
+                user.acara +
+                "</td><td>" +
+                user.tempat +
+                "</td><td>" +
+                user.keterangan +
+                "</td></tr>"
+            );
+            $("#preloader").hide();
+          });
+        }
+
+        if (localData) {
+          // If data exists in localStorage, use it
+          const parsedData = JSON.parse(localData);
+          populateTable(parsedData);
+        } else {
+          // If data does not exist, fetch it from the API
+          const apiUrl = `https://script.google.com/macros/s/AKfycbxgMPLZDQ_kq_n7OibpZqyBdXLaNONoUtIsDQONqkB0Hly8GfuFO5tbBN8LHLOcXdE/exec?sheet=${sheetName}`;
+
+          $.ajax({
+            url: apiUrl,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+              // Populate table with the data
+              populateTable(data);
+
+              // Save the data to localStorage as a string
+              localStorage.setItem(localStorageKey, JSON.stringify(data));
+            },
+            error: function (xhr, status, error) {
+              console.log("An error occurred: " + error);
+            },
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

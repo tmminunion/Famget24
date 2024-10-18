@@ -1298,7 +1298,8 @@ h1, h2, h3, h4, h5,
     .hero p {
       font-size: 1.5rem;
       z-index: 5;
-      margin-top: 20px;
+      position: relative;
+      margin-top: 2px;
       color: rgb(242, 79, 79);
       text-shadow:
         -1px -1px 0 #000,
@@ -1307,6 +1308,23 @@ h1, h2, h3, h4, h5,
         1px 1px 0 #000;
     }
 
+            .pastel-box {
+              background-color: #d3f5b6;
+              /* Pastel pink */
+              padding: 2px;
+              border-radius: 2px;
+              box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+              transition: transform 0.3s;
+            }
+      
+            .pastel-box:hover {
+              transform: scale(1.05);
+            }
+      
+            /* Optional: Responsive text size */
+            .pastel-box a {
+              font-size: calc(1rem + 0.1vw);
+            }
 .ftco-cover-1 {
   background-size: cover;
   background-position: center center;
