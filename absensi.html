@@ -27,7 +27,8 @@
     <link rel="stylesheet" href="css/owl.theme.default.min.css" />
     <link rel="stylesheet" href="fonts/flaticon/font/flaticon.css" />
     <link rel="stylesheet" href="css/aos.css" />
-
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="css/style.css" />
     <style>
@@ -225,7 +226,7 @@
                     class="fa fa-line-chart f-left"
                     style="font-size: larger"
                   ></i
-                  ><span id="data_persen">94.38%</span>
+                  ><span id="data_persen">0 %</span>
                 </h1>
               </div>
             </div>
@@ -236,7 +237,7 @@
                 <h4 class="m-b-20">Total Peserta</h4>
                 <h1 class="text-right">
                   <i class="fa fa-users f-left" style="font-size: larger"></i
-                  ><span id="absentotal">160</span>
+                  ><span id="absentotal">0</span>
                 </h1>
               </div>
             </div>
@@ -254,7 +255,7 @@
                     class="fa fa-check-square f-left"
                     style="font-size: larger"
                   ></i
-                  ><span id="data_masuk">151</span>
+                  ><span id="data_masuk">0</span>
                 </h1>
               </div>
             </div>
@@ -269,7 +270,7 @@
                 </a>
                 <h1 class="text-right">
                   <i class="fa fa-frown-o f-left" style="font-size: larger"></i
-                  ><span id="data_belum">9</span>
+                  ><span id="data_belum">0</span>
                 </h1>
               </div>
             </div>
@@ -332,148 +333,22 @@
                     <p>Loading data...</p>
                   </div>
 
-                  <table id="dataTablex" class="table">
+                  <table id="dataTablexbus" class="table">
                     <thead>
                       <tr>
                         <th class="text-center">No</th>
                         <th class="text-center">Nama</th>
-                        <th class="text-center">Jam</th>
-                        <th class="text-center">Peserta</th>
+                        <th class="text-center">Total</th>
+                        <th class="text-center">Karyawan</th>
                         <th class="text-center">Sudah</th>
                         <th class="text-center">Belum</th>
                         <th class="text-center">Presentasi</th>
-                        <th class="text-center">Keterangan</th>
                         <th class="text-center">Aksi</th>
                         <!-- Kolom baru untuk tombol -->
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td class="text-center">1</td>
-                        <td class="text-center">Bus 1</td>
-                        <td class="text-center">10</td>
-                        <td class="text-center">50</td>
-                        <td class="text-center">40</td>
-                        <td class="text-center">10</td>
-                        <td class="text-center">80%</td>
-                        <td class="text-center">Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=1"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">2</td>
-                        <td class="text-center">Bus 2</td>
-                        <td class="text-center">8</td>
-                        <td class="text-center">45</td>
-                        <td class="text-center">30</td>
-                        <td class="text-center">15</td>
-                        <td class="text-center">67%</td>
-                        <td class="text-center">Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=2"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">3</td>
-                        <td class="text-center">Bus 3</td>
-                        <td class="text-center">9</td>
-                        <td class="text-center">60</td>
-                        <td class="text-center">55</td>
-                        <td class="text-center">5</td>
-                        <td class="text-center">92%</td>
-                        <td class="text-center">Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=3"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">4</td>
-                        <td class="text-center">Bus 4</td>
-                        <td class="text-center">7</td>
-                        <td class="text-center">40</td>
-                        <td class="text-center">20</td>
-                        <td class="text-center">20</td>
-                        <td class="text-center">50%</td>
-                        <td class="text-center">Belum Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=4"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">5</td>
-                        <td class="text-center">Bus 5</td>
-                        <td class="text-center">10</td>
-                        <td class="text-center">55</td>
-                        <td class="text-center">30</td>
-                        <td class="text-center">25</td>
-                        <td class="text-center">55%</td>
-                        <td class="text-center">Belum Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=5"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">6</td>
-                        <td class="text-center">Bus 6</td>
-                        <td class="text-center">6</td>
-                        <td class="text-center">30</td>
-                        <td class="text-center">20</td>
-                        <td class="text-center">10</td>
-                        <td class="text-center">67%</td>
-                        <td class="text-center">Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=6"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">7</td>
-                        <td class="text-center">Bus 7</td>
-                        <td class="text-center">8</td>
-                        <td class="text-center">25</td>
-                        <td class="text-center">10</td>
-                        <td class="text-center">15</td>
-                        <td class="text-center">40%</td>
-                        <td class="text-center">Belum Hadir</td>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-primary btn-sm"
-                            >Lihat</a
-                          >
-                          <!-- Tombol untuk aksi -->
-                        </td>
-                      </tr>
+                    <tbody id="dataBody">
+                      <!-- Data akan dimuat di sini secara dinamis -->
                     </tbody>
                   </table>
                 </div>
@@ -496,90 +371,11 @@
                     <thead>
                       <tr>
                         <th class="text-center">No</th>
-                        <th class="text-center">Nama</th>
                         <th class="text-center">Waktu</th>
+                        <th class="text-left">Nama</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >1</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah A</td>
-                        <td class="text-center">10:00 AM</td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >2</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah B</td>
-                        <td class="text-center">11:30 AM</td>
-                      </tr>
-
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >3</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah B</td>
-                        <td class="text-center">11:30 AM</td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >4</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah B</td>
-                        <td class="text-center">11:30 AM</td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >5</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah B</td>
-                        <td class="text-center">11:30 AM</td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >6</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah B</td>
-                        <td class="text-center">11:30 AM</td>
-                      </tr>
-                      <tr>
-                        <td class="text-center">
-                          <a
-                            href="absensi.html?data=7"
-                            class="btn btn-warning btn-sm"
-                            >7</a
-                          >
-                        </td>
-                        <td class="text-center">Rumah B</td>
-                        <td class="text-center">11:30 AM</td>
-                      </tr>
-                    </tbody>
+                    <tbody></tbody>
                   </table>
                 </div>
               </div>
@@ -635,6 +431,7 @@
     <script src="js/aos.js"></script>
 
     <script src="js/main.js"></script>
+    <script type="module" src="js/addata.min.js"></script>
     <script>
       $(document).ready(function () {
         // Function to get URL parameters
@@ -740,92 +537,6 @@
 
         return gradient;
       }
-
-      const ctx = document.getElementById("absensiChart").getContext("2d");
-
-      // Data absensi untuk 7 bus dalam persentase
-      const dataAbsensi = [
-        { hadir: 30, tidakHadir: 70 }, // Bus 1
-        { hadir: 50, tidakHadir: 50 }, // Bus 2
-        { hadir: 90, tidakHadir: 10 }, // Bus 3
-        { hadir: 60, tidakHadir: 40 }, // Bus 4
-        { hadir: 40, tidakHadir: 60 }, // Bus 5
-        { hadir: 75, tidakHadir: 25 }, // Bus 6
-        { hadir: 20, tidakHadir: 80 }, // Bus 7
-      ];
-
-      const hadirData = dataAbsensi.map((bus) => bus.hadir);
-      const tidakHadirData = dataAbsensi.map((bus) => bus.tidakHadir);
-
-      const myChart = new Chart(ctx, {
-        type: "bar",
-        data: {
-          labels: [
-            "Bus 1",
-            "Bus 2",
-            "Bus 3",
-            "Bus 4",
-            "Bus 5",
-            "Bus 6",
-            "Bus 7",
-          ],
-          datasets: [
-            {
-              label: "Hadir (%)",
-              data: hadirData,
-              backgroundColor: createGradient(ctx, "#2ed8b6", "#59e0c5"),
-              borderWidth: 1,
-            },
-            {
-              label: "Tidak Hadir (%)",
-              data: tidakHadirData,
-              backgroundColor: createGradient(ctx, "#ff5370", "#ff869a"),
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              stacked: true,
-              title: {
-                display: true,
-                text: "Persentase Absensi (%)",
-              },
-            },
-            x: {
-              stacked: true,
-            },
-          },
-          plugins: {
-            legend: {
-              display: false, // Menghilangkan legend
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  return `${context.dataset.label}: ${context.raw}%`;
-                },
-              },
-            },
-            datalabels: {
-              anchor: "center",
-              align: "center",
-              formatter: function (value) {
-                return value + "%"; // Format label
-              },
-              color: "white", // Warna label
-              font: {
-                weight: "bold",
-              },
-            },
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-        plugins: [ChartDataLabels],
-      });
     </script>
     <script>
       const ctxline = document
@@ -843,8 +554,8 @@
         { hadir: 20, tidakHadir: 80 }, // Bus 7
       ];
 
-      const hadirDataline = dataAbsensi.map((bus) => bus.hadir);
-      const tidakHadirDataline = dataAbsensi.map((bus) => bus.tidakHadir);
+      const hadirDataline = dataAbsensiline.map((bus) => bus.hadir);
+      const tidakHadirDataline = dataAbsensiline.map((bus) => bus.tidakHadir);
 
       const myChartline = new Chart(ctxline, {
         type: "bar",
@@ -860,13 +571,13 @@
           datasets: [
             {
               label: "Hadir (%)",
-              data: hadirData,
+              data: hadirDataline,
               backgroundColor: createGradient(ctxline, "#2ed8b6", "#59e0c5"),
               borderWidth: 1,
             },
             {
               label: "Tidak Hadir (%)",
-              data: tidakHadirData,
+              data: tidakHadirDataline,
               backgroundColor: createGradient(ctxline, "#ff5370", "#ff869a"),
               borderWidth: 1,
             },
@@ -916,12 +627,12 @@
       });
     </script>
     <script>
-      const ctx1 = document.getElementById("kehadiranDonut").getContext("2d");
+      const ctx11 = document.getElementById("kehadiranDonut1").getContext("2d");
       const data = [
         { label: "Sudah", value: 10 },
         { label: "belum", value: 6 },
       ];
-      const myChart1 = new Chart(ctx1, {
+      const myChart1 = new Chart(ctx11, {
         type: "doughnut",
         data: {
           labels: data.map((item) => item.label),
