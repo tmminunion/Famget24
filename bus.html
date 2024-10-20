@@ -102,21 +102,6 @@
         <div class="site-mobile-menu-body"></div>
       </div>
 
-      <!--  <div class="bg-primary py-3 top-bar shadow d-none d-md-block">
-       <div class="container">
-         <div class="row">
-           <div class="col-md-6 text-md-left pl-0">
-             <a href="#" class=" pr-3 pl-0">Home</a>
-             <a href="#" class="p-3">Dashboard</a>
-             <a href="#" class="p-3">Input Absensi</a>
-           </div>
-           <div class="col-md-6 text-md-right">
-             <a href="#" class="p-3"><span class="icon-twitter"></span></a>
-             <a href="#" class="p-3"><span class="icon-facebook"></span></a>
-           </div>
-         </div>
-       </div>
-     </div> -->
       <header
         class="site-navbar site-navbar-target bg-secondary shadow"
         role="banner"
@@ -177,25 +162,25 @@
         <div class="d-flex justify-content-center">
           <table class="table table-borderless text-center">
             <tr>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-1">
                 <a href="bus.html?sheet=1">BUS 1</a>
               </td>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-2">
                 <a href="bus.html?sheet=2">BUS 2</a>
               </td>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-3">
                 <a href="bus.html?sheet=3">BUS 3</a>
               </td>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-4">
                 <a href="bus.html?sheet=4">BUS 4</a>
               </td>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-5">
                 <a href="bus.html?sheet=5">BUS 5</a>
               </td>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-6">
                 <a href="bus.html?sheet=6">BUS 6</a>
               </td>
-              <td class="pastel-box">
+              <td class="pastel-box" id="bus-7">
                 <a href="bus.html?sheet=7">BUS 7</a>
               </td>
             </tr>
@@ -440,7 +425,13 @@
 
         // Get the 'date' parameter from URL and set default if not provided
         const sheetName = getParameterByName("sheet") || "1"; // Default to 'sabtu' if not provided
-
+        if (sheetName) {
+          const activeTd = document.getElementById(`bus-${sheetName}`);
+          if (activeTd) {
+            activeTd.classList.remove("pastel-box");
+            activeTd.classList.add("activer");
+          }
+        }
         $("#manifest").text("MANIFEST BUS " + sheetName);
         // Example var "kode"
         const kode = "aswewdfsdfseassdd"; // This can be anything that you want

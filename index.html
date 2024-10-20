@@ -330,29 +330,32 @@
 
     <div class="site-section bg-image overlay-primary" style="background-image: url('images/img_1.jpg');">
       <div class="container">
-        <div class="row align-items-stretch">
-          <div class="col-md-6">
-            <img src="images/logoban.jpg" alt="Image" class="img-fluid shadow">
+  <div class="row align-items-stretch">
+    <div class="col-md-6">
+      <img src="images/logoban.jpg" alt="Image" class="img-fluid shadow">
+    </div>
+    <div class="col-md-6" id="loginForm2" style="display: none;">
+      <img src="images/login.jpg" alt="Image" class="img-fluid shadow" id="logoutImage" style="cursor: pointer;" onclick="logout()">
+    </div>
+    <div class="col-md-6" id="loginForm">
+      <div class="bg-white h-100 p-4 shadow">
+        <h3 class="mb-4 text-cursive">Admin Login</h3>
+        <form action="javascript:void(0);" onsubmit="login();">
+          <div class="form-group">
+            <input type="text" id="email" class="form-control" placeholder="Username" required>
           </div>
-          <div class="col-md-6">
-            <div class="bg-white h-100 p-4 shadow">
-              <h3 class="mb-4 text-cursive">Admin Login</h3>
-              <form action="#">
-                <div class="form-group">
-                  <input type="text" class="form-control" placeholder="Name">
-                </div>
-                <div class="form-group">
-                  <input type="email" class="form-control" placeholder="Email">
-                </div>
-              
-                <div class="form-group">
-                  <input type="submit" value="Donate Now" class="btn btn-primary">
-                </div>
-              </form>
-            </div>
+          <div class="form-group">
+            <input type="password" id="password" class="form-control" placeholder="Password" required>
           </div>
-        </div>
+          <div class="form-group">
+            <input type="submit" value="Login" class="btn btn-primary">
+          </div>
+        </form>
       </div>
+    </div>
+  </div>
+</div>
+
     </div>
 
     <div class="site-section">
@@ -366,6 +369,28 @@
       </div>
     </div>
     
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="errorModalLabel">Login Gagal</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="errorMessage">Kredensial tidak valid. Silakan coba lagi.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
     <footer class="site-footer bg-dark">
       <div class="container">
         <div class="row mt-1 text-center">
@@ -393,35 +418,30 @@
     <script src="js/aos.js"></script>
 
     <script src="js/main.js"></script>
+<script>
+  $(document).ready(function() {
+    var url = "https://script.google.com/macros/s/AKfycbyVFQ3Ojb-5wPHB5T4GE8RAoGMt9SZJBXuugzxv3oQK9X5HMBoIHt9qkWwO9ItuXXgv/exec";
 
- <script>
-    $(document).ready(function() {
-        // URL API Google Apps Script
-        var apiUrl = "https://script.google.com/macros/s/AKfycbzM0MSV0X-0RfRT0dqwCwTHvL_HKzipsOH2gUwlskSqyrrSCdVtdgNCEMrXFaM7UIT4/exec?nama=kode"; // Ganti dengan URL Web App API Anda
+    // Lakukan GET request ke URL
+    $.getJSON(url, function(data) {
+      // Loop melalui setiap objek dalam JSON
+      $.each(data, function(index, item) {
+        // Ambil nama dan value dari setiap objek
+        var nama = item.nama;
+        var value = item.value;
 
-        // Panggilan AJAX otomatis saat halaman dimuat
-        $.ajax({
-            url: apiUrl,
-            type: 'GET',
-            dataType: 'json',
-            success: function(response) {
-                // Cek jika response memiliki kode dan simpan hanya value-nya
-                if (response.kode) {
-                    localStorage.setItem('kode', response.kode); // Menyimpan nilai 'kode' langsung
-                    $('#hasil').text("Data tersimpan: " + response.kode);
-                } else {
-                    $('#hasil').text("Kode tidak ditemukan.");
-                }
-            },
-            error: function(error) {
-                $('#hasil').text("Error memuat data.");
-                console.log("Error:", error);
-            }
-        });
+        // Simpan di localStorage
+        localStorage.setItem(nama, value);
+      });
+
+      console.log("Data berhasil disimpan ke localStorage.");
+    }).fail(function() {
+      console.log("Gagal mengambil data dari URL.");
     });
+  });
 </script>
 
-</scrip>
+ <script type="module" src="js/login.js"></script>
   </body>
 
 </html>

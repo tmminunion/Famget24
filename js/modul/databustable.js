@@ -5,12 +5,12 @@ function populateTable(data) {
     const isPresent = Math.random() > 0.5; // 50% chance between true (oke) and false (cross)
 
     // Pilih icon dan warna berdasarkan status
-    const icon = isPresent
+    const icon = user.hadir
       ? "<i class='fa fa-check-circle' style='font-size:20px;color:green'></i>"
       : "<i class='fa fa-times-circle' style='font-size:20px;color:red'></i>";
 
     // Waktu hanya ditampilkan jika status "oke"
-    const waktu = isPresent ? "10:00:54" : "";
+    const waktu = user.hadir ? user.waktu : "";
 
     // Create a new row and append to the table
     const newRow = document.createElement("tr");
@@ -20,8 +20,8 @@ function populateTable(data) {
       `<td class='text-center'>${user.jumlah}</td>` +
       `<td>${user.seat}</td>` +
       `<td class='text-center'>${icon}</td>` +
-      `<td>${waktu}</td>` +
-      `<td>${user.keterangan}</td>`;
+      `<td class='text-center'>${waktu}</td>` +
+      `<td class='text-center'>${user.keterangan}</td>`;
     tbody.appendChild(newRow);
   });
 

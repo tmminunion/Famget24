@@ -18,7 +18,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 // Get a reference to the database path
-const Acara = getPar("acara") || 1;
+const Acara = getPar("acara") || localStorage.getItem("absensi");
 const starCountRef = ref(db, "Famgetabsensi/" + Acara);
 if (Acara >= 0 && Acara < listacara.length) {
   document.getElementById("judulna").textContent = listacara[Acara];
@@ -26,7 +26,13 @@ if (Acara >= 0 && Acara < listacara.length) {
 } else {
   document.getElementById("judulna").textContent = "Acara tidak ditemukan.";
 }
-
+if (Acara) {
+  const activeTd = document.getElementById(`acara-${Acara}`);
+  if (activeTd) {
+    activeTd.classList.remove("pastel-box");
+    activeTd.classList.add("activer");
+  }
+}
 // Ambil data dari Firebase dan tampilkan di tabel
 onValue(starCountRef, (snapshot) => {
   const data = snapshot.val();

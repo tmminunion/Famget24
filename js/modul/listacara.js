@@ -1,5 +1,5 @@
 export const listacara = [
-  "0. hahha",
+  "0. Trial untuk Koordinator Bus",
   "1. Persiapan Keberangkatan",
   "2. Absensi Perjalanan Menuju Dusun Bambu",
   "3. Persiapan Menuju Hotel",

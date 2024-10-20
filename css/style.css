@@ -1380,7 +1380,14 @@ h1, h2, h3, h4, h5,
  .f-right {
    float: right;
  }
-
+    .activer {
+      background-color: rgb(41,
+          3,
+          212);
+      /* Ganti dengan warna yang diinginkan */
+      color: rgb(212, 195, 195);
+      /* Ganti warna teks jika diperlukan */
+    }
 .ftco-cover-1 {
   background-size: cover;
   background-position: center center;

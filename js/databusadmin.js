@@ -8,12 +8,23 @@ import {
   onValue,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 import { firebaseConfig } from "./modul/FirebaseConfig.js";
-import { getData } from "./modul/databustable.js";
+import { getData } from "./modul/databustableadmin.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const userEmail = localStorage.getItem("userEmail");
+
+// Gunakan regex untuk mendapatkan angka setelah "bus"
+const busNumber = userEmail.match(/bus(\d+)/);
+
+// Cek apakah regex menemukan angka
+if (busNumber) {
+  console.log(busNumber[1]); // Ini akan mencetak angka setelah 'bus', misal: 1
+} else {
+  console.log('Tidak ada angka setelah "bus" ditemukan.');
+}
 const Acara = getPar("acara") || localStorage.getItem("absensi");
-const NamaBus = getPar("bus") || 1;
+const NamaBus = getPar("bus") || busNumber[1];
 document.getElementById("manifest").textContent = "Absensi BUS " + NamaBus;
 document.getElementById("preloader").style.display = "block";
 if (Acara >= 0 && Acara < listacara.length) {
@@ -21,7 +32,21 @@ if (Acara >= 0 && Acara < listacara.length) {
   document.getElementById("judulna2").textContent = listacara[Acara];
 
   const busLinksContainer = document.getElementById("bus-links");
-
+  const busLinksC = document.getElementById("acara-links");
+  for (let i = 0; i <= 8; i++) {
+    // Bus dari 1 sampai 7
+    const td = document.createElement("td");
+    if (i == Acara) {
+      td.className = "activer";
+    } else {
+      td.className = "pastel-box";
+    }
+    const a = document.createElement("a");
+    a.href = `admin.html?acara=${i}&bus=${NamaBus}`; // URL dinamis
+    a.innerText = `${i}`; // Teks yang ditampilkan
+    td.appendChild(a);
+    busLinksC.appendChild(td);
+  }
   // Buat link dinamis untuk setiap bus
   for (let i = 1; i <= 7; i++) {
     // Bus dari 1 sampai 7
@@ -32,7 +57,7 @@ if (Acara >= 0 && Acara < listacara.length) {
       td.className = "pastel-box";
     }
     const a = document.createElement("a");
-    a.href = `absensibus.html?acara=${Acara}&bus=${i}`; // URL dinamis
+    a.href = `admin.html?acara=${Acara}&bus=${i}`; // URL dinamis
     a.innerText = `BUS ${i}`; // Teks yang ditampilkan
     td.appendChild(a);
     busLinksContainer.appendChild(td);
