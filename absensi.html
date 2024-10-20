@@ -31,61 +31,7 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <!-- MAIN CSS -->
     <link rel="stylesheet" href="css/style.css" />
-    <style>
-      thead {
-        background-color: yellow;
-      }
-      .preloader {
-        display: none;
-        text-align: center;
-        margin-top: 20px;
-      }
-      .order-card {
-        color: #fff;
-      }
-
-      .bg-c-blue {
-        background: linear-gradient(45deg, #4099ff, #73b4ff);
-      }
-
-      .bg-c-green {
-        background: linear-gradient(45deg, #2ed8b6, #59e0c5);
-      }
-
-      .bg-c-yellow {
-        background: linear-gradient(45deg, #ffb64d, #ffcb80);
-      }
-
-      .bg-c-pink {
-        background: linear-gradient(45deg, #ff5370, #ff869a);
-      }
-
-      .card {
-        border-radius: 5px;
-        -webkit-box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
-        box-shadow: 0 1px 2.94px 0.06px rgba(4, 26, 55, 0.16);
-        border: none;
-        margin-bottom: 30px;
-        -webkit-transition: all 0.3s ease-in-out;
-        transition: all 0.3s ease-in-out;
-      }
-
-      .card .card-block {
-        padding: 25px;
-      }
-
-      .order-card i {
-        font-size: 26px;
-      }
-
-      .f-left {
-        float: left;
-      }
-
-      .f-right {
-        float: right;
-      }
-    </style>
+    <style></style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
   </head>
@@ -174,14 +120,16 @@
       </div>
       <div class="progress" style="height: 10px; border-radius: 0">
         <div
+          id="progressBar"
           class="progress-bar progress-bar-animated progress-bar-striped bg-secon"
           role="progressbar"
-          style="width: 100%"
-          aria-valuenow="100"
+          style="width: 0%"
+          aria-valuenow="0"
           aria-valuemin="0"
           aria-valuemax="100"
         ></div>
       </div>
+
       <div class="container-fluid">
         <div class="d-flex justify-content-center">
           <table class="table table-borderless text-center">
@@ -245,9 +193,7 @@
           <div class="col-lg-3 col-md-6 col-12">
             <div class="card bg-c-green order-card">
               <div class="card-block">
-                <a
-                  href="https://bungtemin.net/Absensi/TamuSc/checkin/WORKSARASEHAN2024/"
-                >
+                <a href="#">
                   <h4 class="m-b-20">Sudah Absensi</h4>
                 </a>
                 <h1 class="text-right">
@@ -263,9 +209,7 @@
           <div class="col-lg-3 col-md-6 col-12">
             <div class="card bg-c-pink order-card">
               <div class="card-block">
-                <a
-                  href="https://bungtemin.net/Absensi/TamuSc/notin/WORKSARASEHAN2024/"
-                >
+                <a href="#">
                   <h4 class="m-b-20">Belum Absensi</h4>
                 </a>
                 <h1 class="text-right">
@@ -431,225 +375,6 @@
     <script src="js/aos.js"></script>
 
     <script src="js/main.js"></script>
-    <script type="module" src="js/addata.min.js"></script>
-    <script>
-      $(document).ready(function () {
-        // Function to get URL parameters
-        function getParameterByName(name) {
-          const url = window.location.href;
-          name = name.replace(/[\[\]]/g, "\\$&");
-          const regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-            results = regex.exec(url);
-          if (!results) return null;
-          if (!results[2]) return "";
-          return decodeURIComponent(results[2].replace(/\+/g, " "));
-        }
-        const listAcara = [
-          "0. hahha",
-          "1. Persiapan Keberangkatan",
-          "2. Absensi Perjalanan Menuju Dusun Bambu",
-          "3. Persiapan Menuju Hotel",
-          "4. Absensi Perjalanan Menuju Hotel",
-          "5. Persiapan Check Out",
-          "6. Perjalanan Menuju Karawang",
-          "7. Rest Oleh-oleh",
-          "8. Perjalanan Menuju Karawang setelah Rest",
-        ];
-
-        // Mendapatkan parameter 'acara' dari URL dan memeriksa apakah ada
-        const acaraIndex = getParameterByName("acara") || 1; // Default ke 0 jika tidak ada parameter
-
-        // Jika parameter valid, tampilkan acara dari array
-        if (acaraIndex >= 0 && acaraIndex < listAcara.length) {
-          $("#judulna").text(listAcara[acaraIndex]);
-          $("#judulna2").text(listAcara[acaraIndex]);
-        } else {
-          $("#judulna").text("Acara tidak ditemukan.");
-        }
-
-        // Get the 'date' parameter from URL and set default if not provided
-        const sheetName = getParameterByName("date") || "sabtu"; // Default to 'sabtu' if not provided
-        if (sheetName == "minggu") {
-          $("#waktuna").text("MINGGU, 1 Desember 2024");
-        }
-        // Example var "kode"
-        const kode = localStorage.getItem("kode") + "rundown"; // This can be anything that you want
-
-        // Combine kode and sheetName to form the localStorage key
-        const localStorageKey = kode + sheetName; // e.g., 'tuiminggu'
-        $("#preloader").show();
-        // Check if data already exists in localStorage
-        const localData = localStorage.getItem(localStorageKey);
-
-        // Function to populate the table with data
-        function populateTable(data) {
-          $.each(data, function (index, user) {
-            $("#dataTable tbody").append(
-              "<tr><td class='text-right'>" +
-                user.No +
-                "</td><td class='text-center'>" +
-                user.mulai +
-                "</td><td class='text-center'>" +
-                user.selesai +
-                "</td><td>" +
-                user.acara +
-                "</td><td>" +
-                user.tempat +
-                "</td><td>" +
-                user.keterangan +
-                "</td></tr>"
-            );
-            $("#preloader").hide();
-          });
-        }
-
-        if (localData) {
-          // If data exists in localStorage, use it
-          const parsedData = JSON.parse(localData);
-          populateTable(parsedData);
-        } else {
-          // If data does not exist, fetch it from the API
-          const apiUrl = `https://script.google.com/macros/s/AKfycbxgMPLZDQ_kq_n7OibpZqyBdXLaNONoUtIsDQONqkB0Hly8GfuFO5tbBN8LHLOcXdE/exec?sheet=${sheetName}`;
-
-          $.ajax({
-            url: apiUrl,
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-              // Populate table with the data
-              populateTable(data);
-
-              // Save the data to localStorage as a string
-              localStorage.setItem(localStorageKey, JSON.stringify(data));
-            },
-            error: function (xhr, status, error) {
-              console.log("An error occurred: " + error);
-            },
-          });
-        }
-      });
-    </script>
-    <script>
-      function createGradient(ctx, color1, color2) {
-        const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, color1); // Warna awal
-        gradient.addColorStop(1, color2); // Warna akhir
-
-        return gradient;
-      }
-    </script>
-    <script>
-      const ctxline = document
-        .getElementById("absensiChartline")
-        .getContext("2d");
-
-      // Data absensi untuk 7 bus dalam persentase
-      const dataAbsensiline = [
-        { hadir: 30, tidakHadir: 70 }, // Bus 1
-        { hadir: 50, tidakHadir: 50 }, // Bus 2
-        { hadir: 90, tidakHadir: 10 }, // Bus 3
-        { hadir: 60, tidakHadir: 40 }, // Bus 4
-        { hadir: 40, tidakHadir: 60 }, // Bus 5
-        { hadir: 75, tidakHadir: 25 }, // Bus 6
-        { hadir: 20, tidakHadir: 80 }, // Bus 7
-      ];
-
-      const hadirDataline = dataAbsensiline.map((bus) => bus.hadir);
-      const tidakHadirDataline = dataAbsensiline.map((bus) => bus.tidakHadir);
-
-      const myChartline = new Chart(ctxline, {
-        type: "bar",
-        data: {
-          labels: [
-            "SB Sub Assy",
-            "SB Conveyor",
-            "SB Touch Up",
-            "UB Assy",
-            "UB Encopa",
-            "SQPCHR",
-          ],
-          datasets: [
-            {
-              label: "Hadir (%)",
-              data: hadirDataline,
-              backgroundColor: createGradient(ctxline, "#2ed8b6", "#59e0c5"),
-              borderWidth: 1,
-            },
-            {
-              label: "Tidak Hadir (%)",
-              data: tidakHadirDataline,
-              backgroundColor: createGradient(ctxline, "#ff5370", "#ff869a"),
-              borderWidth: 1,
-            },
-          ],
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true,
-              stacked: true,
-              title: {
-                display: true,
-                text: "Persentase Absensi (%)",
-              },
-            },
-            x: {
-              stacked: true,
-            },
-          },
-          plugins: {
-            legend: {
-              display: false, // Menghilangkan legend
-            },
-            tooltip: {
-              callbacks: {
-                label: function (context) {
-                  return `${context.dataset.label}: ${context.raw}%`;
-                },
-              },
-            },
-            datalabels: {
-              anchor: "center",
-              align: "center",
-              formatter: function (value) {
-                return value + "%"; // Format label
-              },
-              color: "white", // Warna label
-              font: {
-                weight: "bold",
-              },
-            },
-          },
-          responsive: true,
-          maintainAspectRatio: false,
-        },
-        plugins: [ChartDataLabels],
-      });
-    </script>
-    <script>
-      const ctx11 = document.getElementById("kehadiranDonut1").getContext("2d");
-      const data = [
-        { label: "Sudah", value: 10 },
-        { label: "belum", value: 6 },
-      ];
-      const myChart1 = new Chart(ctx11, {
-        type: "doughnut",
-        data: {
-          labels: data.map((item) => item.label),
-          datasets: [
-            {
-              data: data.map((item) => item.value),
-              backgroundColor: [
-                createGradient(ctx1, "#2ed8b6", "#59e0c5"),
-                createGradient(ctx1, "#ff5370", "#ff869a"),
-              ], // Sesuaikan dengan data
-            },
-          ],
-        },
-        options: {
-          // Opsi tambahan, misalnya title, legend, dll.
-        },
-      });
-    </script>
+    <script type="module" src="js/addata.js"></script>
   </body>
 </html>

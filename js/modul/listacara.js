@@ -1,0 +1,11 @@
+export const listacara = [
+  "0. hahha",
+  "1. Persiapan Keberangkatan",
+  "2. Absensi Perjalanan Menuju Dusun Bambu",
+  "3. Persiapan Menuju Hotel",
+  "4. Absensi Perjalanan Menuju Hotel",
+  "5. Persiapan Check Out",
+  "6. Perjalanan Menuju Karawang",
+  "7. Rest Oleh-oleh",
+  "8. Perjalanan Menuju Karawang setelah Rest",
+];
