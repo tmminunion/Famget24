@@ -54,21 +54,6 @@
         <div class="site-mobile-menu-body"></div>
       </div>
 
-      <!--  <div class="bg-primary py-3 top-bar shadow d-none d-md-block">
-       <div class="container">
-         <div class="row">
-           <div class="col-md-6 text-md-left pl-0">
-             <a href="#" class=" pr-3 pl-0">Home</a>
-             <a href="#" class="p-3">Dashboard</a>
-             <a href="#" class="p-3">Input Absensi</a>
-           </div>
-           <div class="col-md-6 text-md-right">
-             <a href="#" class="p-3"><span class="icon-twitter"></span></a>
-             <a href="#" class="p-3"><span class="icon-facebook"></span></a>
-           </div>
-         </div>
-       </div>
-     </div> -->
       <header
         class="site-navbar site-navbar-target bg-secondary shadow"
         role="banner"
@@ -83,10 +68,12 @@
               <ul
                 class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block"
               >
-                <li class="active">
+                <li>
                   <a href="index.html" class="nav-link">Home</a>
                 </li>
-                <li><a href="peserta.html" class="nav-link">Peserta</a></li>
+                <li class="active">
+                  <a href="peserta.html" class="nav-link">Peserta</a>
+                </li>
                 <li><a href="rundown.html" class="nav-link">Rundown</a></li>
                 <li><a href="sarasehan.html" class="nav-link">Sarasehan</a></li>
                 <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
@@ -124,8 +111,18 @@
           </div>
         </div>
       </div>
-
-      <div class="site-section">
+      <div class="progress" style="height: 10px; border-radius: 0">
+        <div
+          id="progressBar"
+          class="progress-bar progress-bar-animated progress-bar-striped bg-secon"
+          role="progressbar"
+          style="width: 100%"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
+      <div class="section mt-3">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-12 mr-auto blog-content">
@@ -213,7 +210,9 @@
       src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"
     ></script>
     <script src="js/main.js"></script>
-    <script>
+    <script type="module">
+      import { listacara, Linenya } from "./js/modul/listacara.js";
+
       $(document).ready(function () {
         // Function to get URL parameters
         function getParameterByName(name) {
@@ -236,16 +235,17 @@
         // Function to populate the table with data
         function populateTable(data) {
           $.each(data, function (index, user) {
+            var line = Linenya[user.Lineid];
             $("#dataTable tbody").append(
               "<tr><td class='text-right'>" +
                 (index + 1) +
                 "</td><td>" +
                 user.Nama +
-                "</td><td class='text-center'>" +
-                user.Lineid +
+                "</td><td>" +
+                line +
                 "</td><td class='text-center'>" +
                 user.TotalPeserta +
-                "</td><td>" +
+                "</td><td class='text-center'>" +
                 user.BusNo +
                 "</td><td>" +
                 user.BusSeat +

@@ -60,13 +60,44 @@ onValue(starCountRef, (snapshot) => {
       totalSudah += parseInt(data[key].Sudah);
       totalBelum += parseInt(data[key].Belum);
       const item = data[key];
-      // Buat baris baru untuk setiap item
-      const row = `<tr><td class="text-center">${counter}</td><td class="text-center">${item.Nama}</td><td class="text-center">${item.Sum}</td><td class="text-center">${item.Peserta}</td><td class="text-center">${item.Sudah}</td><td class="text-center">${item.Belum}</td><td class="text-center">${hadirnya}%</td><td class="text-center"><a href="absensibus.html?acara=${Acara}&bus=${counter}" class="btn btn-primary btn-sm">Lihat</a></td></tr>`;
+      var koordinator = localStorage.getItem("koordinator" + counter);
+      var leader = localStorage.getItem("leader" + counter);
+
+      // Tentukan warna tombol berdasarkan persentase kehadiran
+      let buttonClass = "";
+      if (hadirnya < 50) {
+        buttonClass = "btn-danger"; // Merah untuk persentase di bawah 50
+      } else if (hadirnya >= 50 && hadirnya < 80) {
+        buttonClass = "btn-warning"; // Kuning untuk persentase 50-80
+      } else {
+        buttonClass = "btn-success"; // Hijau untuk persentase 80 ke atas
+      }
+
+      // Buat baris baru untuk setiap item dengan warna tombol yang sesuai
+      const row = `<tr>
+                  <td class="text-center">${counter}</td>
+                  <td class="text-center">
+                    <a href="absensibus.html?acara=${Acara}&bus=${counter}" class="btn ${buttonClass} btn-sm">Lihat</a>
+                  </td>
+                  <td class="text-center">${item.Nama}</td>
+                  <td class="text-center">${item.Sum}</td>
+                  <td class="text-center">${item.Peserta}</td>
+                  <td class="text-center">${item.Sudah}</td>
+                  <td class="text-center">${item.Belum}</td>
+                  <td class="text-center">${hadirnya}%</td>
+                  <td>${koordinator}</td>
+                  <td>${leader}</td>
+                  <td class="text-center">
+                    <a href="absensibus.html?acara=${Acara}&bus=${counter}" class="btn ${buttonClass} btn-sm">Lihat</a>
+                  </td>
+                </tr>`;
+
       // Tambahkan baris ke tabel
       dataBody.insertAdjacentHTML("beforeend", row);
       counter++;
     }
   }
+
   var alltot = totalSudah + totalBelum;
   var allpresentasi = (totalSudah / alltot) * 100;
   var element1 = document.getElementById("absentotal");

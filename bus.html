@@ -116,13 +116,15 @@
               <ul
                 class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block"
               >
-                <li class="active">
+                <li>
                   <a href="index.html" class="nav-link">Home</a>
                 </li>
                 <li><a href="peserta.html" class="nav-link">Peserta</a></li>
                 <li><a href="rundown.html" class="nav-link">Rundown</a></li>
                 <li><a href="sarasehan.html" class="nav-link">Sarasehan</a></li>
-                <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
+                <li class="active">
+                  <a href="bus.html" class="nav-link">Bus Seat</a>
+                </li>
                 <li><a href="absensi.html" class="nav-link">Absensi</a></li>
 
                 <li><a href="admin.html" class="nav-link">Admin</a></li>
@@ -157,7 +159,17 @@
           </div>
         </div>
       </div>
-
+      <div class="progress" style="height: 10px; border-radius: 0">
+        <div
+          id="progressBar"
+          class="progress-bar progress-bar-animated progress-bar-striped bg-secon"
+          role="progressbar"
+          style="width: 100%"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
       <div class="container-fluid">
         <div class="d-flex justify-content-center">
           <table class="table table-borderless text-center">
@@ -188,30 +200,44 @@
         </div>
       </div>
 
-      <div class="site-section">
-        <div class="container">
+      <div class="section mt-3">
+        <div class="container-fluid">
           <div class="row">
             <div class="col-md-8 mr-auto blog-content">
-              <div class="container">
-                <h2 class="mb-4" id="manifest">AKOMODASI BUS 1</h2>
+              <div class="container-fluid">
+                <h2 class="mb-4" id="manifest"></h2>
                 <div id="preloader" class="preloader">
                   <img src="images/loading.gif" alt="Loading..." width="50" />
                   <p>Loading data...</p>
                 </div>
                 <div class="table-responsive">
                   <!-- Preloader -->
-
+                  <!-- Tabel Baru untuk Koordinator Bus, Karyawan, dan Total -->
+                  <table id="koordinatorTable" class="table table-bordered">
+                    <thead style="background-color: aqua">
+                      <tr>
+                        <th class="text-center">Bus</th>
+                        <th class="text-center">Leader</th>
+                        <th class="text-center">Koordinator Bus</th>
+                        <th class="text-center">Total Karyawan</th>
+                        <th class="text-center">Total Peserta</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- Data tambahan akan ditampilkan di sini -->
+                    </tbody>
+                  </table>
                   <table
                     id="dataTable"
-                    class="table table-bordered table-striped"
+                    class="table table-bordered table-striped mt-5"
                   >
                     <thead>
                       <tr>
                         <th class="text-center" style="width: 5%">No</th>
                         <th>Nama</th>
                         <th class="text-center" style="width: 10%">Jumlah</th>
-                        <th class="text-center" style="width: 30%">Seat</th>
-                        <th class="text-center" style="width: 5%">Note</th>
+                        <th class="text-center" style="width: 25%">Seat</th>
+                        <th style="width: 25%">Line</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -365,10 +391,10 @@
       </div>
 
       <div class="site-section">
-        <div class="container">
+        <div class="container-fluid">
           <div class="d-md-flex cta-20101 align-self-center bg-light p-5">
             <div class="">
-              <h2 class="text-cursive">
+              <h2 class="text-cursive text-center">
                 "Care Each Other, One Happiness with Big Family: Tumbuh Bersama,
                 Bersinar Bersama"
               </h2>
@@ -410,7 +436,9 @@
     <script src="js/aos.js"></script>
 
     <script src="js/main.js"></script>
-    <script>
+    <script type="module">
+      import { listacara, Linenya } from "./js/modul/listacara.js";
+
       $(document).ready(function () {
         // Function to get URL parameters
         function getParameterByName(name) {
@@ -444,22 +472,43 @@
 
         // Function to populate the table with data
         function populateTable(data) {
+          let totalKaryawan = 0;
+          let totalPeserta = 0;
+          let koordinator = localStorage.getItem("koordinator" + sheetName); // Asumsi koordinator sama untuk setiap baris
+          let leader = localStorage.getItem("leader" + sheetName); // Asumsi koordinator sama untuk setiap baris
           $.each(data, function (index, user) {
+            var inline = Linenya[user.Lineid]; // Access Linenya from imported module
             $("#dataTable tbody").append(
               "<tr><td class='text-right'>" +
-                user.no +
+                (index + 1) +
                 "</td><td>" +
-                user.nama +
+                user.Nama +
                 "</td><td class='text-center'>" +
-                user.jumlah +
+                user.TotalPeserta +
                 "</td><td>" +
-                user.seat +
+                user.BusSeat +
                 "</td><td>" +
-                user.keterangan +
+                inline +
                 "</td></tr>"
             );
-            $("#preloader").hide();
+            totalKaryawan += 1;
+            totalPeserta += parseInt(user.TotalPeserta) || 0;
           });
+
+          $("#preloader").hide();
+          $("#koordinatorTable tbody").html(
+            "<tr><td class='text-center'><h3>" +
+              sheetName +
+              "</h3></td><td class='text-center'>" +
+              leader +
+              "</td><td class='text-center'>" +
+              koordinator +
+              "</td><td class='text-center'>" +
+              totalKaryawan +
+              "</td><td class='text-center'>" +
+              totalPeserta +
+              "</td></tr>"
+          );
         }
 
         if (localData) {
@@ -468,18 +517,16 @@
           populateTable(parsedData);
         } else {
           // If data does not exist, fetch it from the API
-          const apiUrl = `https://script.google.com/macros/s/AKfycby-cN3-mn8KbB530Ok-fL-dqHFkuxQEnIk-2OijE63wo4j4sVv1DK5Pm4n0S6dbxilv/exec?sheet=${sheetName}`;
+          const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
 
           $.ajax({
             url: apiUrl,
             method: "GET",
             dataType: "json",
             success: function (data) {
-              // Populate table with the data
-              populateTable(data);
-
               // Save the data to localStorage as a string
               localStorage.setItem(localStorageKey, JSON.stringify(data));
+              populateTable(data);
             },
             error: function (xhr, status, error) {
               console.log("An error occurred: " + error);

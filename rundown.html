@@ -49,21 +49,6 @@
         <div class="site-mobile-menu-body"></div>
       </div>
 
-      <!--  <div class="bg-primary py-3 top-bar shadow d-none d-md-block">
-       <div class="container">
-         <div class="row">
-           <div class="col-md-6 text-md-left pl-0">
-             <a href="#" class=" pr-3 pl-0">Home</a>
-             <a href="#" class="p-3">Dashboard</a>
-             <a href="#" class="p-3">Input Absensi</a>
-           </div>
-           <div class="col-md-6 text-md-right">
-             <a href="#" class="p-3"><span class="icon-twitter"></span></a>
-             <a href="#" class="p-3"><span class="icon-facebook"></span></a>
-           </div>
-         </div>
-       </div>
-     </div> -->
       <header
         class="site-navbar site-navbar-target bg-secondary shadow"
         role="banner"
@@ -78,11 +63,13 @@
               <ul
                 class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block"
               >
-                <li class="active">
+                <li>
                   <a href="index.html" class="nav-link">Home</a>
                 </li>
                 <li><a href="peserta.html" class="nav-link">Peserta</a></li>
-                <li><a href="rundown.html" class="nav-link">Rundown</a></li>
+                <li class="active">
+                  <a href="rundown.html" class="nav-link">Rundown</a>
+                </li>
                 <li><a href="sarasehan.html" class="nav-link">Sarasehan</a></li>
                 <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
                 <li><a href="absensi.html" class="nav-link">Absensi</a></li>
@@ -119,8 +106,19 @@
           </div>
         </div>
       </div>
+      <div class="progress" style="height: 10px; border-radius: 0">
+        <div
+          id="progressBar"
+          class="progress-bar progress-bar-animated progress-bar-striped bg-secon"
+          role="progressbar"
+          style="width: 100%"
+          aria-valuenow="0"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        ></div>
+      </div>
 
-      <div class="site-section">
+      <div class="section mt-5">
         <div class="container-fluid">
           <div class="row">
             <div class="col-md-3 sidebar">
@@ -141,7 +139,7 @@
             </div>
             <div class="col-md-8 mr-auto blog-content">
               <div class="container">
-                <h2 class="mb-4">RUNDOWN</h2>
+                <h2 class="mb-2">RUNDOWN ACARA</h2>
                 <h3 id="waktuna">SABTU, 30 November 2024</h3>
                 <div class="table-responsive">
                   <!-- Preloader -->

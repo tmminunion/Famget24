@@ -19,6 +19,8 @@ onAuthStateChanged(auth, (user) => {
     // Sembunyikan form login
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("loginForm2").style.display = "block";
+    localStorage.setItem("userEmail", user.email); // Menyimpan email pengguna
+    localStorage.setItem("userUID", user.uid); // Menyimpan UID pengguna
   } else {
     // Pengguna belum login
     console.log("User not logged in");

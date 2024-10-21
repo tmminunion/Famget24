@@ -9,3 +9,13 @@ export const listacara = [
   "7. Rest Oleh-oleh",
   "8. Perjalanan Menuju Karawang setelah Rest",
 ];
+
+export const Linenya = [
+  "Welding",
+  "S/B Sub Assy",
+  "S/B Conveyor",
+  "S/B Touch Up",
+  "UB Assy",
+  "UB Encopa",
+  "SQPCHR",
+];
