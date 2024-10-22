@@ -15,16 +15,17 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     // Pengguna sudah login
     const uid = user.uid;
-    console.log("User logged in:", uid);
     // Sembunyikan form login
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("loginForm2").style.display = "block";
     localStorage.setItem("userEmail", user.email); // Menyimpan email pengguna
-    localStorage.setItem("userUID", user.uid); // Menyimpan UID pengguna
+  
   } else {
     // Pengguna belum login
     console.log("User not logged in");
     // Tampilkan form login jika perlu
+          localStorage.removeItem("userEmail");
+      localStorage.removeItem("userUID");
     document.getElementById("loginForm").style.display = "block";
     document.getElementById("loginForm2").style.display = "none";
   }
@@ -35,18 +36,14 @@ function login() {
   const emailna = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const email = emailna + "@nufat.id";
-  console.log(email);
-  console.log(password);
+
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       console.log("login masuk");
       const user = userCredential.user;
-
       // Simpan data pengguna di localStorage
       localStorage.setItem("userEmail", user.email); // Menyimpan email pengguna
-      localStorage.setItem("userUID", user.uid); // Menyimpan UID pengguna
-
       // Redirect ke halaman utama
       window.location.href = "index.html";
     })

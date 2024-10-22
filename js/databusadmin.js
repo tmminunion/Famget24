@@ -85,5 +85,5 @@ onValue(starCountRef, (snapshot) => {
   var element = document.getElementById("data_persen");
   element.textContent = allpresentasi.toFixed(2) + "%";
   updateProgressBar(allpresentasi.toFixed(0));
-  getData(NamaBus);
+  getData(NamaBus,Acara);
 });

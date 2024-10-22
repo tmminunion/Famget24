@@ -1,17 +1,18 @@
-function populateTable(data) {
+ import { getUserUid } from "./user.js";
+function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
-
+var data = datak.data;
   // Urutkan data berdasarkan status kehadiran
-  const sortedData = data.sort((a, b) => a.hadir - b.hadir);
+  const sortedData = data.sort((a, b) => a.Hadir - b.Hadir);
 
   sortedData.forEach(function (user, index) {
     // Pilih icon dan warna berdasarkan status kehadiran
-    const icon = user.hadir
+    const icon = user.Hadir
       ? "<i class='fa fa-check-circle' style='font-size:20px;color:green'></i>"
       : "<i class='fa fa-times-circle' style='font-size:20px;color:red'></i>";
 
     // Pilih warna tombol berdasarkan status kehadiran
-    const btnClass = user.hadir ? "btn-primary" : "btn-danger";
+    const btnClass = user.Hadir ? "btn-primary" : "btn-danger";
 
     // Buat baris baru dan tambahkan ke tabel
     const newRow = document.createElement("tr");
@@ -22,9 +23,9 @@ function populateTable(data) {
              class="btn ${btnClass} btn-sm" 
              onclick="updateStatus(${user.id}, ${!user.hadir})">Check In</a>
        </td>` + // Tombol dengan kelas sesuai status
-      `<td>${user.nama}</td>` +
-      `<td class='text-center'>${user.jumlah}</td>` +
-      `<td>${user.seat}</td>` +
+      `<td>${user.Nama}</td>` +
+      `<td class='text-center'>${user.TotalPeserta}</td>` +
+      `<td>${user.BusSeat}</td>` +
       `<td class='text-center'>${icon}</td>`;
 
     tbody.appendChild(newRow);
@@ -37,10 +38,13 @@ function populateTable(data) {
 // Fungsi untuk mengupdate status kehadiran
 function updateStatus(userId, newStatus) {
   const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/Absenbus/${userId}`;
-
-  // Siapkan data yang akan dikirim (misalnya user id dan status baru)
+  
+getUserUid()
+    .then(uid => {
+      console.log("User UID from post.js:", uid);
   const data = {
     hadir: newStatus, // Status kehadiran yang baru
+    UID:uid
   };
 
   // Kirim data menggunakan metode PUT atau POST ke API
@@ -66,12 +70,21 @@ function updateStatus(userId, newStatus) {
     .catch((error) => {
       console.error("Error updating status:", error);
     });
+    
+    
+    })
+    .catch(error => {
+      console.error("Error fetching user UID:", error);
+      window.alert(error);
+    });
+    
 }
 
 // Fungsi untuk mengambil data dari API
-function fetchDataFromAPI(sheetName, apiUrlBase) {
+function fetchDataFromAPI(sheetName, acara) {
+  const apiUrlBase = "https://api.bungtemin.net/FamgetAbsensi/adminGetabsen";
   // Mengembalikan Promise dari hasil fetch
-  return fetch(`${apiUrlBase}?sheet=${sheetName}`)
+  return fetch(`${apiUrlBase}/${sheetName}/${acara}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Network response was not ok " + response.statusText);
@@ -84,9 +97,8 @@ function fetchDataFromAPI(sheetName, apiUrlBase) {
     });
 }
 
-export function getData(sheetName) {
-  const apiUrlBase = "https://api.bungtemin.net/FamgetAbsensi/Absenbus";
-
+export function getData(sheetName,apiUrlBase) {
+  
   // Use the modular fetch function to get data from API
   fetchDataFromAPI(sheetName, apiUrlBase)
     .then((data) => {
