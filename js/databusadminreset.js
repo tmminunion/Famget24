@@ -8,7 +8,7 @@ import {
   onValue,
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-database.js";
 import { firebaseConfig } from "./modul/FirebaseConfig.js";
-import { getData } from "./modul/databustableadmin.js";
+import { getData } from "./modul/resetdatabustableadmin.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
@@ -33,10 +33,10 @@ if (Acara >= 0 && Acara < listacara.length) {
     if (i == Acara) {
       td.className = "activer";
     } else {
-      td.className = "pastel-box";
+      td.className = "bg-danger";
     }
     const a = document.createElement("a");
-    a.href = `admin.html?acara=${i}&bus=${NamaBus}`; // URL dinamis
+    a.href = `resetdata.html?acara=${i}&bus=${NamaBus}`; // URL dinamis
     a.innerText = `${i}`; // Teks yang ditampilkan
     td.appendChild(a);
     busLinksC.appendChild(td);
@@ -51,7 +51,7 @@ if (Acara >= 0 && Acara < listacara.length) {
       td.className = "pastel-box";
     }
     const a = document.createElement("a");
-    a.href = `admin.html?acara=${Acara}&bus=${i}`; // URL dinamis
+    a.href = `resetdata.html?acara=${Acara}&bus=${i}`; // URL dinamis
     a.innerText = `BUS ${i}`; // Teks yang ditampilkan
     td.appendChild(a);
     busLinksContainer.appendChild(td);

@@ -85,8 +85,6 @@ onValue(starCountRef, (snapshot) => {
                   <td class="text-center">${item.Sudah}</td>
                   <td class="text-center">${item.Belum}</td>
                   <td class="text-center">${hadirnya}%</td>
-                  <td>${koordinator}</td>
-                  <td>${leader}</td>
                   <td class="text-center">
                     <a href="absensibus.html?acara=${Acara}&bus=${counter}" class="btn ${buttonClass} btn-sm">Lihat</a>
                   </td>
@@ -107,7 +105,7 @@ onValue(starCountRef, (snapshot) => {
   var element3 = document.getElementById("data_belum");
   element3.textContent = totalBelum;
   var element = document.getElementById("data_persen");
-  element.textContent = allpresentasi.toFixed(2) + "%";
+  element.textContent = allpresentasi.toFixed(0) + "%";
 
   updateDonutChart(totalSudah, totalBelum);
   updateChart(hadirData, tidakHadirData);
