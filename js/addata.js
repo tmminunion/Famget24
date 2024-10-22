@@ -112,6 +112,6 @@ onValue(starCountRef, (snapshot) => {
   updateDonutChart(totalSudah, totalBelum);
   updateChart(hadirData, tidakHadirData);
   fetchData();
-  fetchDataline();
+  fetchDataline(Acara);
   updateProgressBar(allpresentasi.toFixed(0));
 });

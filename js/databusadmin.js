@@ -17,12 +17,6 @@ const userEmail = localStorage.getItem("userEmail");
 // Gunakan regex untuk mendapatkan angka setelah "bus"
 const busNumber = userEmail.match(/bus(\d+)/);
 
-// Cek apakah regex menemukan angka
-if (busNumber) {
-  console.log(busNumber[1]); // Ini akan mencetak angka setelah 'bus', misal: 1
-} else {
-  console.log('Tidak ada angka setelah "bus" ditemukan.');
-}
 const Acara = getPar("acara") || localStorage.getItem("absensi");
 const NamaBus = getPar("bus") || busNumber[1];
 document.getElementById("manifest").textContent = "Absensi BUS " + NamaBus;
@@ -70,7 +64,6 @@ const starCountRef = ref(db, "Famgetabsensi/" + Acara + "/bus" + NamaBus);
 
 onValue(starCountRef, (snapshot) => {
   const data = snapshot.val();
-  console.log(data);
 
   var totalSudah = data.Sudah;
   var totalBelum = data.Belum;
@@ -85,5 +78,5 @@ onValue(starCountRef, (snapshot) => {
   var element = document.getElementById("data_persen");
   element.textContent = allpresentasi.toFixed(2) + "%";
   updateProgressBar(allpresentasi.toFixed(0));
-  getData(NamaBus,Acara);
+  getData(NamaBus, Acara);
 });

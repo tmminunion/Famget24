@@ -86,8 +86,8 @@ function updateChartLINE(hadirData, tidakHadirData) {
 }
 
 // Fungsi untuk mengambil data dari API
-export function fetchDataline() {
-  fetch("https://api.bungtemin.net/FamgetAbsensi/absensiline") // Ganti dengan URL API yang sesuai
+export function fetchDataline(acara) {
+  fetch("https://api.bungtemin.net/FamgetAbsensi/absensiline/" + acara) // Ganti dengan URL API yang sesuai
     .then((response) => response.json()) // Mengubah response menjadi JSON
     .then((data) => {
       // Ambil data hadir dan tidak hadir

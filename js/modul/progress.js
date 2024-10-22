@@ -1,6 +1,4 @@
 export function updateProgressBar(percentage) {
-  // Pastikan nilai persentase ada di antara 0 dan 100
-  console.log("data masuk ==> ", percentage);
   percentage = parseInt(percentage);
   // Pastikan nilai persentase ada di antara 0 dan 100
   if (percentage < 0) percentage = 0;

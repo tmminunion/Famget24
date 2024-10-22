@@ -12,9 +12,9 @@ export const listacara = [
 
 export const Linenya = [
   "Welding",
-  "S/B Sub Assy",
-  "S/B Conveyor",
-  "S/B Touch Up",
+  "SB Sub Assy",
+  "SB Conveyor",
+  "SB Touch Up",
   "UB Assy",
   "UB Encopa",
   "SQPCHR",
