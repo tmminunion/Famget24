@@ -2,6 +2,11 @@
 html {
   overflow-x: hidden; }
 
+    .text-judul {
+      font-family: "DynaPuff", system-ui;
+      font-optical-sizing: auto;
+   
+    }
 .font-size-10 {
   font-size: 10px; }
 
