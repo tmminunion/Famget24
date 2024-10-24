@@ -1,6 +1,6 @@
 import { listacara } from "./modul/listacara.js";
 import { updateProgressBar } from "./modul/progress.js";
-import { getPar } from "./modul/allfungction.js";
+import { getPar, updateSeatsFromArray } from "./modul/allfungction.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import {
   getDatabase,

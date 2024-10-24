@@ -1,3 +1,5 @@
+import {updateSeatsFromArray} from "./allfungction.js";
+
 function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
   const data = datak.data;
@@ -26,8 +28,14 @@ const keterangan = user.Hadir?"Oke":"Not";
       `<td class='text-center'>${waktu}</td>` +
       `<td class='text-center'>${keterangan}</td>`;
     tbody.appendChild(newRow);
-  });
+    
+    
+if (user.Hadir == "1"){
 
+updateSeatsFromArray(user.BusSeat);
+}
+  });
+  
   // Hide preloader
   document.getElementById("preloader").style.display = "none";
 }

@@ -13,6 +13,9 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 
+// Initialize Firestore
+const db = firebase.firestore();
+
 const auth = firebase.auth();
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 
@@ -83,3 +86,83 @@ firebase.auth().onAuthStateChanged((user) => {
       });
   }
 });
+
+
+// Initialize Realtime Database
+const database = firebase.database();
+function kirimdata(imgData){
+const base64Image = imgData.split(',')[1];
+// Example of how to call the function with user data
+const userData = {
+  name: "John Doe",
+  email: "johndoe@example.com",
+  photoURL: base64Image,
+  uid: "user123",
+};
+
+  // Reference to the Firestore collection 'users'
+  db.collection("users")
+    .add(userData) // Add the data to Firestore, auto-generating a unique document ID
+    .then((docRef) => {
+      alert("Document written with ID: ", docRef.id);
+    })
+    .catch((error) => {
+      alert("Error adding document: ", error);
+    });
+}
+// Contoh s
+
+// Fungsi untuk menyimpan base64 di Realtime Database
+function saveBase64ToFirebase(base64Image) {
+  // Tulis ke database di path 'images/image_1'
+  database.ref('images/image_1').set({
+    image: base64Image
+  }).then(() => {
+    console.log("Base64 image saved to Firebase Realtime Database");
+  }).catch((error) => {
+    console.error("Error saving base64 image: ", error);
+  });
+}
+
+function kirimdata(base64Image) {
+  // Tulis ke database di path 'images/image_1'
+  database.ref('images/image_1').set({
+    image: base64Image
+  }).then(() => {
+    console.log("Base64 image saved to Firebase Realtime Database");
+  }).catch((error) => {
+    console.error("Error saving base64 image: ", error);
+  });
+}
+
+// Panggil fungsi untuk menyimpan gambar base64
+function kirimdatrtra(base64Imagena) {
+  const clientId = '56fe2778064aadb';
+  //alert(base64Imagena);
+  // Memisahkan MIME dari base64 image
+  const base64Image = base64Imagena.split(',')[1]; // Hanya mengambil bagian base64 setelah MIME
+
+  fetch('https://api.imgur.com/3/upload', {
+    method: 'POST',
+    headers: {
+      Authorization: `Client-ID ${clientId}`,
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      image: base64Image,
+      type: 'base64'
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      alert("Image uploaded successfully: ", data.data.link);
+      window.open(data.data.link, '_blank');
+    } else {
+      alert("Image upload failed: ", data);
+    }
+  })
+  .catch(error => {
+    alert("Error uploading image to Imgur: ", error);
+  });
+}

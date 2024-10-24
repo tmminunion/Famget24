@@ -19,20 +19,25 @@
       property="og:description"
       content="pembuat avatar foto dengan bingkai edisi FAMGET 2024. silahkan di share dan digunakan untuk meriahkan event FAMGET 2024"
     />
-    <meta property="og:url" content="https://bungtemin.com/tw" />
-    <meta property="og:image" content="https://bungtemin.com/tw/foto.jpg" />
+    <meta property="og:url" content="https://famget.nufat.id/fotobingkai/" />
+    <meta property="og:image" content="https://famget.nufat.id/images/logoban.jpg" />
     <meta
       name="nama-header"
       content="XIXSl2pjBgqEUjTp0Z3zppqMb6bztJR7t%2Fr%2FGeH9OAPQ3%2BxGggsgLLEcM2UorCJYZCZezJ1MAqV7eTS1HO0pTA%3D%3D"
     />
     <meta name="nama-topik" content="twibone" />
+    
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+    
+<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.4/dist/socket.io.min.js"></script>
     <script src="https://twibone.bungtemin.net/assets/fot.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-touch-events/2.0.3/jquery.mobile-events.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
     <!-- Bootstrap core CSS -->
     <link
       href="https://twibone.bungtemin.net/assets/dist/css/bootstrap.min.css"
@@ -101,7 +106,7 @@
                   <a href="#" class="text-white" id="linkalbum">Albumku</a>
                 </li>
                 <li>
-                  <a href="#" class="text-white" id="linkalbum">Keluar</a>
+                  <a href="../index.html" class="text-white" id="linkalbum">Ke FAMGET2024</a>
                 </li>
               </ul>
             </div>
@@ -406,6 +411,23 @@
 
             // Atur gambar acak sebagai src elemen img
             document.getElementById("imgfarmer").src = randomImage;
+            
+            const imgElement = document.getElementById('uploaded-image');
+let scale = 1;
+let lastScale = 1;
+
+const hammer = new Hammer(imgElement);
+
+hammer.get('pinch').set({ enable: true });
+
+hammer.on('pinch', function (ev) {
+  scale = lastScale * ev.scale;
+  imgElement.style.transform = `scale(${scale})`;
+});
+
+hammer.on('pinchend', function () {
+  lastScale = scale;
+});
           </script>
           <script>
             var keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
@@ -454,7 +476,7 @@
             }
 
             const position = { x: 0, y: 0 };
-            let scale = 1;
+            
 
             interact("#uploaded-image").draggable({
               listeners: {
@@ -553,11 +575,13 @@
                   }).then(function (canvas) {
                     const imgData = canvas.toDataURL("image/jpeg", 1.0);
                     var anchorTag = document.createElement("a");
-                    var namafile = $("#namaupload").val() + ".jpg";
+                  //  var namafile = $("#namaupload").val() + ".jpg";
+                     var namafile = "famget_"+ generateString(5)+ ".jpg";
                     document.body.appendChild(anchorTag);
                     anchorTag.download = namafile;
                     anchorTag.href = imgData;
                     anchorTag.click();
+                    kirimdata(imgData);
                     $("#barload").hide();
                     $("#modte").html(
                       "File telah di-download, silahkan cek di folder Download browser"
