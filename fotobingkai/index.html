@@ -44,6 +44,7 @@
       rel="stylesheet"
       href="https://unpkg.com/swiper/swiper-bundle.min.css"
     />
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
 
     <!-- Demo styles -->
     <style>
@@ -204,6 +205,20 @@
         border-radius: 5px; /* Sudut bulat 5px */
       }
     </style>
+    <style>
+      #html-content-holder {
+        position: relative;
+        overflow: hidden; /* Menyembunyikan bagian gambar yang keluar dari bingkai */
+      }
+
+      #uploaded-image {
+        position: absolute; /* Pastikan gambar bisa diatur posisi */
+        top: 0;
+        left: 0;
+        transform-origin: top left; /* Untuk memastikan scaling bekerja dari sudut kiri atas */
+      }
+    </style>
+
     <style>
       .swal2-icon.swal2-no-border {
         border: none !important;
@@ -507,34 +522,68 @@
               />
             </div>
           </div>
+
           <center>
             <div
-              for="FileOne"
               id="html-content-holder"
               class="ratio ratio-1x1"
-              alt="Responsive image"
               style="
                 position: relative;
-                background-image: url('');
-                background-repeat: no-repeat;
                 padding: 0px;
                 width: 100%;
+                max-width: 500px; /* Batas ukuran maksimal */
+                aspect-ratio: 1 / 1; /* Menjaga proporsi 1:1 */
+                margin: auto;
               "
             >
-              <div id="myDIV" style="position: absolute">
-                <img class="resizable" src="" />
+              <!-- Gambar Unggahan (Latar Belakang) -->
+              <div
+                id="background-layer"
+                style="
+                  position: absolute; /* Pastikan gambar latar berada dalam layer yang sama */
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  z-index: 1; /* Z-index lebih rendah untuk gambar unggahan */
+                "
+              >
+                <img
+                  id="uploaded-image"
+                  src=""
+                  style="width: 100%; height: 100%; object-fit: cover"
+                  alt="User Upload"
+                />
               </div>
 
-              <img
-                src="https://twibone.bungtemin.net/images/MUSNIK2024/1.png"
-                data-id="1"
-                class="img-fluid"
-                style=""
-                alt="Responsive image"
-                id="imgfarmer"
-              />
+              <!-- Gambar Bingkai (Layer Kedua) -->
+              <div
+                id="frame-layer"
+                style="
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  z-index: 2; /* Z-index lebih tinggi untuk bingkai */
+                  pointer-events: none; /* Mencegah interaksi dengan layer bingkai */
+                "
+              >
+                <img
+                  src="https://twibone.bungtemin.net/images/MUSNIK2024/1.png"
+                  id="imgfarmer"
+                  class="img-fluid"
+                  style="
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain; /* Jaga proporsi frame */
+                  "
+                  alt="Frame"
+                />
+              </div>
             </div>
 
+            <input type="file" name="FileOne" id="FileOne" />
             <input
               type="range"
               class="form-range"
@@ -542,8 +591,9 @@
               min="-50"
               max="200"
               value="50"
+              style="display: none"
             />
-            <input type="text" id="data" style="display: none" />
+
             <input type="text" id="namaupload" style="display: none" />
             <div class="d-grid gap-2 col-6 mx-auto">
               <input
@@ -563,6 +613,7 @@
             />
             <span id="modfinis"></span>
           </center>
+
           <form
             method="post"
             accept-charset="utf-8"
@@ -600,6 +651,7 @@
           <!-- <script type="text/javascript" src="https://twibone.bungtemin.net/assets/dist/file2.js"></script> -->
 
           <script>
+            // Disable scroll function
             var keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
             function preventDefault(e) {
               e.preventDefault();
@@ -626,13 +678,9 @@
             } catch (e) {}
 
             var wheelOpt = supportsPassive ? { passive: false } : false;
-            var wheelEvent =
-              "onwheel" in document.createElement("div")
-                ? "wheel"
-                : "mousewheel";
-            // call this to Disable
+
             function disableScroll() {
-              window.addEventListener("touchmove", preventDefault, wheelOpt); // mobile
+              window.addEventListener("touchmove", preventDefault, wheelOpt);
               window.addEventListener(
                 "keydown",
                 preventDefaultForScrollKeys,
@@ -640,7 +688,6 @@
               );
             }
 
-            // call this to Enable
             function enableScroll() {
               window.removeEventListener("touchmove", preventDefault, wheelOpt);
               window.removeEventListener(
@@ -651,129 +698,100 @@
             }
 
             const position = { x: 0, y: 0 };
+            let scale = 1;
 
-            interact(".img-fluid").draggable({
+            // Setup interact.js
+            interact("#uploaded-image").draggable({
               listeners: {
-                start(event) {
-                  console.log(event.type, event.target);
-                },
-
                 move(event) {
+                  // Hitung posisi baru
                   position.x += event.dx;
                   position.y += event.dy;
-                  $("#html-content-holder").css(
-                    "background-position",
-                    position.x + "px " + position.y + "px"
-                  );
+
+                  // Terapkan transformasi ke gambar
+                  event.target.style.transform = `translate(${position.x}px, ${position.y}px) scale(${scale})`;
                   disableScroll();
+                },
+                end(event) {
+                  enableScroll();
                 },
               },
             });
 
             $(document).ready(function () {
-              checkID();
-              document
-                .getElementById("imgfarmer")
-                .addEventListener("touchstart", disableScroll);
-              document
-                .getElementById("imgfarmer")
-                .addEventListener("touchend", enableScroll);
               var namafilenyaq =
                 localStorage.getItem("deviceIDi") + "_" + generateString(15);
               $("#namaupload").val(namafilenyaq);
               $("#hidden_datanama").val(namafilenyaq);
               $("#hidden_datauser").val(localStorage.getItem("deviceIDi"));
 
-              var typenya = $("#imgfarmer").attr("data-id");
-              $("#hidden_datatype").val(typenya);
-
-              $(".pilihanimag").click(function () {
-                var gambarnew = $(this).attr("src");
-                var namafilenyag =
-                  localStorage.getItem("deviceIDi") + "_" + generateString(15);
-                $("#namaupload").val(namafilenyag);
-                $("#hidden_datanama").val(namafilenyag);
-                $("#imgfarmer").attr("src", gambarnew);
-
-                var typenya = $(this).attr("data-id");
-                $("#hidden_datatype").val(typenya);
+              // Handle image selection
+              $("input[name='FileOne']").on("change", function (event1) {
+                var src1 = URL.createObjectURL(event1.target.files[0]);
+                $("#uploaded-image").attr("src", src1);
+                position.x = 0; // Reset position
+                position.y = 0; // Reset position
+                scale = 1; // Reset scale
+                $("#uploaded-image").css(
+                  "transform",
+                  `translate(0px, 0px) scale(1)`
+                );
+                $("#btn_convert").show();
               });
 
-              $("#customRange3").on("change", valueUpdated3);
-
-              // Logs the value while the user is moving the slider
-              $("#customRange3").on("input", valueUpdated3);
-
-              function valueUpdated3(e) {
-                var val = $("#customRange3").val();
-                console.log(val);
-                $("#html-content-holder").css(
-                  "background-size",
-                  100 + (100 * val) / 110 + "%"
+              // Handle zoom slider
+              $("#customRange3").on("input", function () {
+                scale = 1 + $(this).val() / 100; // Scale image based on the slider value
+                $("#uploaded-image").css(
+                  "transform",
+                  `translate(${position.x}px, ${position.y}px) scale(${scale})`
                 );
-                console.log(100 + (100 * val) / 110);
-              }
+              });
 
               $("#bwee").submit(function (event) {
                 $("#barload").show();
                 $("#bwee").hide();
-
                 $("#framesub").on("load", function () {
                   $("#barload").hide();
                   console.log("terkirim");
                   $("#modfinis").html(
-                    "File Telah telah terkirim silahkan buat foto bingkai lagi"
+                    "File Telah terkirim, silahkan buat foto bingkai lagi"
                   );
                 });
               });
-            });
 
-            $("input[name='FileOne']").on("change", function (event1) {
-              var namafilenya =
-                localStorage.getItem("deviceIDi") + "_" + generateString(15);
-              $("#namaupload").val(namafilenya);
-              $("#hidden_datanama").val(namafilenya);
-              $("#customRange3").show();
-              $("#bwee").hide();
-              $("#modfinis").html(" ");
-              src1 = URL.createObjectURL(event1.target.files[0]);
-              document.querySelector("[for=FileOne]").style.backgroundImage =
-                "url(" + src1 + ")";
-              $("#html-content-holder").css("background-size", "cover");
-              $("#btn_convert").show();
-            });
+              document
+                .getElementById("btn_convert")
+                .addEventListener("click", function () {
+                  $("#btn_convert").hide();
+                  $("#barload").show();
+                  $("#customRange3").hide();
 
-            document
-              .getElementById("btn_convert")
-              .addEventListener("click", function () {
-                $("#btn_convert").hide();
-                $("#barload").show();
-                $("#customRange3").hide();
-                //$("#modolna").click();
-                html2canvas(document.getElementById("html-content-holder"), {
-                  allowTaint: true,
-                  useCORS: true,
-                }).then(function (canvas) {
-                  var anchorTag = document.createElement("a");
-                  var namafile = $("#namaupload").val() + ".jpg";
-                  document.body.appendChild(anchorTag);
-                  document.getElementById("previewImg").appendChild(canvas);
-                  anchorTag.download = namafile;
-                  anchorTag.href = canvas.toDataURL();
-                  anchorTag.target = "_blank";
-                  anchorTag.click();
-                  var dataURL = canvas.toDataURL();
+                  html2canvas(document.getElementById("html-content-holder"), {
+                    scale: 10,
+                    allowTaint: true,
+                    useCORS: true,
+                  }).then(function (canvas) {
+                    var anchorTag = document.createElement("a");
+                    var namafile = $("#namaupload").val() + ".jpg";
+                    document.body.appendChild(anchorTag);
+                    document.getElementById("previewImg").appendChild(canvas);
+                    anchorTag.download = namafile;
+                    anchorTag.href = canvas.toDataURL();
+                    anchorTag.target = "_blank";
+                    anchorTag.click();
+                    var dataURL = canvas.toDataURL();
 
-                  document.getElementById("hidden_data").value = dataURL;
-                  $("#barload").hide();
-                  $("#bwee").submit();
+                    document.getElementById("hidden_data").value = dataURL;
+                    $("#barload").hide();
+                    $("#bwee").submit();
 
-                  $("#modte").html(
-                    "File Telah di download silahkan Check di Folder Download browser"
-                  );
-                  var namafileff = $("#namaupload").val();
+                    $("#modte").html(
+                      "File telah di-download, silahkan cek di folder Download browser"
+                    );
+                  });
                 });
-              });
+            });
           </script>
         </div>
       </section>
