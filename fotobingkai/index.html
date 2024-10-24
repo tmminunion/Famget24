@@ -26,7 +26,8 @@
       content="XIXSl2pjBgqEUjTp0Z3zppqMb6bztJR7t%2Fr%2FGeH9OAPQ3%2BxGggsgLLEcM2UorCJYZCZezJ1MAqV7eTS1HO0pTA%3D%3D"
     />
     <meta name="nama-topik" content="twibone" />
-
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.4/dist/socket.io.min.js"></script>
     <script src="https://twibone.bungtemin.net/assets/fot.js"></script>
@@ -38,248 +39,12 @@
       rel="stylesheet"
     />
     <script src="https://twibone.bungtemin.net/assets/dist/js/bootstrap.bundle.min.js"></script>
-    <style></style>
-    <!-- Link Swiper's CSS -->
+    <link rel="stylesheet" href="style.css" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/swiper/swiper-bundle.min.css"
     />
 
-    <!-- Demo styles -->
-    <style>
-      .cardcontainer {
-        width: 100%;
-        height: auto;
-        background-color: white;
-        margin-left: auto;
-        margin-right: auto;
-        transition: 0.3s;
-      }
-
-      .cardcontainer:hover {
-        box-shadow: 0 0 45px gray;
-      }
-
-      .photo {
-        height: auto;
-        width: 100%;
-      }
-
-      .photo img {
-        height: 100%;
-        width: 100%;
-      }
-
-      .txt1 {
-        margin: auto;
-        text-align: center;
-        font-size: 17px;
-      }
-
-      .content {
-        width: 95%;
-        height: 60px;
-        margin-left: auto;
-        margin-right: auto;
-        position: relative;
-        top: -33px;
-      }
-
-      .txt4 {
-        font-size: 17px;
-        position: relative;
-        color: #e74c3c;
-        top: 33px;
-      }
-
-      .txt2 {
-        font-size: 12px;
-        position: relative;
-        top: 20px;
-      }
-
-      .footer {
-        width: 80%;
-        height: 70px;
-        margin-left: auto;
-        margin-right: auto;
-        background-color: white;
-        position: relative;
-        top: -15px;
-      }
-
-      .btn {
-        position: relative;
-        top: 20px;
-      }
-
-      .txt3 {
-        color: gray;
-        position: relative;
-        top: 18px;
-        font-size: 14px;
-      }
-
-      .comments {
-        float: right;
-        cursor: pointer;
-      }
-      .swiper {
-        width: 100%;
-        padding-bottom: 10px;
-        padding-top: 10px;
-      }
-
-      .swiper-slide {
-        background-position: center;
-        background-size: cover;
-        width: 100%;
-        height: auto;
-      }
-
-      .swiper-slide img {
-        display: block;
-        width: 100%;
-      }
-
-      .nav-scroller {
-        position: relative;
-        z-index: 2;
-        height: 2.4rem;
-        overflow-y: hidden;
-      }
-
-      .nav-scroller .nav {
-        display: flex;
-        flex-wrap: nowrap;
-        padding-bottom: 1rem;
-        margin-top: -1px;
-        overflow-x: auto;
-        text-align: center;
-        white-space: nowrap;
-        -webkit-overflow-scrolling: touch;
-      }
-      main.custom-container {
-        margin: 0 auto;
-        /* Untuk menengahkan elemen main secara horizontal */
-        height: 100vh;
-        /* Menyesuaikan tinggi elemen main ke tinggi viewport */
-      }
-
-      /* Menyesuaikan lebar konten untuk perangkat layar besar */
-      @media (min-width: 992px) {
-        .custom-container {
-          width: 30%;
-        }
-      }
-
-      .action-icons {
-        position: absolute;
-        bottom: -25px;
-        right: 5px;
-      }
-
-      .action-icons img {
-        width: 40px; /* Sesuaikan ukuran ikon sesuai kebutuhan */
-        margin-left: 5px; /* Jarak antar ikon */
-
-        cursor: pointer;
-      }
-      .love-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-
-      .love-icon {
-        margin-bottom: 1px;
-      }
-
-      .love-count {
-        font-size: 10px;
-        padding: 5px;
-        background-color: rgba(0, 0, 0, 0.5); /* Hitam agak transparan */
-        color: #fff; /* Tulisan putih */
-        border-radius: 5px; /* Sudut bulat 5px */
-      }
-    </style>
-    <style>
-      #html-content-holder {
-        position: relative;
-        overflow: hidden; /* Menyembunyikan bagian gambar yang keluar dari bingkai */
-      }
-
-      #uploaded-image {
-        position: absolute; /* Pastikan gambar bisa diatur posisi */
-        top: 0;
-        left: 0;
-        transform-origin: top left; /* Untuk memastikan scaling bekerja dari sudut kiri atas */
-      }
-    </style>
-
-    <style>
-      .swal2-icon.swal2-no-border {
-        border: none !important;
-        box-shadow: none !important;
-      }
-    </style>
-    <style>
-      @keyframes heartbeat {
-        0% {
-          transform: scale(1);
-        }
-        14% {
-          transform: scale(1.3);
-        }
-        28% {
-          transform: scale(1);
-        }
-        42% {
-          transform: scale(1.3);
-        }
-        70% {
-          transform: scale(1);
-        }
-      }
-
-      .swal2-icon.swal2-no-border {
-        border: none !important;
-        box-shadow: none !important;
-        animation: heartbeat 1.5s infinite;
-      }
-      .swal2-custom {
-        background-color: rgba(0, 0, 0, 0.3) !important;
-      }
-    </style>
-    <style>
-      .swal2-custom .swal2-title {
-        color: red !important;
-      }
-
-      .swal2-custom .swal2-content {
-        color: red !important;
-      }
-      .swal2-custom .swal2-text {
-        color: white !important;
-      }
-
-      .swal2-custom .swal2-confirm,
-      .swal2-custom .swal2-cancel {
-        color: white !important; /* Warna teks untuk tombol */
-      }
-
-      /* Untuk mengatur warna background tombol */
-      .swal2-custom .swal2-confirm {
-        background-color: red !important;
-      }
-      .swal2-custom .swal2-cancel {
-        background-color: grey !important;
-      }
-      .swal2-custom .swal2-html-container {
-        color: white !important; /* Untuk SweetAlert2 versi terkini, teks isi berada di dalam container ini */
-      }
-    </style>
     <script>
       const characters =
         "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -310,12 +75,11 @@
         <div class="container">
           <div class="row">
             <div class="col-sm-8 col-md-7 py-4">
-              <h2 class="text-white">NUNU FATULAH</h2>
-              <h5 class="text-white">00415024</h5>
+              <button id="googleSignInBtn">Sign in with Google</button>
               <hr class="bg-white" />
               <h4 class="text-white">Catatan :</h4>
               <p class="text-muted">
-                Silahkan Upload foto terbaik kamu dengan 9 pilihan frame yang
+                Silahkan Upload foto terbaik kamu dengan 19 pilihan frame yang
                 tersedia dan menangkan Doorprize menarik untuk Foto Bingkai
                 terbaik.
               </p>
@@ -324,41 +88,20 @@
               <h4 class="text-white">Menu</h4>
               <ul class="list-unstyled">
                 <li>
-                  <a href="https://twibone.bungtemin.net/" class="text-white"
-                    >Beranda</a
-                  >
+                  <a href="index.html" class="text-white">Beranda</a>
                 </li>
                 <li>
-                  <a
-                    href="https://twibone.bungtemin.net/bingkai"
-                    class="text-white"
-                    >Bingkai</a
-                  >
+                  <a href="#" class="text-white">Bingkai</a>
                 </li>
 
                 <li>
-                  <a
-                    href="https://twibone.bungtemin.net/albumall"
-                    class="text-white"
-                    id="linkalbum"
-                    >Foto Steam</a
-                  >
+                  <a href="#" class="text-white" id="linkalbum">Foto Steam</a>
                 </li>
                 <li>
-                  <a
-                    href="https://twibone.bungtemin.net/albumku"
-                    class="text-white"
-                    id="linkalbum"
-                    >Albumku</a
-                  >
+                  <a href="#" class="text-white" id="linkalbum">Albumku</a>
                 </li>
                 <li>
-                  <a
-                    href="https://twibone.bungtemin.net/login/logout.php"
-                    class="text-white"
-                    id="linkalbum"
-                    >Keluar</a
-                  >
+                  <a href="#" class="text-white" id="linkalbum">Keluar</a>
                 </li>
               </ul>
             </div>
@@ -409,63 +152,63 @@
           <div class="swiper-wrapper">
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/1.png"
+                src="./images/FAMGET2024/1.png"
                 class="pilihanimag"
                 data-id="1"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/2.png"
+                src="./images/FAMGET2024/2.png"
                 class="pilihanimag"
                 data-id="2"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/3.png"
+                src="./images/FAMGET2024/3.png"
                 class="pilihanimag"
                 data-id="3"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/4.png"
+                src="./images/FAMGET2024/4.png"
                 class="pilihanimag"
                 data-id="4"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/5.png"
+                src="./images/FAMGET2024/5.png"
                 class="pilihanimag"
                 data-id="5"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/6.png"
+                src="./images/FAMGET2024/6.png"
                 class="pilihanimag"
                 data-id="6"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/7.png"
+                src="./images/FAMGET2024/7.png"
                 class="pilihanimag"
                 data-id="7"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/8.png"
+                src="./images/FAMGET2024/8.png"
                 class="pilihanimag"
                 data-id="8"
               />
             </div>
             <div class="swiper-slide">
               <img
-                src="https://twibone.bungtemin.net/images/FAMGET2024/9.png"
+                src="./images/FAMGET2024/9.png"
                 class="pilihanimag"
                 data-id="9"
               />
@@ -546,9 +289,8 @@
               >
                 <img
                   id="uploaded-image"
-                  src=""
+                  src="./images/space.png"
                   style="width: 100%; height: 100%; object-fit: cover"
-                  alt="User Upload"
                 />
               </div>
 
@@ -566,7 +308,7 @@
                 "
               >
                 <img
-                  src="https://twibone.bungtemin.net/images/FAMGET2024/1.png"
+                  src="./images/FAMGET2024/1.png"
                   id="imgfarmer"
                   class="img-fluid"
                   style="
@@ -652,7 +394,19 @@
             style="display: none"
           ></iframe>
           <!-- <script type="text/javascript" src="https://twibone.bungtemin.net/assets/dist/file2.js"></script> -->
+          <script>
+            // Daftar gambar yang tersedia
+            var images = [];
+            for (var i = 1; i <= 19; i++) {
+              images.push("./images/FAMGET2024/" + i + ".png");
+            }
 
+            // Pilih gambar acak dari array
+            var randomImage = images[Math.floor(Math.random() * images.length)];
+
+            // Atur gambar acak sebagai src elemen img
+            document.getElementById("imgfarmer").src = randomImage;
+          </script>
           <script>
             var keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
             function preventDefault(e) {
@@ -773,6 +527,17 @@
                   `translate(${position.x}px, ${position.y}px) scale(${scale})`
                 );
               });
+              $(".pilihanimag").click(function () {
+                var gambarnew = $(this).attr("src");
+                var namafilenyag =
+                  localStorage.getItem("deviceIDi") + "_" + generateString(15);
+                $("#namaupload").val(namafilenyag);
+                $("#hidden_datanama").val(namafilenyag);
+                $("#imgfarmer").attr("src", gambarnew);
+
+                var typenya = $(this).attr("data-id");
+                $("#hidden_datatype").val(typenya);
+              });
 
               document
                 .getElementById("btn_convert")
@@ -814,14 +579,13 @@
         <div class="container" color="success">
           <div class="row bg-dark mt-3">
             <div class="col-md-12 text-center py-4">
-              <p>
-                Copyright Tim Media Bungtemin.net © since 2022. All rights
-                reserved.
-              </p>
+              <p>Copyright Nufat.id © since 2022. All rights reserved.</p>
             </div>
           </div>
         </div>
       </div>
     </footer>
+
+    <script src="databas.js"></script>
   </body>
 </html>

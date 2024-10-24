@@ -1,0 +1,247 @@
+.cardcontainer {
+    width: 100%;
+    height: auto;
+    background-color: white;
+    margin-left: auto;
+    margin-right: auto;
+    transition: 0.3s;
+}
+
+.cardcontainer:hover {
+    box-shadow: 0 0 45px gray;
+}
+
+.photo {
+    height: auto;
+    width: 100%;
+}
+
+.photo img {
+    height: 100%;
+    width: 100%;
+}
+
+.txt1 {
+    margin: auto;
+    text-align: center;
+    font-size: 17px;
+}
+
+.content {
+    width: 95%;
+    height: 60px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+    top: -33px;
+}
+
+.txt4 {
+    font-size: 17px;
+    position: relative;
+    color: #e74c3c;
+    top: 33px;
+}
+
+.txt2 {
+    font-size: 12px;
+    position: relative;
+    top: 20px;
+}
+
+.footer {
+    width: 80%;
+    height: 70px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: white;
+    position: relative;
+    top: -15px;
+}
+
+.btn {
+    position: relative;
+    top: 20px;
+}
+
+.txt3 {
+    color: gray;
+    position: relative;
+    top: 18px;
+    font-size: 14px;
+}
+
+.comments {
+    float: right;
+    cursor: pointer;
+}
+
+.swiper {
+    width: 100%;
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 100%;
+    height: auto;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+}
+
+.nav-scroller {
+    position: relative;
+    z-index: 2;
+    height: 2.4rem;
+    overflow-y: hidden;
+}
+
+.nav-scroller .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 1rem;
+    margin-top: -1px;
+    overflow-x: auto;
+    text-align: center;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+}
+
+main.custom-container {
+    margin: 0 auto;
+    /* Untuk menengahkan elemen main secara horizontal */
+    height: 100vh;
+    /* Menyesuaikan tinggi elemen main ke tinggi viewport */
+}
+
+/* Menyesuaikan lebar konten untuk perangkat layar besar */
+@media (min-width: 992px) {
+    .custom-container {
+        width: 30%;
+    }
+}
+
+.action-icons {
+    position: absolute;
+    bottom: -25px;
+    right: 5px;
+}
+
+.action-icons img {
+    width: 40px;
+    /* Sesuaikan ukuran ikon sesuai kebutuhan */
+    margin-left: 5px;
+    /* Jarak antar ikon */
+
+    cursor: pointer;
+}
+
+.love-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.love-icon {
+    margin-bottom: 1px;
+}
+
+.love-count {
+    font-size: 10px;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Hitam agak transparan */
+    color: #fff;
+    /* Tulisan putih */
+    border-radius: 5px;
+    /* Sudut bulat 5px */
+}
+
+  #html-content-holder {
+      position: relative;
+      overflow: hidden;
+      /* Menyembunyikan bagian gambar yang keluar dari bingkai */
+  }
+
+  #uploaded-image {
+      position: absolute;
+      /* Pastikan gambar bisa diatur posisi */
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      /* Untuk memastikan scaling bekerja dari sudut kiri atas */
+  }
+
+   @keyframes heartbeat {
+       0% {
+           transform: scale(1);
+       }
+
+       14% {
+           transform: scale(1.3);
+       }
+
+       28% {
+           transform: scale(1);
+       }
+
+       42% {
+           transform: scale(1.3);
+       }
+
+       70% {
+           transform: scale(1);
+       }
+   }
+
+   .swal2-icon.swal2-no-border {
+       border: none !important;
+       box-shadow: none !important;
+       animation: heartbeat 1.5s infinite;
+   }
+
+   .swal2-custom {
+       background-color: rgba(0, 0, 0, 0.3) !important;
+   }
+
+          .swal2-custom .swal2-title {
+              color: red !important;
+          }
+    
+          .swal2-custom .swal2-content {
+              color: red !important;
+          }
+    
+          .swal2-custom .swal2-text {
+              color: white !important;
+          }
+    
+          .swal2-custom .swal2-confirm,
+          .swal2-custom .swal2-cancel {
+              color: white !important;
+              /* Warna teks untuk tombol */
+          }
+    
+          /* Untuk mengatur warna background tombol */
+          .swal2-custom .swal2-confirm {
+              background-color: red !important;
+          }
+    
+          .swal2-custom .swal2-cancel {
+              background-color: grey !important;
+          }
+    
+          .swal2-custom .swal2-html-container {
+              color: white !important;
+              /* Untuk SweetAlert2 versi terkini, teks isi berada di dalam container ini */
+          }
+                   .swal2-icon.swal2-no-border {
+                       border: none !important;
+                       box-shadow: none !important;
+                   }
