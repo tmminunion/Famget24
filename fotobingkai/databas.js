@@ -36,6 +36,10 @@ googleSignInBtn.addEventListener("click", () => {
       var token = credential.accessToken;
       // The signed-in user info.
       var user = result.user;
+        // Simpan informasi pengguna ke localStorage
+              localStorage.setItem("displayName", user.displayName);
+              localStorage.setItem("email", user.email);
+              localStorage.setItem("photoURL", user.photoURL);
       // IdP data available in result.additionalUserInfo.profile.
       // ...
     })
@@ -63,12 +67,13 @@ firebase.auth().onAuthStateChanged((user) => {
     if (isGoogleProvider) {
       // Pengguna login melalui Google, izinkan akses
       console.log("User is logged in using Google:", user);
-
-      // Simpan informasi pengguna ke localStorage
+const InBtn = document.getElementById("konlog");
+  googleSignInBtn.style.display  ="none";      // Simpan informasi pengguna ke localStorage
       localStorage.setItem("displayName", user.displayName);
       localStorage.setItem("email", user.email);
       localStorage.setItem("photoURL", user.photoURL);
-
+$("#rownama").text(user.displayName);
+// document.getElementById('rownama').innerText=user.displayName;  
       // Tampilkan informasi pengguna
       console.log("User Display Name: ", user.displayName);
       console.log("User Email: ", user.email);
@@ -79,44 +84,11 @@ firebase.auth().onAuthStateChanged((user) => {
       // Pengguna tidak login dengan Google, lakukan logout
       console.log("User is not logged in using Google. Logging out...");
 
-      firebase
-        .auth()
-        .signOut()
-        .then(() => {
-          alert("You must log in using Google. Please sign in again.");
-          // Redirect ke halaman login atau trigger Google sign-in popup
-          firebase
-            .auth()
-            .signInWithPopup(googleProvider)
-            .then((result) => {
-              // User successfully signed in with Google
-              var user = result.user;
-              console.log("User logged in using Google:", user);
-
-              // Simpan informasi pengguna ke localStorage
-              localStorage.setItem("displayName", user.displayName);
-              localStorage.setItem("email", user.email);
-              localStorage.setItem("photoURL", user.photoURL);
-
-              // Tampilkan informasi pengguna
-              console.log("User Display Name: ", user.displayName);
-              console.log("User Email: ", user.email);
-              console.log("User Photo URL: ", user.photoURL);
-              console.log("User Email Verified: ", user.emailVerified);
-              console.log("User UID: ", user.uid);
-            })
-            .catch((error) => {
-              console.error("Error during Google sign-in:", error);
-            });
-        })
-        .catch((error) => {
-          console.error("Error during sign out:", error);
-        });
+    
     }
   } else {
     // No user is signed in, trigger Google sign-in popup
-    console.log("No user is logged in. Opening Google sign-in popup...");
-
+  
     firebase
       .auth()
       .signInWithPopup(googleProvider)
@@ -140,6 +112,7 @@ firebase.auth().onAuthStateChanged((user) => {
       .catch((error) => {
         console.error("Error during sign in:", error);
       });
+      
   }
 });
 
@@ -204,7 +177,7 @@ function kirimdata(base64Imagena) {
             profilePicture: photoURL, // Simpan foto profil
           })
           .then((docRef) => {
-            console.log("Document written with ID: " + docRef.id);
+            alert("Document written with ID: " + docRef.id);
           })
           .catch((error) => {
             alert("Error adding document: " + error);
