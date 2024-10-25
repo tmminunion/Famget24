@@ -1,4 +1,5 @@
 import { getUserUid } from "./user.js";
+import { updateSeatsFromArray } from "./allfungction.js";
 function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
   tbody.innerHTML = ""; // Clear existing content
@@ -31,9 +32,12 @@ function populateTable(datak) {
       `<td class='text-center'>${icon}</td>`;
 
     tbody.appendChild(newRow);
-  });
 
-  // Hide preloader
+    if (user.Hadir == "1") {
+      updateSeatsFromArray(user.BusSeat);
+    }
+    // Hide preloader
+  });
   document.getElementById("preloader").style.display = "none";
 }
 

@@ -111,6 +111,10 @@
         width: auto;
         margin: 0 auto; /* Untuk membuat tabel berada di tengah */
       }
+      .updated-seat {
+        background-color: rgb(3, 105, 3);
+        color: white;
+      }
     </style>
   </head>
 
@@ -135,24 +139,11 @@
               <a href="index.html" class="text-white text-judul">Famget 2024</a>
             </div>
 
-            <nav class="site-navigation text-left ml-auto" role="navigation">
-              <ul
-                class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block"
-              >
-                <li>
-                  <a href="index.html" class="nav-link">Home</a>
-                </li>
-                <li><a href="peserta.html" class="nav-link">Peserta</a></li>
-                <li><a href="rundown.html" class="nav-link">Rundown</a></li>
-                <li><a href="sarasehan.html" class="nav-link">Sarasehan</a></li>
-                <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
-                <li><a href="absensi.html" class="nav-link">Absensi</a></li>
-
-                <li class="active">
-                  <a href="admin.html" class="nav-link">Admin</a>
-                </li>
-              </ul>
-            </nav>
+            <nav
+              class="site-navigation text-left ml-auto"
+              role="navigation"
+              id="menuk"
+            ></nav>
 
             <div class="ml-auto toggle-button d-inline-block d-lg-none">
               <a
@@ -329,124 +320,124 @@
                         <td class="driver">DR</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 2 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 2 -->
                       <tr>
-                        <td class="seatki">1</td>
-                        <td class="seatka">2</td>
+                        <td class="seatki" data-seat="1">1</td>
+                        <td class="seatka" data-seat="2">2</td>
                         <td class="space"></td>
-                        <td class="seatki">3</td>
-                        <td class="seat">4</td>
-                        <td class="seatka">5</td>
+                        <td class="seatki" data-seat="3">3</td>
+                        <td class="seat" data-seat="4">4</td>
+                        <td class="seatka" data-seat="5">5</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 3 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 3 -->
                       <tr>
-                        <td class="seatki">6</td>
-                        <td class="seatka">7</td>
+                        <td class="seatki" data-seat="6">6</td>
+                        <td class="seatka" data-seat="7">7</td>
                         <td class="space"></td>
-                        <td class="seatki">8</td>
-                        <td class="seat">9</td>
-                        <td class="seatka">10</td>
+                        <td class="seatki" data-seat="8">8</td>
+                        <td class="seat" data-seat="9">9</td>
+                        <td class="seatka" data-seat="10">10</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 4 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 4 -->
                       <tr>
-                        <td class="seatki">11</td>
-                        <td class="seatka">12</td>
+                        <td class="seatki" data-seat="11">11</td>
+                        <td class="seatka" data-seat="12">12</td>
                         <td class="space"></td>
-                        <td class="seatki">13</td>
-                        <td class="seat">14</td>
-                        <td class="seatka">15</td>
+                        <td class="seatki" data-seat="13">13</td>
+                        <td class="seat" data-seat="14">14</td>
+                        <td class="seatka" data-seat="15">15</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 5 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 5 -->
                       <tr>
-                        <td class="seatki">16</td>
-                        <td class="seatka">17</td>
+                        <td class="seatki" data-seat="16">16</td>
+                        <td class="seatka" data-seat="17">17</td>
                         <td class="space"></td>
-                        <td class="seatki">18</td>
-                        <td class="seat">19</td>
-                        <td class="seatka">20</td>
+                        <td class="seatki" data-seat="18">18</td>
+                        <td class="seat" data-seat="19">19</td>
+                        <td class="seatka" data-seat="20">20</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 6 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 6 -->
                       <tr>
-                        <td class="seatki">21</td>
-                        <td class="seatka">22</td>
+                        <td class="seatki" data-seat="21">21</td>
+                        <td class="seatka" data-seat="22">22</td>
                         <td class="space"></td>
-                        <td class="seatki">23</td>
-                        <td class="seat">24</td>
-                        <td class="seatka">25</td>
+                        <td class="seatki" data-seat="23">23</td>
+                        <td class="seat" data-seat="24">24</td>
+                        <td class="seatka" data-seat="25">25</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 7 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 7 -->
                       <tr>
-                        <td class="seatki">26</td>
-                        <td class="seatka">27</td>
+                        <td class="seatki" data-seat="26">26</td>
+                        <td class="seatka" data-seat="27">27</td>
                         <td class="space"></td>
-                        <td class="seatki">28</td>
-                        <td class="seat">29</td>
-                        <td class="seatka">30</td>
+                        <td class="seatki" data-seat="28">28</td>
+                        <td class="seat" data-seat="29">29</td>
+                        <td class="seatka" data-seat="30">30</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 8 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 8 -->
                       <tr>
-                        <td class="seatki">31</td>
-                        <td class="seatka">32</td>
+                        <td class="seatki" data-seat="31">31</td>
+                        <td class="seatka" data-seat="32">32</td>
                         <td class="space"></td>
-                        <td class="seatki">33</td>
-                        <td class="seat">34</td>
-                        <td class="seatka">35</td>
+                        <td class="seatki" data-seat="33">33</td>
+                        <td class="seat" data-seat="34">34</td>
+                        <td class="seatka" data-seat="35">35</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 9 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 9 -->
                       <tr>
-                        <td class="seatki">36</td>
-                        <td class="seatka">37</td>
+                        <td class="seatki" data-seat="36">36</td>
+                        <td class="seatka" data-seat="37">37</td>
                         <td class="space"></td>
-                        <td class="seatki">38</td>
-                        <td class="seat">39</td>
-                        <td class="seatka">40</td>
+                        <td class="seatki" data-seat="38">38</td>
+                        <td class="seat" data-seat="39">39</td>
+                        <td class="seatka" data-seat="40">40</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 10 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 10 -->
                       <tr>
-                        <td class="seatki">41</td>
-                        <td class="seatka">42</td>
+                        <td class="seatki" data-seat="41">41</td>
+                        <td class="seatka" data-seat="42">42</td>
                         <td class="space"></td>
-                        <td class="seatki">43</td>
-                        <td class="seat">44</td>
-                        <td class="seatka">45</td>
+                        <td class="seatki" data-seat="43">43</td>
+                        <td class="seat" data-seat="44">44</td>
+                        <td class="seatka" data-seat="45">45</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 11 - 2 kursi, space, 3 kursi -->
+                      <!-- Baris 11 -->
                       <tr>
-                        <td class="seatki">46</td>
-                        <td class="seatka">47</td>
+                        <td class="seatki" data-seat="46">46</td>
+                        <td class="seatka" data-seat="47">47</td>
                         <td class="space"></td>
-                        <td class="seatki">48</td>
-                        <td class="seat">49</td>
-                        <td class="seatka">50</td>
+                        <td class="seatki" data-seat="48">48</td>
+                        <td class="seat" data-seat="49">49</td>
+                        <td class="seatka" data-seat="50">50</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 12 - 2 kursi kosong (untuk pintu) -->
+                      <!-- Baris 12 -->
                       <tr>
                         <td class="space"></td>
                         <td class="space"></td>
                         <td class="space"></td>
-                        <td class="seatki">51</td>
-                        <td class="seat">52</td>
-                        <td class="seatka">53</td>
+                        <td class="seatki" data-seat="51">51</td>
+                        <td class="seat" data-seat="52">52</td>
+                        <td class="seatka" data-seat="53">53</td>
                       </tr>
                       <tr class="space"></tr>
                       <!-- Baris 13 - Full kursi -->
                       <tr>
-                        <td class="seatki">54</td>
-                        <td class="seat">55</td>
-                        <td class="seat">56</td>
-                        <td class="seat">57</td>
-                        <td class="seat">58</td>
-                        <td class="seatka">59</td>
+                        <td class="seatki" data-seat="54">54</td>
+                        <td class="seat" data-seat="55">55</td>
+                        <td class="seat" data-seat="56">56</td>
+                        <td class="seat" data-seat="57">57</td>
+                        <td class="seat" data-seat="58">58</td>
+                        <td class="seatka" data-seat="59">59</td>
                       </tr>
                     </tbody>
                   </table>

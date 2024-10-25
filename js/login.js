@@ -19,13 +19,12 @@ onAuthStateChanged(auth, (user) => {
     document.getElementById("loginForm").style.display = "none";
     document.getElementById("loginForm2").style.display = "block";
     localStorage.setItem("userEmail", user.email); // Menyimpan email pengguna
-  
   } else {
     // Pengguna belum login
     console.log("User not logged in");
     // Tampilkan form login jika perlu
-          localStorage.removeItem("userEmail");
-      localStorage.removeItem("userUID");
+    localStorage.removeItem("userEmail");
+    localStorage.removeItem("userUID");
     document.getElementById("loginForm").style.display = "block";
     document.getElementById("loginForm2").style.display = "none";
   }
@@ -36,7 +35,6 @@ function login() {
   const emailna = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const email = emailna + "@nufat.id";
-
 
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
@@ -72,6 +70,7 @@ function logout() {
       console.error("Error logging out:", error);
     });
 }
+
 window.login = login;
 
 window.logout = logout;

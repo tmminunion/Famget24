@@ -50,20 +50,71 @@ googleSignInBtn.addEventListener("click", () => {
       // ...
     });
 });
-// Check if the user is already signed in and log user info
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
-    // User is signed in
-    console.log("User is already logged in:", user);
+    // Cek metode login pengguna
+    var providerData = user.providerData;
 
-    // Display user information
-    console.log("User Display Name: ", user.displayName);
-    console.log("User Email: ", user.email);
-    console.log("User Photo URL: ", user.photoURL);
-    console.log("User Email Verified: ", user.emailVerified);
-    console.log("User UID: ", user.uid);
+    // Cek apakah pengguna login melalui Google
+    var isGoogleProvider = providerData.some(
+      (provider) => provider.providerId === "google.com"
+    );
+
+    if (isGoogleProvider) {
+      // Pengguna login melalui Google, izinkan akses
+      console.log("User is logged in using Google:", user);
+
+      // Simpan informasi pengguna ke localStorage
+      localStorage.setItem("displayName", user.displayName);
+      localStorage.setItem("email", user.email);
+      localStorage.setItem("photoURL", user.photoURL);
+
+      // Tampilkan informasi pengguna
+      console.log("User Display Name: ", user.displayName);
+      console.log("User Email: ", user.email);
+      console.log("User Photo URL: ", user.photoURL);
+      console.log("User Email Verified: ", user.emailVerified);
+      console.log("User UID: ", user.uid);
+    } else {
+      // Pengguna tidak login dengan Google, lakukan logout
+      console.log("User is not logged in using Google. Logging out...");
+
+      firebase
+        .auth()
+        .signOut()
+        .then(() => {
+          alert("You must log in using Google. Please sign in again.");
+          // Redirect ke halaman login atau trigger Google sign-in popup
+          firebase
+            .auth()
+            .signInWithPopup(googleProvider)
+            .then((result) => {
+              // User successfully signed in with Google
+              var user = result.user;
+              console.log("User logged in using Google:", user);
+
+              // Simpan informasi pengguna ke localStorage
+              localStorage.setItem("displayName", user.displayName);
+              localStorage.setItem("email", user.email);
+              localStorage.setItem("photoURL", user.photoURL);
+
+              // Tampilkan informasi pengguna
+              console.log("User Display Name: ", user.displayName);
+              console.log("User Email: ", user.email);
+              console.log("User Photo URL: ", user.photoURL);
+              console.log("User Email Verified: ", user.emailVerified);
+              console.log("User UID: ", user.uid);
+            })
+            .catch((error) => {
+              console.error("Error during Google sign-in:", error);
+            });
+        })
+        .catch((error) => {
+          console.error("Error during sign out:", error);
+        });
+    }
   } else {
-    // No user is signed in, trigger the Google sign-in popup
+    // No user is signed in, trigger Google sign-in popup
     console.log("No user is logged in. Opening Google sign-in popup...");
 
     firebase
@@ -72,9 +123,14 @@ firebase.auth().onAuthStateChanged((user) => {
       .then((result) => {
         // User signed in
         var user = result.user;
-        console.log("User logged in:", user);
+        console.log("User logged in using Google:", user);
 
-        // Display user information
+        // Simpan informasi pengguna ke localStorage
+        localStorage.setItem("displayName", user.displayName);
+        localStorage.setItem("email", user.email);
+        localStorage.setItem("photoURL", user.photoURL);
+
+        // Tampilkan informasi pengguna
         console.log("User Display Name: ", user.displayName);
         console.log("User Email: ", user.email);
         console.log("User Photo URL: ", user.photoURL);
@@ -87,82 +143,77 @@ firebase.auth().onAuthStateChanged((user) => {
   }
 });
 
-
 // Initialize Realtime Database
 const database = firebase.database();
-function kirimdata(imgData){
-const base64Image = imgData.split(',')[1];
-// Example of how to call the function with user data
-const userData = {
-  name: "John Doe",
-  email: "johndoe@example.com",
-  photoURL: base64Image,
-  uid: "user123",
-};
 
-  // Reference to the Firestore collection 'users'
-  db.collection("users")
-    .add(userData) // Add the data to Firestore, auto-generating a unique document ID
-    .then((docRef) => {
-      alert("Document written with ID: ", docRef.id);
+function kirimdatak(base64Image) {
+  // Tulis ke database di path 'images/image_1'
+  database
+    .ref("images/image_1")
+    .set({
+      image: base64Image,
+    })
+    .then(() => {
+      console.log("Base64 image saved to Firebase Realtime Database");
     })
     .catch((error) => {
-      alert("Error adding document: ", error);
+      console.error("Error saving base64 image: ", error);
     });
 }
-// Contoh s
+function kirimdata(base64Imagena) {
+  const clientId = "082eb55cc144305"; // Ganti dengan Client ID kamu
 
-// Fungsi untuk menyimpan base64 di Realtime Database
-function saveBase64ToFirebase(base64Image) {
-  // Tulis ke database di path 'images/image_1'
-  database.ref('images/image_1').set({
-    image: base64Image
-  }).then(() => {
-    console.log("Base64 image saved to Firebase Realtime Database");
-  }).catch((error) => {
-    console.error("Error saving base64 image: ", error);
-  });
-}
+  // Pisahkan base64 menjadi data biner (tanpa header MIME)
+  const base64Image = base64Imagena.split(",")[1];
+  const displayName = localStorage.getItem("displayName");
+  const email = localStorage.getItem("email");
+  const photoURL = localStorage.getItem("photoURL"); // Ambil URL foto profil
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Client-ID " + clientId);
 
-function kirimdata(base64Image) {
-  // Tulis ke database di path 'images/image_1'
-  database.ref('images/image_1').set({
-    image: base64Image
-  }).then(() => {
-    console.log("Base64 image saved to Firebase Realtime Database");
-  }).catch((error) => {
-    console.error("Error saving base64 image: ", error);
-  });
-}
+  var formdata = new FormData();
+  formdata.append("image", base64Image);
+  formdata.append("type", "base64");
+  formdata.append("title", "Image upload by " + displayName); // Gunakan displayName sebagai judul
+  formdata.append(
+    "description",
+    `Uploaded by ${displayName} (${email}). Profile Picture: ${photoURL}`
+  ); // Gunakan displayName, email, dan photoURL di deskripsi
 
-// Panggil fungsi untuk menyimpan gambar base64
-function kirimdatrtra(base64Imagena) {
-  const clientId = '56fe2778064aadb';
-  //alert(base64Imagena);
-  // Memisahkan MIME dari base64 image
-  const base64Image = base64Imagena.split(',')[1]; // Hanya mengambil bagian base64 setelah MIME
+  var requestOptions = {
+    method: "POST",
+    headers: myHeaders,
+    body: formdata,
+    redirect: "follow",
+  };
+  fetch("https://api.imgur.com/3/upload", requestOptions)
+    .then((response) => response.json())
+    .then((result) => {
+      if (result.success) {
+        console.log("Image uploaded successfully: ", result.data.link);
 
-  fetch('https://api.imgur.com/3/upload', {
-    method: 'POST',
-    headers: {
-      Authorization: `Client-ID ${clientId}`,
-      Accept: 'application/json',
-    },
-    body: JSON.stringify({
-      image: base64Image,
-      type: 'base64'
+        // Simpan URL gambar ke Firestore
+        db.collection("imageskoleksi")
+          .add({
+            imageUrl: result.data.link,
+            title: result.data.title,
+            description: result.data.description,
+            uploadedAt: new Date(),
+            uploadedBy: displayName, // Simpan siapa yang upload
+            email: email, // Simpan email
+            profilePicture: photoURL, // Simpan foto profil
+          })
+          .then((docRef) => {
+            console.log("Document written with ID: " + docRef.id);
+          })
+          .catch((error) => {
+            alert("Error adding document: " + error);
+          });
+      } else {
+        console.error("Image upload failed: ", result);
+      }
     })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      alert("Image uploaded successfully: ", data.data.link);
-      window.open(data.data.link, '_blank');
-    } else {
-      alert("Image upload failed: ", data);
-    }
-  })
-  .catch(error => {
-    alert("Error uploading image to Imgur: ", error);
-  });
+    .catch((error) => {
+      console.log("Error uploading image to Imgur: ", error);
+    });
 }
