@@ -1,4 +1,4 @@
-const firebaseConfig = {
+ const firebaseConfig = {
   apiKey: "AIzaSyA7kHlC_5RxBy7g5JbFuYWjGOZ393S0-hk",
   authDomain: "nufat-eltijany.firebaseapp.com",
   databaseURL:
@@ -119,21 +119,22 @@ $("#rownama").text(user.displayName);
 // Initialize Realtime Database
 const database = firebase.database();
 
-function kirimdatak(base64Image) {
-  // Tulis ke database di path 'images/image_1'
+function kirimdatta(base64Image) {
+  // Tulis ke database dengan id unik di path 'images/'
   database
-    .ref("images/image_1")
-    .set({
+    .ref("images/")
+    .push({
       image: base64Image,
     })
     .then(() => {
-      console.log("Base64 image saved to Firebase Realtime Database");
+      alert("Base64 image saved with unique ID to Firebase Realtime Database");
     })
     .catch((error) => {
-      console.error("Error saving base64 image: ", error);
+      alert("Error saving base64 image: ", error);
     });
 }
-function kirimdata(base64Imagena) {
+
+function kirimdata6h6h6h(base64Imagena) {
   const clientId = "082eb55cc144305"; // Ganti dengan Client ID kamu
 
   // Pisahkan base64 menjadi data biner (tanpa header MIME)
@@ -145,7 +146,7 @@ function kirimdata(base64Imagena) {
   myHeaders.append("Authorization", "Client-ID " + clientId);
 
   var formdata = new FormData();
-  formdata.append("image", base64Image);
+  formdata.append("base64data", base64Image);
   formdata.append("type", "base64");
   formdata.append("title", "Image upload by " + displayName); // Gunakan displayName sebagai judul
   formdata.append(
@@ -153,16 +154,20 @@ function kirimdata(base64Imagena) {
     `Uploaded by ${displayName} (${email}). Profile Picture: ${photoURL}`
   ); // Gunakan displayName, email, dan photoURL di deskripsi
 
+//var link  = "https://twibone.bungtemin.net/upload.php";
+var link  = "https://api.imgur.com/3/upload";
   var requestOptions = {
     method: "POST",
     headers: myHeaders,
     body: formdata,
     redirect: "follow",
   };
-  fetch("https://api.imgur.com/3/upload", requestOptions)
+  fetch(link, requestOptions)
     .then((response) => response.json())
     .then((result) => {
+      alert("resul");
       if (result.success) {
+        alert("success");
         console.log("Image uploaded successfully: ", result.data.link);
 
         // Simpan URL gambar ke Firestore
@@ -182,11 +187,54 @@ function kirimdata(base64Imagena) {
           .catch((error) => {
             alert("Error adding document: " + error);
           });
+          
+          
       } else {
-        console.error("Image upload failed: ", result);
+        alert("Image upload failed: ", result);
       }
     })
     .catch((error) => {
-      console.log("Error uploading image to Imgur: ", error);
+      alert("Error uploading image to Imgur: ", error);
     });
+}
+
+
+
+function kirimdata(base64Imagena) {
+
+  // Pisahkan base64 menjadi data biner (tanpa header MIME)
+  const base64Image = base64Imagena.split(",")[1];
+  const displayName = localStorage.getItem("displayName");
+  const email = localStorage.getItem("email");
+  const photoURL = localStorage.getItem("photoURL"); // Ambil URL foto profil
+  
+// Kirim menggunakan fetch
+fetch('https://twibone.bungtemin.net/dodol.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ image: base64Image })
+})
+.then(response => response.json())
+.then(data =>{ 
+       console.log(data.file);
+    db.collection("imageskoleksi")
+          .add({
+            imageUrl: data.file,
+            uploadedAt: new Date(),
+            uploadedBy: displayName, // Simpan siapa yang upload
+            email: email, // Simpan email
+            profilePicture: photoURL, // Simpan foto profil
+          })
+          .then((docRef) => {
+            console.log("Document written with ID: " + docRef.id);
+          })
+          .catch((error) => {
+            console.log("Error adding document: " + error);
+          });
+          
+})
+.catch(error => alert('Error:', error));
+
 }
