@@ -152,85 +152,37 @@
       </div>
       <section class="container">
         <div class="swiper mySwiper">
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/1.png"
-                class="pilihanimag"
-                data-id="1"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/2.png"
-                class="pilihanimag"
-                data-id="2"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/3.png"
-                class="pilihanimag"
-                data-id="3"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/4.png"
-                class="pilihanimag"
-                data-id="4"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/5.png"
-                class="pilihanimag"
-                data-id="5"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/6.png"
-                class="pilihanimag"
-                data-id="6"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/7.png"
-                class="pilihanimag"
-                data-id="7"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/8.png"
-                class="pilihanimag"
-                data-id="8"
-              />
-            </div>
-            <div class="swiper-slide">
-              <img
-                src="./images/FAMGET2024/9.png"
-                class="pilihanimag"
-                data-id="9"
-              />
-            </div>
-          </div>
+          <div class="swiper-wrapper" id="swiper-wrapper"></div>
           <div class="swiper-pagination"></div>
         </div>
 
         <!-- Swiper JS -->
         <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
-        <!-- Initialize Swiper -->
         <script>
-          $(".swiper-wrapper").html(
-            $(".swiper-wrapper .swiper-slide").sort(function () {
-              return Math.random() - 0.5;
-            })
-          );
+          // Array yang berisi path gambar
+          const imagesl = [];
+          for (let i = 1; i <= 19; i++) {
+            imagesl.push(`./images/FAMGET2024/${i}.png`);
+          }
 
+          // Men-generate elemen slide gambar
+          const swiperWrapper = document.getElementById("swiper-wrapper");
+          imagesl.forEach((src, index) => {
+            const slide = document.createElement("div");
+            slide.classList.add("swiper-slide");
+            slide.innerHTML = `<img src="${src}" class="pilihanimag" data-id="${
+              index + 1
+            }" />`;
+            swiperWrapper.appendChild(slide);
+          });
+
+          // Randomize slide order
+          const slides = Array.from(document.querySelectorAll(".swiper-slide"));
+          slides.sort(() => Math.random() - 0.5);
+          slides.forEach((slide) => swiperWrapper.appendChild(slide));
+
+          // Inisialisasi Swiper
           var swiper = new Swiper(".mySwiper", {
             effect: "coverflow",
             grabCursor: true,

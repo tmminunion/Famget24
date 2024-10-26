@@ -160,7 +160,7 @@ $(document).ready(function () {
       `translate(${position.x}px, ${position.y}px) scale(${scale})`
     );
   });
-  $(".pilihanimag").click(function () {
+  $(document).on("click", ".pilihanimag", function () {
     var gambarnew = $(this).attr("src");
     var namafilenyag =
       localStorage.getItem("deviceIDi") + "_" + generateString(15);
@@ -171,7 +171,6 @@ $(document).ready(function () {
     var typenya = $(this).attr("data-id");
     $("#hidden_datatype").val(typenya);
   });
-
   document
     .getElementById("btn_convert")
     .addEventListener("click", function (e) {
