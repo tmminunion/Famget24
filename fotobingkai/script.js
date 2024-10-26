@@ -4,8 +4,28 @@ for (var i = 1; i <= 19; i++) {
   images.push("./images/FAMGET2024/" + i + ".png");
 }
 
-// Pilih gambar acak dari array
-var randomImage = images[Math.floor(Math.random() * images.length)];
+// Fungsi untuk mendapatkan parameter dari URL
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
+// Mendapatkan parameter 'file' dari URL
+var fileParam = getQueryParam("file");
+
+// Jika ada parameter file, gunakan gambar tersebut, jika tidak, pilih gambar acak
+var randomImage;
+if (fileParam) {
+  // Memastikan fileParam adalah salah satu gambar dalam array
+  if (images.includes("./images/FAMGET2024/" + fileParam)) {
+    randomImage = "./images/FAMGET2024/" + fileParam;
+  } else {
+    randomImage = images[Math.floor(Math.random() * images.length)];
+  }
+} else {
+  // Pilih gambar acak jika tidak ada parameter file
+  randomImage = images[Math.floor(Math.random() * images.length)];
+}
 
 // Atur gambar acak sebagai src elemen img
 document.getElementById("imgfarmer").src = randomImage;

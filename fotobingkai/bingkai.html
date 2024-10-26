@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ID">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+    />
+    <meta
+      name="description"
+      content="pembuat avatar foto dengan bingkai edisi FAMGET 2024"
+    />
+    <meta name="author" content="Nunu Fatulah" />
+    <meta name="generator" content="Hugo 0.88.1" />
+    <title>Foto Bingkai - Famget 2024</title>
+    <meta property="og:type" content="album" />
+    <meta property="og:title" content="Foto Bingkai - FAMGET 2024" />
+    <meta
+      property="og:description"
+      content="pembuat avatar foto dengan bingkai edisi FAMGET 2024. silahkan di share dan digunakan untuk meriahkan event FAMGET 2024"
+    />
+    <meta property="og:url" content="https://famget.nufat.id/fotobingkai/" />
+    <meta
+      property="og:image"
+      content="https://famget.nufat.id/images/logoban.jpg"
+    />
+    <meta
+      name="nama-header"
+      content="XIXSl2pjBgqEUjTp0Z3zppqMb6bztJR7t%2Fr%2FGeH9OAPQ3%2BxGggsgLLEcM2UorCJYZCZezJ1MAqV7eTS1HO0pTA%3D%3D"
+    />
+    <meta name="nama-topik" content="twibone" />
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.4/dist/socket.io.min.js"></script>
+    <script src="https://twibone.bungtemin.net/assets/fot.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-touch-events/2.0.3/jquery.mobile-events.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <!-- Bootstrap core CSS -->
+    <link
+      href="https://twibone.bungtemin.net/assets/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://twibone.bungtemin.net/assets/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swiper/swiper-bundle.min.css"
+    />
+
+    <script>
+      const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      function generateString(length) {
+        let result = "BT";
+        const charactersLength = characters.length;
+        for (let i = 0; i < length; i++) {
+          result += characters.charAt(
+            Math.floor(Math.random() * charactersLength)
+          );
+        }
+
+        return result;
+      }
+
+      function checkID() {
+        localStorage.setItem("deviceIDi", "00415024");
+        $("#hidden_datauser").val(localStorage.getItem("deviceIDi"));
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+
+  <body>
+    <header>
+      <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8 col-md-7 py-4">
+              <h2 id="rownama" class="text-white"></h2>
+              <hr class="bg-white" />
+              <h4 class="text-white">Catatan :</h4>
+              <p class="text-muted">
+                Silahkan Upload foto terbaik kamu dengan 19 pilihan frame yang
+                tersedia dan menangkan Doorprize menarik untuk Foto Bingkai
+                terbaik.
+              </p>
+            </div>
+            <div class="col-sm-4 offset-md-1 py-2">
+              <h4 class="text-white">Menu</h4>
+              <ul class="list-unstyled" id="menuall"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container">
+          <a href="index.html" class="navbar-brand d-flex align-items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              aria-hidden="true"
+              class="me-2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"
+              />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            <strong>Foto Bingkai</strong>
+          </a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarHeader"
+            aria-controls="navbarHeader"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="text-center container">
+        <div class="row py-lg-2">
+          <div class="col-lg-6 col-md-8 mx-auto">
+            <h1 class="fw-light">Bingkai Model</h1>
+          </div>
+        </div>
+      </section>
+      <div class="album py-1 bg-light">
+        <div class="container">
+          <div class="row" id="listnya"></div>
+        </div>
+      </div>
+    </main>
+
+    <script>
+      // Array yang berisi nama gambar
+      const imageNames = [
+        "1.png",
+        "2.png",
+        "3.png",
+        "4.png",
+        "5.png",
+        "6.png",
+        "7.png",
+        "8.png",
+        "9.png",
+        "10.png",
+        "11.png",
+        "12.png",
+        "13.png",
+        "14.png",
+        "15.png",
+        "16.png",
+        "17.png",
+        "18.png",
+        "19.png",
+      ];
+
+      const basePath = "images/FAMGET2024/";
+      const linkPath = "index.html?file=";
+      // Fungsi untuk mengacak urutan array
+      function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+      }
+
+      // Fungsi untuk menghasilkan daftar gambar
+      function generateImageCards() {
+        const listDiv = document.getElementById("listnya");
+
+        // Mengacak urutan gambar
+        const shuffledImageNames = shuffleArray([...imageNames]);
+
+        shuffledImageNames.forEach((imageName, index) => {
+          const card = `
+        <div class="col py-2 col-md-4 col-sm-6 col-6 mx-auto">
+          <div class="card shadow">
+            <div class="card-body p-2 my-1 d-flex flex-column justify-content-center align-items-center" style="min-height: 90px;">
+              <img src="${basePath}${imageName}" class="img-fluid" alt="Responsive image" id="imgfarmer" />
+            </div>
+            <div class="card-footer bg-primary text-white text-center">
+              <a href="${linkPath}${imageName}" class="text-white">Gunakan</a>
+            </div>
+          </div>
+        </div>
+      `;
+          listDiv.insertAdjacentHTML("beforeend", card);
+        });
+      }
+
+      // Memanggil fungsi untuk menghasilkan gambar saat dokumen siap
+      document.addEventListener("DOMContentLoaded", generateImageCards);
+    </script>
+
+    <footer class="text-muted text-center">
+      <div class="container">
+        <hr />
+      </div>
+
+      <div class="footer-copyright">
+        <div class="container" color="success">
+          <div class="row bg-dark mt-3">
+            <div class="col-md-12 text-center py-4">
+              <p>Copyright Nufat.id © since 2022. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script src="Comon.js"></script>
+  </body>
+</html>

@@ -1,8 +1,8 @@
 const menuItems = [
   { href: "index.html", text: "Beranda", id: "" },
-  { href: "#", text: "Bingkai", id: "" },
+  { href: "bingkai.html", text: "Bingkai", id: "" },
   { href: "galeri.html", text: "Foto Galery", id: "linkalbum" },
-  { href: "#", text: "Albumku", id: "linkalbum" },
+  { href: "galeriku.html", text: "Albumku", id: "linkalbum" },
   { href: "../index.html", text: "Ke FAMGET2024", id: "linkalbum" },
 ];
 

@@ -227,10 +227,12 @@
 
       // Fungsi untuk mengambil data dengan pagination
       function getPaginatedData() {
+        const userId = localStorage.getItem("uid"); // Pastikan ini sesuai dengan kunci yang digunakan saat menyimpan uid
+
         let query = collectionRef
+          .where("Userid", "==", userId) // Tambahkan filter untuk userId
           .orderBy("uploadedAt", "desc")
           .limit(itemsPerPage);
-
         // Jika ada dokumen terakhir (lastVisible), mulai setelahnya
         if (lastVisible) {
           query = query.startAfter(lastVisible);
@@ -259,6 +261,7 @@
             console.error("Error fetching paginated data: ", error);
           });
       }
+
       function showZoomedImage(imageUrl) {
         const zoomedImage = document.getElementById("zoomedImage");
         zoomedImage.src = imageUrl; // Set sumber gambar di modal
@@ -284,7 +287,7 @@
         const newCard = `
     <div class="container-fluid">
       <div class="cardcontainer">
-        <div class="photo" onmouseover="showLove(this)">
+        <div class="photo">
           <div class="instagram-heart"></div>
           <img 
             src="${data.imageUrl}" 
@@ -308,6 +311,7 @@
           data.love || 0
         } Suka</span>
             </div>
+            <img src="https://twibone.bungtemin.net/assets/buang.png" alt="Delete" onclick="confirmDelete('${docId}')">
           </div>
         </div>
       </div>
@@ -367,6 +371,50 @@
           })
           .catch((error) => {
             console.log("Failed to update love count: ", error);
+          });
+      }
+      function confirmDelete(docId) {
+        // Menampilkan konfirmasi kepada pengguna sebelum menghapus
+        if (confirm("Apakah Anda yakin ingin menghapus item ini?")) {
+          deleteDocument(docId);
+        }
+      }
+      function confirmDelete(id) {
+        Swal.fire({
+          title: "Yakin ingin menghapus?",
+          text: "foto yang dihapus tidak bisa di kembalikan!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: "Ya, hapus foto!",
+          cancelButtonText: "Batalkan",
+          reverseButtons: true,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            // Panggil fungsi deleteData jika pengguna mengkonfirmasi penghapusan
+            deleteDocument(id);
+          } else if (result.dismiss === Swal.DismissReason.cancel) {
+            // Tampilkan pesan SweetAlert bahwa penghapusan dibatalkan jika pengguna membatalkan
+            Swal.fire({
+              title: "Batal",
+              text: "Foto Kamu masih tersimpan :)",
+              icon: "error",
+            });
+          }
+        });
+      }
+
+      function deleteDocument(docId) {
+        // Menghapus dokumen dari Firestore berdasarkan docId
+        db.collection("imageskoleksi")
+          .doc(docId)
+          .delete()
+          .then(() => {
+            console.log("Document successfully deleted!");
+            // Menghapus elemen dari UI
+            window.location.reload(); // Memperbaiki 'window.reload' menjadi 'window.location.reload()'
+          })
+          .catch((error) => {
+            console.error("Error removing document: ", error);
           });
       }
     </script>
