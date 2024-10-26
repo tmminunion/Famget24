@@ -20,21 +20,24 @@
       content="pembuat avatar foto dengan bingkai edisi FAMGET 2024. silahkan di share dan digunakan untuk meriahkan event FAMGET 2024"
     />
     <meta property="og:url" content="https://famget.nufat.id/fotobingkai/" />
-    <meta property="og:image" content="https://famget.nufat.id/images/logoban.jpg" />
+    <meta
+      property="og:image"
+      content="https://famget.nufat.id/images/logoban.jpg"
+    />
     <meta
       name="nama-header"
       content="XIXSl2pjBgqEUjTp0Z3zppqMb6bztJR7t%2Fr%2FGeH9OAPQ3%2BxGggsgLLEcM2UorCJYZCZezJ1MAqV7eTS1HO0pTA%3D%3D"
     />
     <meta name="nama-topik" content="twibone" />
-    
+
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
-    
-<script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/socket.io-client@4.7.4/dist/socket.io.min.js"></script>
-    <script src="https://twibone.bungtemin.net/assets/fot.js"></script>
+    <script src="js/kodena.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/interactjs/dist/interact.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-touch-events/2.0.3/jquery.mobile-events.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
@@ -80,7 +83,7 @@
         <div class="container">
           <div class="row">
             <div class="col-sm-8 col-md-7 py-4">
-              <h2 id="rownama" class="text-white"></h2>   
+              <h2 id="rownama" class="text-white"></h2>
               <hr class="bg-white" />
               <h4 class="text-white">Catatan :</h4>
               <p class="text-muted">
@@ -91,9 +94,7 @@
             </div>
             <div class="col-sm-4 offset-md-1 py-2">
               <h4 class="text-white">Menu</h4>
-              <ul class="list-unstyled" id="menuall">     
-             
-              </ul>
+              <ul class="list-unstyled" id="menuall"></ul>
             </div>
           </div>
         </div>
@@ -137,12 +138,18 @@
     </header>
 
     <main class="custom-container align-center">
-      
-        <div class="container d-flex justify-content-center align-items-center p-1 mb-3" id="konlog">
-  <button type="button" class="login-with-google-btn" id="googleSignInBtn">
-    Sign in with Google
-  </button>
-</div>
+      <div
+        class="container d-flex justify-content-center align-items-center p-1 mb-3"
+        id="konlog"
+      >
+        <button
+          type="button"
+          class="login-with-google-btn"
+          id="googleSignInBtn"
+        >
+          Sign in with Google
+        </button>
+      </div>
       <section class="container">
         <div class="swiper mySwiper">
           <div class="swiper-wrapper">
@@ -212,7 +219,6 @@
           </div>
           <div class="swiper-pagination"></div>
         </div>
-       
 
         <!-- Swiper JS -->
         <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
@@ -326,16 +332,6 @@
               value="50"
             />
 
-            <input
-              type="range"
-              class="form-range"
-              id="customRange3"
-              min="-50"
-              max="200"
-              value="50"
-              style="display: none"
-            />
-
             <input type="text" id="namaupload" style="display: none" />
             <div class="d-grid gap-2 col-6 mx-auto">
               <input
@@ -390,198 +386,6 @@
             id="framesub"
             style="display: none"
           ></iframe>
-          <!-- <script type="text/javascript" src="https://twibone.bungtemin.net/assets/dist/file2.js"></script> -->
-          <script>
-            // Daftar gambar yang tersedia
-            var images = [];
-            for (var i = 1; i <= 19; i++) {
-              images.push("./images/FAMGET2024/" + i + ".png");
-            }
-
-            // Pilih gambar acak dari array
-            var randomImage = images[Math.floor(Math.random() * images.length)];
-
-            // Atur gambar acak sebagai src elemen img
-            document.getElementById("imgfarmer").src = randomImage;
-            
-            const imgElement = document.getElementById('uploaded-image');
-let scale = 1;
-let lastScale = 1;
-
-const hammer = new Hammer(imgElement);
-
-hammer.get('pinch').set({ enable: true });
-
-hammer.on('pinch', function (ev) {
-  scale = lastScale * ev.scale;
-  imgElement.style.transform = `scale(${scale})`;
-});
-
-hammer.on('pinchend', function () {
-  lastScale = scale;
-});
-          </script>
-          <script>
-            var keys = { 37: 1, 38: 1, 39: 1, 40: 1 };
-            function preventDefault(e) {
-              e.preventDefault();
-            }
-
-            function preventDefaultForScrollKeys(e) {
-              if (keys[e.keyCode]) {
-                preventDefault(e);
-                return false;
-              }
-            }
-
-            var supportsPassive = false;
-            try {
-              window.addEventListener(
-                "test",
-                null,
-                Object.defineProperty({}, "passive", {
-                  get: function () {
-                    supportsPassive = true;
-                  },
-                })
-              );
-            } catch (e) {}
-
-            var wheelOpt = supportsPassive ? { passive: false } : false;
-
-            function disableScroll() {
-              window.addEventListener("touchmove", preventDefault, wheelOpt);
-              window.addEventListener(
-                "keydown",
-                preventDefaultForScrollKeys,
-                false
-              );
-            }
-
-            function enableScroll() {
-              window.removeEventListener("touchmove", preventDefault, wheelOpt);
-              window.removeEventListener(
-                "keydown",
-                preventDefaultForScrollKeys,
-                false
-              );
-            }
-
-            const position = { x: 0, y: 0 };
-            
-
-            interact("#uploaded-image").draggable({
-              listeners: {
-                move(event) {
-                  position.x += event.dx;
-                  position.y += event.dy;
-
-                  // Terapkan posisi ke gambar
-                  event.target.style.transform = `translate(${position.x}px, ${position.y}px) scale(${scale})`;
-                  disableScroll();
-                },
-                end(event) {
-                  enableScroll();
-                },
-              },
-            });
-
-            $(document).ready(function () {
-              var namafilenyaq =
-                localStorage.getItem("deviceIDi") + "_" + generateString(15);
-              $("#namaupload").val(namafilenyaq);
-              $("#hidden_datanama").val(namafilenyaq);
-              $("#hidden_datauser").val(localStorage.getItem("deviceIDi"));
-
-              $("input[name='FileOne']").on("change", function (event1) {
-                var file = event1.target.files[0];
-                var img = new Image();
-
-                img.onload = function () {
-                  var originalWidth = img.width;
-                  var originalHeight = img.height;
-
-                  // Hitung rasio aspek
-                  var frameWidth = $("#html-content-holder").width();
-                  var frameHeight = $("#html-content-holder").height();
-                  var frameAspectRatio = frameWidth / frameHeight;
-                  var imageAspectRatio = originalWidth / originalHeight;
-
-                  // Sesuaikan ukuran gambar berdasarkan rasio aspek
-                  if (imageAspectRatio > frameAspectRatio) {
-                    // Gambar lebih lebar daripada bingkai
-                    var newWidth = frameWidth;
-                    var newHeight = (newWidth / originalWidth) * originalHeight;
-                  } else {
-                    // Gambar lebih tinggi daripada bingkai
-                    var newHeight = frameHeight;
-                    var newWidth = (newHeight / originalHeight) * originalWidth;
-                  }
-
-                  // Set ukuran gambar
-                  $("#uploaded-image").attr("src", URL.createObjectURL(file));
-                  $("#uploaded-image").css({
-                    width: newWidth + "px",
-                    height: newHeight + "px",
-                    transform: `translate(0px, 0px) scale(1)`,
-                  });
-
-                  position.x = 0; // Reset posisi
-                  position.y = 0; // Reset posisi
-                  scale = 1; // Reset skala
-                  $("#btn_convert").show();
-                };
-                img.src = URL.createObjectURL(file);
-              });
-
-              $("#customRange3").on("input", function () {
-                scale = 1 + $(this).val() / 100; // Skala gambar berdasarkan nilai slider
-                $("#uploaded-image").css(
-                  "transform",
-                  `translate(${position.x}px, ${position.y}px) scale(${scale})`
-                );
-              });
-              $(".pilihanimag").click(function () {
-                var gambarnew = $(this).attr("src");
-                var namafilenyag =
-                  localStorage.getItem("deviceIDi") + "_" + generateString(15);
-                $("#namaupload").val(namafilenyag);
-                $("#hidden_datanama").val(namafilenyag);
-                $("#imgfarmer").attr("src", gambarnew);
-
-                var typenya = $(this).attr("data-id");
-                $("#hidden_datatype").val(typenya);
-              });
-
-              document
-                .getElementById("btn_convert")
-                .addEventListener("click", function () {
-                  $("#btn_convert").hide();
-                  $("#barload").show();
-                  $("#customRange3").hide();
-
-                  html2canvas(document.getElementById("html-content-holder"), {
-                    scale: 5, // Mengatur skala lebih tinggi untuk kualitas
-                    allowTaint: true,
-                    useCORS: true,
-                  }).then(function (canvas) {
-                    const imgData = canvas.toDataURL("image/jpeg", 1.0);
-                    var anchorTag = document.createElement("a");
-                  //  var namafile = $("#namaupload").val() + ".jpg";
-                     var namafile = "famget_"+ generateString(5)+ ".jpg";
-                    document.body.appendChild(anchorTag);
-                    anchorTag.download = namafile;
-                    anchorTag.href = imgData;
-                    anchorTag.click();
-                    kirimdata(imgData);
-                    $("#barload").hide();
-                    $("#modte").html(
-                      "File telah di-download, silahkan cek di folder Download browser"
-                    );
-                  });
-                });
-            });
-          </script>
         </div>
       </section>
     </main>
@@ -603,6 +407,7 @@ hammer.on('pinchend', function () {
     </footer>
 
     <script src="Comon.js"></script>
+    <script src="script.js"></script>
     <script src="databas.js"></script>
   </body>
 </html>
