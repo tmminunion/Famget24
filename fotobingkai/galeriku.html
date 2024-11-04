@@ -145,6 +145,7 @@
         <button
           type="button"
           class="login-with-google-btn"
+          style="display: none"
           id="googleSignInBtn"
         >
           Sign in with Google
@@ -411,6 +412,7 @@
           .then(() => {
             console.log("Document successfully deleted!");
             // Menghapus elemen dari UI
+
             window.location.reload(); // Memperbaiki 'window.reload' menjadi 'window.location.reload()'
           })
           .catch((error) => {

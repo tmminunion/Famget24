@@ -51,7 +51,11 @@ function signInWithGoogle() {
 function updateUIAfterLogin(user) {
   if (user) {
     googleSignInBtn.style.display = "none"; // Sembunyikan tombol login
-    $("#rownama").text(user.displayName); // Tampilkan nama pengguna di UI
+
+    // Menampilkan nama pengguna dan informasi lainnya di card
+    $("#ppcard").attr("src", user.photoURL); // Update gambar profil
+    $("#namauser").text(user.displayName); // Update nama pengguna
+    $("#emailuser").text(user.email); // Update detail profil, bisa disesuaikan
 
     // Simpan informasi pengguna ke localStorage
     localStorage.setItem("displayName", user.displayName);
@@ -199,48 +203,6 @@ function kirimdata(base64Imagena) {
     .catch((error) => {
       alert("Error uploading image to Imgur: ", error);
     });
-}
-
-function kirimdataa(base64Imagena) {
-  // Pisahkan base64 menjadi data biner (tanpa header MIME)
-  const base64Image = base64Imagena.split(",")[1];
-  const displayName = localStorage.getItem("displayName");
-  const email = localStorage.getItem("email");
-  const photoURL = localStorage.getItem("photoURL"); // Ambil URL foto profil
-
-  // Kirim menggunakan fetch
-  fetch("https://twibone.bungtemin.net/dodol.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ image: base64Image }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data.file);
-      db.collection("imageskoleksi")
-        .add({
-          imageUrl: data.file,
-          uploadedAt: new Date(),
-          uploadedBy: displayName, // Simpan siapa yang upload
-          email: email, // Simpan email
-          profilePicture: photoURL, // Simpan foto profil
-        })
-        .then((docRef) => {
-          console.log("Document written with ID: " + docRef.id);
-          $("#barload").hide();
-          $("#modfinis").html(
-            "Upload ke server selesai...!!<br>silahkan upload foto lainnya"
-          );
-
-          $("#modfinis").show();
-        })
-        .catch((error) => {
-          console.log("Error adding document: " + error);
-        });
-    })
-    .catch((error) => alert("Error:", error));
 }
 
 // Panggil fungsi ini untuk mengambil halaman pertama
