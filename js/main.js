@@ -9,6 +9,7 @@ const navMenu = `
       <li><a href="absensi.html" class="nav-link">Absensi</a></li>
       <li><a href="admin.html" class="nav-link">Admin</a></li>
       <li><a href="/fotobingkai/index.html" class="nav-link">Foto Bingkai</a></li>
+      <li><a href="sarasehan.html" class="nav-link">Estory</a></li>
    </ul>
 
 `;

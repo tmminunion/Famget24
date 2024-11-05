@@ -105,174 +105,67 @@
         <section>
           <!-- Tombol untuk memicu modal -->
 
-          <!-- Modal Bootstrap -->
-          <div
-            class="modal fade"
-            id="postModal"
-            tabindex="-1"
-            role="dialog"
-            aria-labelledby="postModalLabel"
-            aria-hidden="true"
-          >
-            <div class="modal-dialog" role="document">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
-                  <button
-                    type="button"
-                    class="close"
-                    data-dismiss="modal"
-                    aria-label="Close"
-                  >
-                    <span aria-hidden="true">&times;</span>
-                  </button>
-                </div>
-                <div class="modal-body">
-                  <!-- Form untuk postingan -->
-                  <form id="postForm">
-                    <!-- Textarea fleksibel -->
-                    <div class="form-group">
-                      <label for="postContent">What's on your mind?</label>
-                      <textarea
-                        class="form-control"
-                        id="postContent"
-                        rows="4"
-                        placeholder="Write something..."
-                      ></textarea>
-                    </div>
-
-                    <!-- Upload gambar -->
-                    <div class="form-group">
-                      <label for="postImage">Upload an image</label>
-                      <input
-                        type="file"
-                        class="form-control-file"
-                        id="postImage"
-                        accept="image/*"
-                      />
-                    </div>
-
-                    <!-- Pratinjau gambar -->
-                    <div class="form-group">
-                      <img
-                        id="previewImage"
-                        src="#"
-                        alt="Image preview"
-                        style="
-                          display: none;
-                          width: 100%;
-                          max-height: 400px;
-                          object-fit: contain;
-                          margin-top: 10px;
-                        "
-                      />
-                    </div>
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                  >
-                    Close
-                  </button>
-                  <button type="submit" class="btn btn-primary" id="submitPost">
-                    Post
-                  </button>
-                </div>
-              </div>
-            </div>
+         <!-- Modal Bootstrap -->
+<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Form untuk postingan -->
+        <form id="postForm">
+          <!-- Textarea fleksibel -->
+          <div class="form-group">
+            <label for="postContent">What's on your mind?</label>
+            <textarea class="form-control" id="postContent" rows="4" placeholder="Write something..."></textarea>
           </div>
 
-          <script>
-            // Menampilkan pratinjau gambar yang diunggah
-            document
-              .getElementById("postImage")
-              .addEventListener("change", function (event) {
-                const file = event.target.files[0];
-                const previewImage = document.getElementById("previewImage");
-                if (file) {
-                  const reader = new FileReader();
-                  reader.onload = function (e) {
-                    previewImage.src = e.target.result;
-                    previewImage.style.display = "block";
-                  };
-                  reader.readAsDataURL(file);
-                } else {
-                  previewImage.style.display = "none";
-                  previewImage.src = "#";
-                }
-              });
+          <!-- Upload gambar -->
+          <div class="form-group">
+            <label for="postImage">Upload an image</label>
+            <input type="file" class="form-control-file" id="postImage" accept="image/*" />
+          </div>
 
-            // Mencegah submit form default dan menambahkan logika untuk posting
-            document
-              .getElementById("submitPost")
-              .addEventListener("click", function (event) {
-                event.preventDefault();
-                const content = document.getElementById("postContent").value;
-                if (content === "") {
-                  alert("Please enter some content before posting!");
-                } else {
-                  // Logika untuk mengirim data
-                  alert("Post submitted successfully!");
-                  // Reset form setelah submit
-                  document.getElementById("postForm").reset();
-                  document.getElementById("previewImage").style.display =
-                    "none";
-                  // Tutup modal
-                  $("#postModal").modal("hide");
-                }
-              });
-          </script>
+          <!-- Pratinjau gambar -->
+          <div class="form-group">
+            <img id="previewImage" src="#" alt="Image preview" style="display: none; width: 100%; max-height: 400px; object-fit: contain; margin-top: 10px;" />
+          </div>
+          
+          <!-- Loader (hidden by default) -->
+          <div id="loader" class="text-center" style="display: none;">
+            <div class="spinner-border" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <p>Please wait, your post is being submitted...</p>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" class="btn btn-primary" id="submitPost">
+          Post
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+        <script>
+      
+</script>
         </section>
 
         <div class="container mt-5 mb-5">
           <div class="row justify-content-center">
             <!-- Konten utama (col-md-6) -->
             <div class="col-md-7" id="postlist">
-              <div class="card">
-                <div class="d-flex justify-content-between p-2 px-3">
-                  <div class="d-flex flex-row align-items-center">
-                    <img
-                      src="https://i.imgur.com/UXdKE3o.jpg"
-                      width="50"
-                      class="rounded-circle"
-                    />
-                    <div class="d-flex flex-column ml-2">
-                      <span class="font-weight-bold">Jeanette Sun</span>
-                      <small class="text-primary">Collegues</small>
-                    </div>
-                  </div>
-                  <div class="d-flex flex-row mt-1 ellipsis">
-                    <small class="mr-2">20 mins</small>
-                  </div>
-                </div>
-                <img src="https://i.imgur.com/xhzhaGA.jpg" class="img-fluid" />
-                <div class="p-2">
-                  <p class="text-justify">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                    do eiusmod tempor incididunt.
-                  </p>
-                  <hr />
-                  <div
-                    class="d-flex justify-content-between align-items-center"
-                  >
-                    <div
-                      class="d-flex flex-row icons d-flex align-items-center mb-2 px-4"
-                    >
-                      <i
-                        class="fa fa-heart"
-                        style="font-size: x-large; color: red"
-                      ></i>
-                      <span class="px-2">100</span>
-                    </div>
-                    <div class="d-flex flex-row muted-color mb-2">
-                      <span>2 comments</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            
             </div>
 
             <!-- Sidebar profil yang sticky (col-md-3) -->
