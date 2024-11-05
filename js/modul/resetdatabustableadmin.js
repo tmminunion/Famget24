@@ -14,7 +14,7 @@ function populateTable(datak) {
     const icon = user.Hadir
       ? "<i class='fa fa-check-circle' style='font-size:20px;color:green'></i>"
       : "<i class='fa fa-times-circle' style='font-size:20px;color:red'></i>";
-
+const namabut = user.Hadir ? "Reset" : "Check In";
     // Pilih warna tombol berdasarkan status kehadiran
     const btnClass = user.Hadir ? "btn-primary" : "btn-danger";
     updateBadge(user.Nama, user.BusSeat);
@@ -25,7 +25,7 @@ function populateTable(datak) {
       `<td class='text-center'>
           <a href="javascript:void(0);" 
              class="btn ${btnClass} btn-sm" 
-             onclick="updateStatus(${user.id}, ${user.Acara}, ${user.BusNo})">Check In</a>
+             onclick="updateStatus(${user.id}, ${user.Acara}, ${user.BusNo})">${namabut}</a>
        </td>` + // Tombol dengan kelas sesuai status
       `<td>${user.Nama}</td>` +
       `<td class='text-center'>${user.TotalPeserta}</td>` +

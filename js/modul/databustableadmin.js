@@ -16,6 +16,7 @@ function populateTable(datak) {
 
     // Pilih warna tombol berdasarkan status kehadiran
     const btnClass = user.Hadir ? "btn-primary" : "btn-danger";
+    const namabut = user.Hadir ? "Reset" : "Check In";
     updateBadge(user.Nama, user.BusSeat);
     // Buat baris baru dan tambahkan ke tabel
     const newRow = document.createElement("tr");
@@ -24,7 +25,7 @@ function populateTable(datak) {
       `<td class='text-center'>
           <a href="javascript:void(0);" 
              class="btn ${btnClass} btn-sm" 
-             onclick="updateStatus(${user.id}, ${user.Acara}, ${user.BusNo})">Check In</a>
+             onclick="updateStatus(${user.id}, ${user.Acara}, ${user.BusNo})">${namabut}</a>
        </td>` + // Tombol dengan kelas sesuai status
       `<td>${user.Nama}</td>` +
       `<td class='text-center'>${user.TotalPeserta}</td>` +

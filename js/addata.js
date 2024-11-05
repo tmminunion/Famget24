@@ -23,6 +23,14 @@ const starCountRef = ref(db, "Famgetabsensi/" + Acara);
 if (Acara >= 0 && Acara < listacara.length) {
   document.getElementById("judulna").textContent = listacara[Acara];
   document.getElementById("judulna2").textContent = listacara[Acara];
+  
+  // Update link href secara dinamis
+  const sudahLink = document.getElementById('sudahlink');
+  const belumLink = document.getElementById('belumlink');
+
+  sudahLink.href = `absensibus_sudah.html?acara=${Acara}&bus=1`; // bus=1 untuk 'sudah'
+  belumLink.href = `absensibus_sudah.html?acara=${Acara}&bus=0`; // bus=0 untuk 'belum'
+  
 } else {
   document.getElementById("judulna").textContent = "Acara tidak ditemukan.";
 }
