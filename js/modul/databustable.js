@@ -1,4 +1,4 @@
-import { updateSeatsFromArray } from "./allfungction.js";
+import { updateSeatsFromArray, updateBadge } from "./allfungction.js";
 
 function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
@@ -6,10 +6,7 @@ function populateTable(datak) {
 
   tbody.innerHTML = "";
   data.forEach(function (user, index) {
-    // Buat random status (oke atau cross)
-    const isPresent = Math.random() > 0.5; // 50% chance between true (oke) and false (cross)
-
-    // Pilih icon dan warna berdasarkan status
+    updateBadge(user.Nama, user.BusSeat);
     const icon = user.Hadir
       ? "<i class='fa fa-check-circle' style='font-size:20px;color:green'></i>"
       : "<i class='fa fa-times-circle' style='font-size:20px;color:red'></i>";

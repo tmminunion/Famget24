@@ -1,5 +1,5 @@
 import { getUserUid } from "./user.js";
-import { updateSeatsFromArray } from "./allfungction.js";
+import { updateSeatsFromArray, updateBadge } from "./allfungction.js";
 function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
   tbody.innerHTML = ""; // Clear existing content
@@ -16,7 +16,7 @@ function populateTable(datak) {
 
     // Pilih warna tombol berdasarkan status kehadiran
     const btnClass = user.Hadir ? "btn-primary" : "btn-danger";
-
+    updateBadge(user.Nama, user.BusSeat);
     // Buat baris baru dan tambahkan ke tabel
     const newRow = document.createElement("tr");
     newRow.innerHTML =

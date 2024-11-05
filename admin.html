@@ -36,6 +36,23 @@
     <link rel="stylesheet" href="css/style.css" />
 
     <style>
+      .badge-group {
+        position: relative;
+      }
+
+      .badge {
+        position: absolute;
+        top: -10px; /* Menyesuaikan agar lebih dekat ke kursi */
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #170050; /* Warna background badge */
+        color: white;
+        padding: 2px 8px; /* Memperkecil padding untuk mempersempit badge */
+        border-radius: 5px;
+        font-size: 12px;
+        text-align: center; /* Memastikan tulisan berada di tengah */
+        display: inline-block; /* Agar badge rapi */
+      }
       .container-fluids {
         margin: 0 !important; /* Menghilangkan margin */
         padding: 0 !important; /* Menghilangkan padding */
@@ -96,7 +113,7 @@
       .space {
         background-color: transparent;
         border: none;
-        height: 20px;
+        height: 5px;
       }
       .driver,
       .conductor {
@@ -303,6 +320,15 @@
                       <!-- Data will be appended here -->
                     </tbody>
                   </table>
+                  <div class="mt-5">
+                    <a
+                      href="resetdata.html"
+                      class="btn btn-danger btn-lg btn-block"
+                      role="button"
+                    >
+                      untuk Reset Data Klik di sini
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -320,7 +346,7 @@
                         <td class="driver">DR</td>
                       </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 2 -->
+                      <!-- Baris 2 dengan badge untuk seat 1, 2 dan 3, 4, 5 -->
                       <tr>
                         <td class="seatki" data-seat="1">1</td>
                         <td class="seatka" data-seat="2">2</td>
@@ -329,8 +355,17 @@
                         <td class="seat" data-seat="4">4</td>
                         <td class="seatka" data-seat="5">5</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge1" class="badge">Badge 1</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge3" class="badge">Badge 3</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 3 -->
+                      <!-- Baris 3 dengan badge untuk seat 6 sampai 10 -->
                       <tr>
                         <td class="seatki" data-seat="6">6</td>
                         <td class="seatka" data-seat="7">7</td>
@@ -339,8 +374,17 @@
                         <td class="seat" data-seat="9">9</td>
                         <td class="seatka" data-seat="10">10</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge6" class="badge">Badge 6</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge8" class="badge">Badge 8</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 4 -->
+                      <!-- Baris 4 dengan badge untuk seat 11 sampai 15 -->
                       <tr>
                         <td class="seatki" data-seat="11">11</td>
                         <td class="seatka" data-seat="12">12</td>
@@ -349,8 +393,17 @@
                         <td class="seat" data-seat="14">14</td>
                         <td class="seatka" data-seat="15">15</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge11" class="badge">Badge 11</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge13" class="badge">Badge 13</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 5 -->
+                      <!-- Baris 5 dengan badge untuk seat 16 sampai 20 -->
                       <tr>
                         <td class="seatki" data-seat="16">16</td>
                         <td class="seatka" data-seat="17">17</td>
@@ -359,8 +412,17 @@
                         <td class="seat" data-seat="19">19</td>
                         <td class="seatka" data-seat="20">20</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge16" class="badge">Badge 16</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge18" class="badge">Badge 18</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 6 -->
+                      <!-- Baris 6 dengan badge untuk seat 21 sampai 25 -->
                       <tr>
                         <td class="seatki" data-seat="21">21</td>
                         <td class="seatka" data-seat="22">22</td>
@@ -369,8 +431,17 @@
                         <td class="seat" data-seat="24">24</td>
                         <td class="seatka" data-seat="25">25</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge21" class="badge">Badge 21</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge23" class="badge">Badge 23</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 7 -->
+                      <!-- Baris 7 dengan badge untuk seat 26 sampai 30 -->
                       <tr>
                         <td class="seatki" data-seat="26">26</td>
                         <td class="seatka" data-seat="27">27</td>
@@ -379,8 +450,17 @@
                         <td class="seat" data-seat="29">29</td>
                         <td class="seatka" data-seat="30">30</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge26" class="badge">Badge 26</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge28" class="badge">Badge 28</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 8 -->
+                      <!-- Baris 8 dengan badge untuk seat 31 sampai 35 -->
                       <tr>
                         <td class="seatki" data-seat="31">31</td>
                         <td class="seatka" data-seat="32">32</td>
@@ -389,8 +469,17 @@
                         <td class="seat" data-seat="34">34</td>
                         <td class="seatka" data-seat="35">35</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge31" class="badge">Badge 31</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge33" class="badge">Badge 33</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 9 -->
+                      <!-- Baris 9 dengan badge untuk seat 36 sampai 40 -->
                       <tr>
                         <td class="seatki" data-seat="36">36</td>
                         <td class="seatka" data-seat="37">37</td>
@@ -399,8 +488,17 @@
                         <td class="seat" data-seat="39">39</td>
                         <td class="seatka" data-seat="40">40</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge36" class="badge">Badge 36</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge38" class="badge">Badge 38</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 10 -->
+                      <!-- Baris 10 dengan badge untuk seat 41 sampai 45 -->
                       <tr>
                         <td class="seatki" data-seat="41">41</td>
                         <td class="seatka" data-seat="42">42</td>
@@ -409,8 +507,17 @@
                         <td class="seat" data-seat="44">44</td>
                         <td class="seatka" data-seat="45">45</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge41" class="badge">Badge 41</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge43" class="badge">Badge 43</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 11 -->
+                      <!-- Baris 11 dengan badge untuk seat 46 sampai 50 -->
                       <tr>
                         <td class="seatki" data-seat="46">46</td>
                         <td class="seatka" data-seat="47">47</td>
@@ -419,8 +526,17 @@
                         <td class="seat" data-seat="49">49</td>
                         <td class="seatka" data-seat="50">50</td>
                       </tr>
+                      <tr>
+                        <td colspan="2" class="badge-group">
+                          <div id="badge46" class="badge">Badge 46</div>
+                        </td>
+                        <td class="space"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge48" class="badge">Badge 48</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 12 -->
+                      <!-- Baris 12 dengan badge untuk seat 51 sampai 53 -->
                       <tr>
                         <td class="space"></td>
                         <td class="space"></td>
@@ -429,8 +545,14 @@
                         <td class="seat" data-seat="52">52</td>
                         <td class="seatka" data-seat="53">53</td>
                       </tr>
+                      <tr>
+                        <td colspan="3"></td>
+                        <td colspan="3" class="badge-group">
+                          <div id="badge51" class="badge">Badge 51</div>
+                        </td>
+                      </tr>
                       <tr class="space"></tr>
-                      <!-- Baris 13 - Full kursi -->
+                      <!-- Baris 13 dengan badge untuk seat 54 sampai 59 -->
                       <tr>
                         <td class="seatki" data-seat="54">54</td>
                         <td class="seat" data-seat="55">55</td>
@@ -438,6 +560,26 @@
                         <td class="seat" data-seat="57">57</td>
                         <td class="seat" data-seat="58">58</td>
                         <td class="seatka" data-seat="59">59</td>
+                      </tr>
+                      <tr>
+                        <td class="badge-group">
+                          <div id="badge54" class="badge"></div>
+                        </td>
+                        <td class="badge-group">
+                          <div id="badge55" class="badge"></div>
+                        </td>
+                        <td class="badge-group">
+                          <div id="badge56" class="badge"></div>
+                        </td>
+                        <td class="badge-group">
+                          <div id="badge57" class="badge"></div>
+                        </td>
+                        <td class="badge-group">
+                          <div id="badge58" class="badge"></div>
+                        </td>
+                        <td class="badge-group">
+                          <div id="badge59" class="badge"></div>
+                        </td>
                       </tr>
                     </tbody>
                   </table>

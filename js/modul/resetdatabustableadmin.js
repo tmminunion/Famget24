@@ -1,4 +1,6 @@
 import { getUserUid } from "./user.js";
+import { updateBadge } from "./allfungction.js";
+
 function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
   tbody.innerHTML = ""; // Clear existing content
@@ -6,7 +8,7 @@ function populateTable(datak) {
   var data = datak.data;
   // Urutkan data berdasarkan status kehadiran
   const sortedData = data.sort((a, b) => a.Hadir - b.Hadir);
-const reversedData = sortedData.reverse();
+  const reversedData = sortedData.reverse();
   reversedData.forEach(function (user, index) {
     // Pilih icon dan warna berdasarkan status kehadiran
     const icon = user.Hadir
@@ -15,7 +17,7 @@ const reversedData = sortedData.reverse();
 
     // Pilih warna tombol berdasarkan status kehadiran
     const btnClass = user.Hadir ? "btn-primary" : "btn-danger";
-
+    updateBadge(user.Nama, user.BusSeat);
     // Buat baris baru dan tambahkan ke tabel
     const newRow = document.createElement("tr");
     newRow.innerHTML =
