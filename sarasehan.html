@@ -170,24 +170,20 @@
 
             <!-- Sidebar profil yang sticky (col-md-3) -->
             <div class="col-md-4">
-              <div id="konlog">
-                <button
-                  type="button"
-                  class="login-with-google-btn"
-                  id="googleSignInBtn"
-                  style="display: none"
-                >
-                  Sign in with Google
-                </button>
-              </div>
+             
               <div class="card sticky-top" style="top: 20px">
                 <div class="d-flex flex-column align-items-center p-3">
-                  <img
-                    id="ppcard"
-                    src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
-                    width="100"
-                    class="rounded-circle"
-                  />
+                <!-- Gambar Profil -->
+<img
+  id="ppcard"
+  src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
+  width="100"
+  class="rounded-circle"
+  data-bs-toggle="modal"
+  data-bs-target="#uploadModal"
+  style="cursor: pointer;"
+/>
+
                   <div class="d-flex flex-column align-items-center mt-2">
                     <span class="font-weight-bold" id="namauser"></span>
                     <small class="text-primary pb-3" id="emailuser"></small>
@@ -208,6 +204,25 @@
         </div>
       </main>
     </div>
+    
+<!-- Modal Bootstrap untuk unggah gambar -->
+<div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="uploadModalLabel">Unggah Foto Profil</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="file" id="imageInput" class="form-control">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+        <button type="button" class="btn btn-primary" id="uploadButton">Unggah</button>
+      </div>
+    </div>
+  </div>
+</div>
     <a
       href="#"
       class="btn btn-primary floating-button"

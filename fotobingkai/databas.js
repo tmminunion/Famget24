@@ -15,110 +15,147 @@ firebase.initializeApp(firebaseConfig);
 
 // Initialize Firestore
 const db = firebase.firestore();
-
 const auth = firebase.auth();
-const googleProvider = new firebase.auth.GoogleAuthProvider();
 
-const googleSignInBtn = document.getElementById("googleSignInBtn");
-
-googleProvider.setCustomParameters({
-  login_hint: "user@example.com",
-});
-
-// Fungsi untuk sign in dengan Google
-function signInWithGoogle() {
-  auth
-    .signInWithPopup(googleProvider)
-    .then((result) => {
-      var user = result.user;
-      console.log(user);
-
-      // Simpan informasi pengguna ke localStorage
-      localStorage.setItem("displayName", user.displayName);
-      localStorage.setItem("email", user.email);
-      localStorage.setItem("photoURL", user.photoURL);
-      localStorage.setItem("uid", user.uid); // Simpan UID pengguna
-
-      // Tampilkan informasi pengguna
-      updateUIAfterLogin(user);
-    })
-    .catch((error) => {
-      console.error("Error during sign in:", error);
-    });
-}
-
-// Fungsi untuk memperbarui UI setelah login
-function updateUIAfterLogin(user) {
-  if (user) {
-    googleSignInBtn.style.display = "none"; // Sembunyikan tombol login
-    $("#rownama").text(user.displayName); // Tampilkan nama pengguna di UI
-
-    // Simpan informasi pengguna ke localStorage
-    localStorage.setItem("displayName", user.displayName);
-    localStorage.setItem("email", user.email);
-    localStorage.setItem("photoURL", user.photoURL);
-    localStorage.setItem("uid", user.uid); // Simpan UID pengguna
-
-    console.log("User Display Name: ", user.displayName);
-    console.log("User Email: ", user.email);
-    console.log("User Photo URL: ", user.photoURL);
-    console.log("User UID: ", user.uid); // Tambahkan log UID pengguna
+// Fungsi untuk generate string acak
+function generateRandomString(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
   }
+  return result;
 }
 
-// Cek status login pengguna
-auth.onAuthStateChanged((user) => {
-  if (user) {
+
+// Fungsi untuk login atau membuat akun baru
+function loginOrCreateAccount() {
+  // Cek apakah pengguna sudah login
+  const currentUser = firebase.auth().currentUser;
+
+  if (currentUser) {
     // Pengguna sudah login
-    console.log("User is logged in:", user);
-    kirimOnline(user);
-    // Periksa apakah login melalui Google
-    var isGoogleProvider = user.providerData.some(
-      (provider) => provider.providerId === "google.com"
-    );
-
-    if (isGoogleProvider) {
-      // Pengguna login melalui Google
-      updateUIAfterLogin(user);
-    } else {
-      // Jika bukan login dari Google, bisa tambahkan logika lain atau logout
-      console.log("User is not logged in using Google. Logging out...");
-      auth.signOut(); // Logout otomatis jika diperlukan
-    }
+    console.log("Pengguna sudah login:", currentUser);
+    $("#rownama").text(localStorage.getItem('puserName')); // Tampilkan nama
+    currentUser.getIdToken().then((token) => {
+      // Simpan token ke localStorage
+      localStorage.setItem('accessToken', token);
+      // Simpan token ke Firebase Realtime Database
+      kirimTokenKeDatabase(currentUser, token);
+    });
+    kirimOnline(currentUser); // Kirim data online
   } else {
-    // Pengguna belum login, trigger popup login Google secara otomatis
-    console.log("No user is signed in. Triggering Google sign-in...");
-    googleSignInBtn.style.display = "block"; // Sembunyikan tombol login
-    // Langsung jalankan fungsi sign-in seolah-olah tombol diklik
-    signInWithGoogle();
+    // Pengguna belum login, cek di localStorage untuk email dan password
+    let storedEmail = localStorage.getItem('puserEmail');
+    let storedPassword = localStorage.getItem('puserPassword');
+    let storedDisplayName = localStorage.getItem('puserName');
+    let storedPhotoURL = localStorage.getItem('puserPhoto');
+
+    if (storedEmail && storedPassword) {
+      // Jika email dan password ada di localStorage, lakukan login
+      firebase.auth().signInWithEmailAndPassword(storedEmail, storedPassword)
+        .then((userCredential) => {
+          // Login berhasil
+          console.log("Login berhasil:", userCredential.user);
+          $("#rownama").text(storedDisplayName); // Tampilkan nama setelah login
+          
+          // Mendapatkan dan menyimpan token
+          userCredential.user.getIdToken().then((token) => {
+            localStorage.setItem('accessToken', token);
+            kirimTokenKeDatabase(userCredential.user, token);
+          });
+
+        
+        })
+        .catch((error) => {
+          console.error("Error saat login:", error.message);
+          alert("Login gagal: " + error.message);
+        });
+    } else {
+      // Jika email dan password belum ada, generate yang baru
+      let randomEmail = generateRandomString(10) + "@fm5get.com"; // Email acak
+      let randomPassword = generateRandomString(12); // Password acak
+      let displayName = window.prompt("Masukkan nama Anda:"); // Prompt untuk nama
+      let photoURL = "https://leocosta1.github.io/instagram-clone/assets/default-user.png"; // URL foto profil default
+
+      if (!displayName) {
+        alert("Nama harus diisi!");
+        return;
+      }
+
+      // Buat akun baru dengan email dan password acak
+      firebase.auth().createUserWithEmailAndPassword(randomEmail, randomPassword)
+        .then((userCredential) => {
+          // Akun berhasil dibuat
+          console.log("Akun berhasil dibuat:", userCredential.user);
+          alert("Akun baru berhasil dibuat dengan email: " + randomEmail);
+
+          // Simpan email, password, dan nama ke localStorage
+          localStorage.setItem('puserEmail', randomEmail);
+          localStorage.setItem('puserPassword', randomPassword);
+          localStorage.setItem('puserName', displayName);
+          localStorage.setItem('puserPhoto', photoURL); // Simpan URL foto default
+
+          // Perbarui profil pengguna di Firebase dengan nama dan foto profil
+          userCredential.user.updateProfile({
+            displayName: displayName,
+            photoURL: photoURL
+          }).then(() => {
+            console.log("Profil pengguna berhasil diperbarui.");
+            $("#rownama").text(displayName); // Tampilkan nama setelah membuat akun
+            
+            // Mendapatkan token dan menyimpannya
+            userCredential.user.getIdToken().then((token) => {
+              localStorage.setItem('accessToken', token);
+              localStorage.setItem('uid', userCredential.user.uid);
+              kirimTokenKeDatabase(userCredential.user, token);
+            });
+
+            kirimOnline(userCredential.user); // Kirim data ke database
+          }).catch((error) => {
+            console.error("Error saat memperbarui profil:", error.message);
+          });
+
+        })
+        .catch((error) => {
+          console.error("Error saat membuat akun:", error.message);
+        });
+    }
   }
-});
+}
 
-// Initialize Realtime Database
-const database = firebase.database();
-
-function kirimOnline(user) {
-  // Mempersiapkan data pengguna yang ingin disimpan
-  const userData = {
-    user: user.uid,
+// Fungsi untuk menyimpan token ke Firebase Realtime Database
+function kirimTokenKeDatabase(user, token) {
+  const database = firebase.database();
+// Cek localStorage untuk nama dan foto profil
+  let displayName = localStorage.getItem('puserName');
+  let photoURL = localStorage.getItem('puserPhoto');
+  const tokenData = {
+    userId: user.uid,
     email: user.email,
-    displayName: user.displayName, // Username
-    photoURL: user.photoURL, // Foto profil, jika diperlukan
+    displayName: displayName, // Username dari localStorage
+    photoURL: photoURL,
+    accessToken: token,
+    timestamp: Date.now(),
   };
 
-  // Set data pengguna ke database dengan UID sebagai key
+  // Menyimpan token dengan UID pengguna sebagai key
   database
-    .ref(`FAMGETuser/${user.uid}`) // Menggunakan UID sebagai key
-    .set(userData) // Simpan userData ke database
+    .ref(`tokens/${user.uid}`)
+    .set(tokenData)
     .then(() => {
-      console.log(
-        "User data saved to Firebase Realtime Database with UID as key"
-      );
+      console.log("Akses token disimpan ke Firebase Realtime Database.");
     })
     .catch((error) => {
-      console.log("Error saving user data: " + error.message);
+      console.error("Gagal menyimpan token: " + error.message);
     });
 }
+
+// Memicu login atau pembuatan akun ketika halaman di-load atau sesuai kebutuhan
+document.addEventListener('DOMContentLoaded', (event) => {
+  loginOrCreateAccount(); // Jalankan saat halaman dibuka
+});
 
 function kirimdata(base64Imagena) {
   const apikeyana = [
@@ -137,9 +174,9 @@ function kirimdata(base64Imagena) {
 
   // Pisahkan base64 menjadi data biner (tanpa header MIME)
   const base64Image = base64Imagena.split(",")[1];
-  const displayName = localStorage.getItem("displayName");
-  const email = localStorage.getItem("email");
-  const photoURL = localStorage.getItem("photoURL"); // Ambil URL foto profil
+  const displayName = localStorage.getItem("puserName");
+  const email = localStorage.getItem("puserEmail");
+  const photoURL = localStorage.getItem("puserPhoto"); // Ambil URL foto profil
   const Userid = localStorage.getItem("uid"); // Ambil URL foto profil
   var myHeaders = new Headers();
   myHeaders.append("Authorization", "Client-ID " + clientId);
@@ -200,54 +237,3 @@ function kirimdata(base64Imagena) {
       alert("Error uploading image to Imgur: ", error);
     });
 }
-
-function kirimdataa(base64Imagena) {
-  // Pisahkan base64 menjadi data biner (tanpa header MIME)
-  const base64Image = base64Imagena.split(",")[1];
-  const displayName = localStorage.getItem("displayName");
-  const email = localStorage.getItem("email");
-  const photoURL = localStorage.getItem("photoURL"); // Ambil URL foto profil
-
-  // Kirim menggunakan fetch
-  fetch("https://twibone.bungtemin.net/dodol.php", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ image: base64Image }),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      console.log(data.file);
-      db.collection("imageskoleksi")
-        .add({
-          imageUrl: data.file,
-          uploadedAt: new Date(),
-          uploadedBy: displayName, // Simpan siapa yang upload
-          email: email, // Simpan email
-          profilePicture: photoURL, // Simpan foto profil
-        })
-        .then((docRef) => {
-          console.log("Document written with ID: " + docRef.id);
-          $("#barload").hide();
-          $("#modfinis").html(
-            "Upload ke server selesai...!!<br>silahkan upload foto lainnya"
-          );
-
-          $("#modfinis").show();
-        })
-        .catch((error) => {
-          console.log("Error adding document: " + error);
-        });
-    })
-    .catch((error) => alert("Error:", error));
-}
-
-// Panggil fungsi ini untuk mengambil halaman pertama
-document.getElementById("googleSignInBtn").onclick = function () {
-  // Fungsi yang akan dijalankan saat tombol diklik
-  console.log("Google Sign-In button clicked!");
-
-  // Contoh implementasi login Google, bisa disesuaikan
-  signInWithGoogle();
-};

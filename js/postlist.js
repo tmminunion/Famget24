@@ -71,7 +71,7 @@ async function fetchAndDisplayPosts() {
     const postlist = document.getElementById("postlist");
 
     // Ambil data dari API
-    var endpoit  = localStorage.getItem("uid"); 
+    var endpoit  = localStorage.getItem("uid")  || "LxLqzVMNawW1ASF60gqPwcvdbQR2" 
     const response = await fetch(
       "https://api.bungtemin.net/FamgetAbsensi/laststory/" + endpoit
     );
@@ -172,8 +172,8 @@ document.addEventListener("DOMContentLoaded", fetchAndDisplayPosts);
  // Fungsi untuk mengirim data ke API bungtemin.net
   function sendDataToApi(content, imageUrl = null) {
     var endpoit  = localStorage.getItem("uid"); 
-    var ennama  = localStorage.getItem("displayName"); 
-     var eprofil  = localStorage.getItem("photoURL"); 
+    var ennama  = localStorage.getItem("puserName"); 
+     var eprofil  = localStorage.getItem("puserPhoto"); 
     
     const data = {
       type: "profil",
