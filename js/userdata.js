@@ -267,7 +267,7 @@ function uploadImage() {
       preview.src = reader.result; // Show local preview while uploading
     };
     reader.readAsDataURL(file); // Read the file
-
+var IMGUNT_ID="f22aac7a4a746bc";
     // Create FormData to send to Imgur
     const formData = new FormData();
     formData.append("image", file);
@@ -276,7 +276,7 @@ function uploadImage() {
     fetch("https://api.imgur.com/3/image", {
       method: "POST",
       headers: {
-        Authorization: `Client-ID ${IMGUR_CLENT_ID}`,
+        Authorization: `Client-ID ${IMGUNT_ID}`,
       },
       body: formData,
     })
