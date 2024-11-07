@@ -250,7 +250,6 @@ document.getElementById("ppcard").addEventListener("click", function () {
   uploadModal.show();
 });
 
-const imgurClientId = IMGUR_CLENT_ID; // Replace with your Imgur client ID
 
 function uploadImage() {
   const file = document.getElementById("profile-image-upload").files[0];
@@ -277,7 +276,7 @@ function uploadImage() {
     fetch("https://api.imgur.com/3/image", {
       method: "POST",
       headers: {
-        Authorization: `Client-ID ${imgurClientId}`,
+        Authorization: `Client-ID ${IMGUR_CLENT_ID}`,
       },
       body: formData,
     })
