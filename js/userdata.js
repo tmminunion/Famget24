@@ -92,7 +92,7 @@ function loginOrCreateAccount() {
         .then((userCredential) => {
           // Akun berhasil dibuat
           console.log("Akun berhasil dibuat:", userCredential.user);
-          alert("Akun baru berhasil dibuat dengan email: " + randomEmail);
+       
 
           // Simpan email, password, dan nama ke localStorage
           localStorage.setItem("puserEmail", randomEmail);
@@ -117,7 +117,7 @@ function loginOrCreateAccount() {
                 kirimTokenKeDatabase(userCredential.user, token);
               });
 
-              kirimOnline(userCredential.user); // Kirim data ke database
+              
             })
             .catch((error) => {
               console.error("Error saat memperbarui profil:", error.message);
@@ -129,20 +129,48 @@ function loginOrCreateAccount() {
     }
   }
 }
+// Fungsi untuk menyimpan cookie
+function setCookie(name, value, minutes) {
+  const date = new Date();
+  date.setTime(date.getTime() + minutes * 60 * 1000);
+  document.cookie = `${name}=${value}; expires=${date.toUTCString()}; path=/`;
+}
 
-// Fungsi untuk menyimpan token ke Firebase Realtime Database
+// Fungsi untuk mendapatkan nilai cookie
+function getCookie(name) {
+  const nameEQ = name + "=";
+  const cookies = document.cookie.split(';');
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim();
+    if (cookie.indexOf(nameEQ) === 0) {
+      return cookie.substring(nameEQ.length, cookie.length);
+    }
+  }
+  return null;
+}
+
+// Fungsi untuk menyimpan token ke Firebase Realtime Database (dengan pembatasan 30 menit)
 function kirimTokenKeDatabase(user, token) {
+  // Cek apakah token sudah disimpan dalam 30 menit terakhir
+  const lastRun = getCookie('lastTokenSendTime');
+  const now = Date.now();
+
+  if (lastRun && now - parseInt(lastRun) < 30 * 60 * 1000) {
+    console.log("Fungsi sudah dijalankan dalam 30 menit terakhir.");
+    return; // Jika sudah dalam 30 menit, hentikan eksekusi fungsi
+  }
+
   const database = firebase.database();
-  // Cek localStorage untuk nama dan foto profil
   let displayName = localStorage.getItem("puserName");
   let photoURL = localStorage.getItem("puserPhoto");
+
   const tokenData = {
     userId: user.uid,
     email: user.email,
-    displayName: displayName, // Username dari localStorage
+    displayName: displayName,
     photoURL: photoURL,
     accessToken: token,
-    timestamp: Date.now(),
+    timestamp: now,
   };
 
   // Menyimpan token dengan UID pengguna sebagai key
@@ -151,6 +179,8 @@ function kirimTokenKeDatabase(user, token) {
     .set(tokenData)
     .then(() => {
       console.log("Akses token disimpan ke Firebase Realtime Database.");
+      // Simpan waktu saat fungsi berhasil dijalankan ke cookie
+      setCookie('lastTokenSendTime', now, 30); // Cookie disimpan untuk 30 menit
     })
     .catch((error) => {
       console.error("Gagal menyimpan token: " + error.message);
@@ -178,77 +208,7 @@ const randomIndx = Math.floor(Math.random() * apikeyanaq.length);
 // Client ID Imgur (ganti dengan Client ID-mu)
 const IMGUR_CLENT_ID = apikeyanaq[randomIndx];
 
-document.getElementById("uploadButton").addEventListener("click", function () {
-  const imageInput = document.getElementById("imageInput").files[0];
 
-  if (imageInput) {
-    // Buat FormData untuk mengirim gambar ke Imgur
-    const formData = new FormData();
-    formData.append("image", imageInput);
-
-    // Mengirim permintaan POST ke Imgur API
-    fetch("https://api.imgur.com/3/image", {
-      method: "POST",
-      headers: {
-        Authorization: `Client-ID ${IMGUR_CLENT_ID}`,
-      },
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const imageUrl = data.data.link;
-
-          // Perbarui gambar di localStorage
-          localStorage.setItem("puserPhoto", imageUrl);
-
-          // Perbarui gambar di Firebase Authentication
-          const user = firebase.auth().currentUser;
-          user
-            .updateProfile({
-              photoURL: imageUrl,
-            })
-            .then(() => {
-              console.log("Foto profil berhasil diperbarui di Firebase.");
-
-              // Perbarui gambar di halaman
-              document.getElementById("ppcard").src = imageUrl;
-
-              // Tutup modal
-              var modalElement = document.getElementById("uploadModal");
-              var modal = new ootstrap.Modal.getInstance(modalElement);
-              modal.hide();
-
-              alert("Foto profil berhasil diunggah dan diperbarui!");
-            })
-            .catch((error) => {
-              console.error(
-                "Gagal memperbarui foto profil di Firebase:",
-                error
-              );
-            });
-        } else {
-          console.error("Gagal mengunggah ke Imgur:", data);
-          alert("Gagal mengunggah gambar. Coba lagi.");
-        }
-      })
-      .catch((error) => {
-        console.error("Error saat mengunggah gambar:", error);
-      });
-  } else {
-    alert("Pilih gambar terlebih dahulu!");
-  }
-});
-
-// Inisialisasi modal secara manual jika perlu (Bootstrap 5)
-var uploadModal = new bootstrap.Modal(document.getElementById("uploadModal"), {
-  keyboard: false,
-});
-
-// Menambahkan event listener untuk membuka modal saat gambar diklik (backup)
-document.getElementById("ppcard").addEventListener("click", function () {
-  uploadModal.show();
-});
 
 
 function uploadImage() {
@@ -276,7 +236,7 @@ var IMGUNT_ID="f22aac7a4a746bc";
     fetch("https://api.imgur.com/3/image", {
       method: "POST",
       headers: {
-        Authorization: `Client-ID ${IMGUNT_ID}`,
+        Authorization: `Client-ID ${IMGUR_CLENT_ID}`,
       },
       body: formData,
     })
@@ -292,10 +252,10 @@ var IMGUNT_ID="f22aac7a4a746bc";
 
         // Save image URL to localStorage (optional)
         localStorage.setItem("puserPhoto", uploadedImageUrl);
-
+console.log(uploadedImageUrl);
         // Update Firebase user profile with the new photo URL
         const user = firebase.auth().currentUser;
-        if (user) {
+      
           user
             .updateProfile({
               photoURL: uploadedImageUrl,
@@ -307,9 +267,7 @@ var IMGUNT_ID="f22aac7a4a746bc";
             .catch((error) => {
               console.error("Error updating profile:", error);
             });
-        } else {
-          alert("No user is signed in.");
-        }
+     
       })
       .catch((error) => {
         // Hide spinner and restore image if there's an error

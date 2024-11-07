@@ -207,7 +207,7 @@
                   <form id="editForm">
                     <!-- Input for Name -->
                     <div class="mb-3">
-                      <label for="name" class="form-label">Name</label>
+                      <label for="name" class="form-label">Nama Lenkap</label>
                       <input
                         type="text"
                         class="form-control"
@@ -216,33 +216,6 @@
                         required
                       />
                     </div>
-
-                    <!-- Input for Email -->
-                    <div class="mb-3">
-                      <label for="email" class="form-label">Email</label>
-                      <input
-                        type="email"
-                        class="form-control"
-                        id="email"
-                        placeholder="Enter your email"
-                        required
-                      />
-                    </div>
-
-                    <!-- Input for Profile Picture URL -->
-                    <div class="mb-3">
-                      <label for="photo" class="form-label"
-                        >Profile Picture URL</label
-                      >
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="photo"
-                        placeholder="Enter image URL"
-                        required
-                      />
-                    </div>
-
                     <!-- Buttons -->
                     <div class="d-grid gap-2">
                       <button type="submit" class="btn btn-primary">
@@ -277,14 +250,7 @@
                     <span class="font-weight-bold" id="namauser"></span>
                     <small class="text-primary pb-3" id="emailuser"></small>
 
-                    <button
-                      type="button"
-                      class="btn btn-primary"
-                      data-toggle="modal"
-                      data-target="#postModal"
-                    >
-                      Create a Post
-                    </button>
+                  
                   </div>
                 </div>
               </div>
@@ -295,92 +261,7 @@
     </div>
 
     <!-- Modal Bootstrap -->
-    <div
-      class="modal fade"
-      id="postModal"
-      tabindex="-1"
-      role="dialog"
-      aria-labelledby="postModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
-            <button
-              type="button"
-              class="close"
-              data-dismiss="modal"
-              aria-label="Close"
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <!-- Form untuk postingan -->
-            <form id="postForm">
-              <!-- Textarea fleksibel -->
-              <div class="form-group">
-                <label for="postContent">What's on your mind?</label>
-                <textarea
-                  class="form-control"
-                  id="postContent"
-                  rows="4"
-                  placeholder="Write something..."
-                ></textarea>
-              </div>
-
-              <!-- Upload gambar -->
-              <div class="form-group">
-                <label for="postImage">Upload an image</label>
-                <input
-                  type="file"
-                  class="form-control-file"
-                  id="postImage"
-                  accept="image/*"
-                />
-              </div>
-
-              <!-- Pratinjau gambar -->
-              <div class="form-group">
-                <img
-                  id="previewImage"
-                  src="#"
-                  alt="Image preview"
-                  style="
-                    display: none;
-                    width: 100%;
-                    max-height: 400px;
-                    object-fit: contain;
-                    margin-top: 10px;
-                  "
-                />
-              </div>
-
-              <!-- Loader (hidden by default) -->
-              <div id="loader" class="text-center" style="display: none">
-                <div class="spinner-border" role="status">
-                  <span class="sr-only">Loading...</span>
-                </div>
-                <p>Please wait, your post is being submitted...</p>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="submit" class="btn btn-primary" id="submitPost">
-              Post
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -394,5 +275,49 @@
 
     <script src="js/main.js"></script>
     <script src="js/userdata.js"></script>
+    
+<script>
+  // Fungsi untuk menampilkan nama dari localStorage ke form
+  document.addEventListener('DOMContentLoaded', function () {
+  const nameInput = document.getElementById('name');
+    const storedName = localStorage.getItem('puserName');
+    const storedPhoto = localStorage.getItem('puserPhoto') || "https://leocosta1.github.io/instagram-clone/assets/default-user.png";
+
+    if (storedName) {
+      nameInput.value = storedName; // Tampilkan nama di form
+      $("#namauser").text(storedName);
+    }
+    $("#ppcard").attr("src", storedPhoto);
+    $("#foto").attr("src", storedPhoto);
+  });
+
+  // Fungsi untuk menangani form submit
+  document.getElementById('editForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const newName = document.getElementById('name').value;
+
+    // Simpan nama baru ke localStorage
+    localStorage.setItem('puserName', newName);
+
+    // Update nama di Firebase Authentication
+    const user = firebase.auth().currentUser;
+    if (user) {
+      user.updateProfile({
+        displayName: newName,
+      })
+      .then(() => {
+        alert('Nama berhasil diperbarui!');
+        $("#namauser").text(newName);
+      })
+      .catch((error) => {
+        console.error('Error updating profile:', error);
+        alert('Terjadi kesalahan saat memperbarui nama.');
+      });
+    } else {
+      alert('Tidak ada pengguna yang masuk.');
+    }
+  });
+</script>
   </body>
 </html>
