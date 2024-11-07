@@ -75,7 +75,8 @@ async function fetchAndDisplayPosts() {
     const response = await fetch(
       "https://api.bungtemin.net/FamgetAbsensi/laststory/" + endpoit
     );
-    const postsFromServer = await response.json();
+const postsFrom = await response.json();
+    const postsFromServer = postsFrom.data;
 
     // Tampilkan postingan dari DB terlebih dahulu
     postsFromDB.forEach((post) => {
