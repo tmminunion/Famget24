@@ -71,7 +71,7 @@ async function fetchAndDisplayPosts() {
     const postlist = document.getElementById("postlist");
 
     // Ambil data dari API
-    var endpoit  = localStorage.getItem("uid")  || "LxLqzVMNawW1ASF60gqPwcvdbQR2" 
+    var endpoit = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
     const response = await fetch(
       "https://api.bungtemin.net/FamgetAbsensi/laststory/" + endpoit
     );
@@ -83,7 +83,7 @@ async function fetchAndDisplayPosts() {
     });
 
     // Hapus postingan yang tidak ada di server
-    const serverPostIds = new Set(postsFromServer.map(post => post.id));
+    const serverPostIds = new Set(postsFromServer.map((post) => post.id));
 
     postsFromDB.forEach((post) => {
       if (!serverPostIds.has(post.id)) {
@@ -102,7 +102,6 @@ async function fetchAndDisplayPosts() {
     postsFromServer.forEach((post) => {
       appendPostToHTML(postlist, post);
     });
-
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
@@ -115,7 +114,7 @@ function appendPostToHTML(postlist, post) {
   // Periksa apakah card dengan ID tersebut sudah ada
   if (!document.getElementById(postId)) {
     const postHTML = `
-      <div class="card mt-3" id="${postId}">
+      <div class="card mt-1" id="${postId}">
         <div class="d-flex justify-content-between p-2 px-3">
           <div class="d-flex flex-row align-items-center">
             <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
@@ -137,8 +136,8 @@ function appendPostToHTML(postlist, post) {
               <i class="fa fa-heart" style="font-size: x-large; color: red"></i>
               <span class="px-2">100</span>
             </div>
-            <div class="d-flex flex-row muted-color mb-2">
-              <span>2 comments</span>
+            <div class="d-flex flex-row muted-color mb-1">
+              <span style="font-size: small">21 Komentar</span>
             </div>
           </div>
         </div>
@@ -153,68 +152,67 @@ function appendPostToHTML(postlist, post) {
 // Panggil fungsi fetchAndDisplayPosts saat halaman dimuat
 document.addEventListener("DOMContentLoaded", fetchAndDisplayPosts);
 
+const apikeyana = [
+  "025ba3ace62a66d",
+  "082eb55cc144305",
+  "70519e36199385e",
+  "8d04e5606260801",
+  "a692f82b1aced47",
+  "b4b4301cdb7c9c8",
+  "7c0326461ff3839",
+  "f22aac7a4a746bc",
+  "de75765ef3b4199",
+];
+const randomIndex = Math.floor(Math.random() * apikeyana.length);
 
-    const apikeyana = [
-    "025ba3ace62a66d",
-    "082eb55cc144305",
-    "70519e36199385e",
-    "8d04e5606260801",
-    "a692f82b1aced47",
-    "b4b4301cdb7c9c8",
-    "7c0326461ff3839",
-    "f22aac7a4a746bc",
-    "de75765ef3b4199",
-  ];
-  const randomIndex = Math.floor(Math.random() * apikeyana.length);
- 
-  // Client ID Imgur (ganti dengan Client ID-mu)
-  const IMGUR_CLIENT_ID = apikeyana[randomIndex]; 
- // Fungsi untuk mengirim data ke API bungtemin.net
-  function sendDataToApi(content, imageUrl = null) {
-    var endpoit  = localStorage.getItem("uid"); 
-    var ennama  = localStorage.getItem("puserName"); 
-     var eprofil  = localStorage.getItem("puserPhoto"); 
-    
-    const data = {
-      type: "profil",
-      noreg: endpoit, // Ganti dengan nomor registrasi yang sesuai
-      nama: ennama, // Ganti dengan nama yang sesuai
-      forum: "FAMGET", // Forum yang sesuai
-      content: content,
-      imgid: imageUrl ? imageUrl : "", // Jika ada image, gunakan URL-nya, jika tidak kosong
-      fotoprofil: eprofil, // URL foto profil
-      aproved: "1", // Status approved
-    };
+// Client ID Imgur (ganti dengan Client ID-mu)
+const IMGUR_CLIENT_ID = apikeyana[randomIndex];
+// Fungsi untuk mengirim data ke API bungtemin.net
+function sendDataToApi(content, imageUrl = null) {
+  var endpoit = localStorage.getItem("uid");
+  var ennama = localStorage.getItem("puserName");
+  var eprofil = localStorage.getItem("puserPhoto");
 
-    fetch("https://api.bungtemin.net/FamgetAbsensi/PostForumFeed/"+ endpoit, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
+  const data = {
+    type: "profil",
+    noreg: endpoit, // Ganti dengan nomor registrasi yang sesuai
+    nama: ennama, // Ganti dengan nama yang sesuai
+    forum: "FAMGET", // Forum yang sesuai
+    content: content,
+    imgid: imageUrl ? imageUrl : "", // Jika ada image, gunakan URL-nya, jika tidak kosong
+    fotoprofil: eprofil, // URL foto profil
+    aproved: "1", // Status approved
+  };
+
+  fetch("https://api.bungtemin.net/FamgetAbsensi/PostForumFeed/" + endpoit, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      console.log(result);
+
+      // Reset form setelah submit
+      document.getElementById("postForm").reset();
+      document.getElementById("previewImage").style.display = "none";
+      document.getElementById("loader").style.display = "none";
+      fetchAndDisplayPosts();
+      // Tutup modal
+      $("#postModal").modal("hide");
     })
-      .then((response) => response.json())
-      .then((result) => {
-      
-        console.log(result);
+    .catch((error) => {
+      console.error("Error submitting post:", error);
+      alert("Error submitting post");
+    });
+}
 
-        // Reset form setelah submit
-        document.getElementById("postForm").reset();
-        document.getElementById("previewImage").style.display = "none";
-         document.getElementById("loader").style.display = "none";
-fetchAndDisplayPosts();
-        // Tutup modal
-        $("#postModal").modal("hide");
-      })
-      .catch((error) => {
-        console.error("Error submitting post:", error);
-        alert("Error submitting post");
-      });
-  }
-
-
-  // Menampilkan pratinjau gambar yang diunggah
-  document.getElementById("postImage").addEventListener("change", function (event) {
+// Menampilkan pratinjau gambar yang diunggah
+document
+  .getElementById("postImage")
+  .addEventListener("change", function (event) {
     const file = event.target.files[0];
     const previewImage = document.getElementById("previewImage");
     if (file) {
@@ -230,14 +228,16 @@ fetchAndDisplayPosts();
     }
   });
 
-  // Mencegah submit form default dan menambahkan logika untuk posting
-  document.getElementById("submitPost").addEventListener("click", function (event) {
+// Mencegah submit form default dan menambahkan logika untuk posting
+document
+  .getElementById("submitPost")
+  .addEventListener("click", function (event) {
     event.preventDefault();
-    
+
     const content = document.getElementById("postContent").value;
     const fileInput = document.getElementById("postImage");
     const file = fileInput.files[0];
-     document.getElementById("loader").style.display = "block";
+    document.getElementById("loader").style.display = "block";
 
     if (content === "") {
       alert("Please enter some content before posting!");
@@ -253,20 +253,20 @@ fetchAndDisplayPosts();
         },
         body: formData,
       })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const imageUrl = data.data.link;
-          // Kirim data ke API bungtemin.net setelah upload gambar
-          sendDataToApi(content, imageUrl);
-        } else {
-          alert("Failed to upload image to Imgur");
-        }
-      })
-      .catch((error) => {
-        console.error("Error uploading image:", error);
-        alert("Error uploading image");
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            const imageUrl = data.data.link;
+            // Kirim data ke API bungtemin.net setelah upload gambar
+            sendDataToApi(content, imageUrl);
+          } else {
+            alert("Failed to upload image to Imgur");
+          }
+        })
+        .catch((error) => {
+          console.error("Error uploading image:", error);
+          alert("Error uploading image");
+        });
     } else {
       // Jika tidak ada gambar, langsung kirim data ke API bungtemin.net
       sendDataToApi(content);
