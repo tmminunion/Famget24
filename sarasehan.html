@@ -215,15 +215,13 @@
               <div class="card sticky-top" style="top: 10px">
                 <div class="d-flex flex-column align-items-center p-3">
                   <!-- Gambar Profil -->
-                  <img
-                    id="ppcard"
-                    src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
-                    width="100"
-                    class="rounded-circle"
-                    data-bs-toggle="modal"
-                    data-bs-target="#uploadModal"
-                    style="cursor: pointer"
-                  />
+                  <a href="profil.html">
+                    <img
+                      id="ppcard"
+                      src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
+                      width="100"
+                      class="rounded-circle"
+                  /></a>
 
                   <div class="d-flex flex-column align-items-center mt-2">
                     <a href="profil.html"
@@ -248,45 +246,6 @@
       </main>
     </div>
 
-    <!-- Modal Bootstrap untuk unggah gambar -->
-    <div
-      class="modal fade"
-      id="uploadModal"
-      tabindex="-1"
-      aria-labelledby="uploadModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="uploadModalLabel">
-              Unggah Foto Profil
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <input type="file" id="imageInput" class="form-control" />
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Tutup
-            </button>
-            <button type="button" class="btn btn-primary" id="uploadButton">
-              Unggah
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
     <a
       href="#"
       class="btn btn-primary floating-button"

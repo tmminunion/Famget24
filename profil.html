@@ -271,9 +271,6 @@
                     src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
                     width="100"
                     class="rounded-circle"
-                    data-bs-toggle="modal"
-                    data-bs-target="#uploadModal"
-                    style="cursor: pointer"
                   />
 
                   <div class="d-flex flex-column align-items-center mt-2">
@@ -295,46 +292,6 @@
           </div>
         </div>
       </main>
-    </div>
-
-    <!-- Modal Bootstrap untuk unggah gambar -->
-    <div
-      class="modal fade"
-      id="uploadModal"
-      tabindex="-1"
-      aria-labelledby="uploadModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="uploadModalLabel">
-              Unggah Foto Profil
-            </h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <input type="file" id="imageInput" class="form-control" />
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Tutup
-            </button>
-            <button type="button" class="btn btn-primary" id="uploadButton">
-              Unggah
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
 
     <!-- Modal Bootstrap -->
@@ -437,64 +394,5 @@
 
     <script src="js/main.js"></script>
     <script src="js/userdata.js"></script>
-    <script src="js/postlist.js"></script>
-
-    <script>
-      const imgurClientId = "Your_Imgur_Client_ID"; // Replace with your Imgur client ID
-
-      function uploadImage() {
-        const file = document.getElementById("profile-image-upload").files[0];
-        const preview = document.getElementById("foto");
-        const loadingSpinner = document.getElementById("loadingSpinner");
-        const reader = new FileReader();
-
-        if (file) {
-          // Show the loading spinner
-          loadingSpinner.style.display = "block";
-          preview.style.opacity = "0.5"; // Dim the image while loading
-
-          // Read the image file as DataURL for local preview
-          reader.onloadend = function () {
-            preview.src = reader.result; // Show local preview while uploading
-          };
-          reader.readAsDataURL(file); // Read the file
-
-          // Create FormData to send to Imgur
-          const formData = new FormData();
-          formData.append("image", file);
-
-          // Upload to Imgur using Fetch API
-          fetch("https://api.imgur.com/3/image", {
-            method: "POST",
-            headers: {
-              Authorization: `Client-ID ${imgurClientId}`,
-            },
-            body: formData,
-          })
-            .then((response) => response.json())
-            .then((data) => {
-              const uploadedImageUrl = data.data.link;
-              // Hide the spinner after upload
-              loadingSpinner.style.display = "none";
-              preview.style.opacity = "1"; // Restore image opacity
-
-              // Update image preview with the uploaded image URL
-              preview.src = uploadedImageUrl;
-
-              // Save image URL to localStorage (optional)
-              localStorage.setItem("puserPhoto", uploadedImageUrl);
-              alert("Image uploaded successfully!");
-            })
-            .catch((error) => {
-              // Hide spinner and restore image if there's an error
-              loadingSpinner.style.display = "none";
-              preview.style.opacity = "1";
-              alert("Error uploading image: " + error.message);
-            });
-        } else {
-          alert("Please select an image to upload.");
-        }
-      }
-    </script>
   </body>
 </html>
