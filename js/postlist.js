@@ -75,7 +75,7 @@ async function fetchAndDisplayPosts() {
     const response = await fetch(
       "https://api.bungtemin.net/FamgetAbsensi/laststory/" + endpoit
     );
-const postsFrom = await response.json();
+    const postsFrom = await response.json();
     const postsFromServer = postsFrom.data;
 
     // Tampilkan postingan dari DB terlebih dahulu
@@ -109,11 +109,17 @@ const postsFrom = await response.json();
 }
 
 function appendPostToHTML(postlist, post) {
+  // Set bahasa lokal Moment.js ke Indonesia
+  moment.locale("id");
+
   // Buat ID untuk card berdasarkan post.id
   const postId = `post-${post.id}`;
 
   // Periksa apakah card dengan ID tersebut sudah ada
   if (!document.getElementById(postId)) {
+    // Format waktu menggunakan Moment.js (dalam bahasa Indonesia)
+    const formattedTimeAgo = moment(post.CreatedAt).fromNow(); // Menggunakan 'fromNow' dengan bahasa Indonesia
+
     const postHTML = `
       <div class="card mt-1" id="${postId}">
         <div class="d-flex justify-content-between p-2 px-3">
@@ -121,11 +127,13 @@ function appendPostToHTML(postlist, post) {
             <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
             <div class="d-flex flex-column ml-2">
               <span class="font-weight-bold">${post.nama}</span>
-              <small class="text-primary">${post.CreatedAt}</small>
+              <small class="text-primary">${formattedTimeAgo}</small> <!-- Format waktu dengan time ago dalam Bahasa Indonesia -->
             </div>
           </div>
           <div class="d-flex flex-row mt-1 ellipsis">
-            <small class="mr-2">Just now</small>
+            <small class="mr-2 view-count">${
+              post.View_Count || 0
+            } Views</small> <!-- Default View Count atau dari data -->
           </div>
         </div>
          <img src="${post.imgid}" class="img-fluid" />
@@ -134,17 +142,95 @@ function appendPostToHTML(postlist, post) {
           <hr />
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex flex-row icons d-flex align-items-center mb-2 px-4">
-              <i class="fa fa-heart" style="font-size: x-large; color: red"></i>
-              <span class="px-2">100</span>
+              <i class="fa fa-heart like-button" style="font-size: x-large; color: red; cursor: pointer;"></i>
+              <span class="px-2 love-count">${
+                post.Like_Count || 0
+              }</span> <!-- Default loveCount atau dari data -->
             </div>
-            <div class="d-flex flex-row muted-color mb-1">
-              <span style="font-size: small">21 Komentar</span>
+            <div class="d-flex flex-row muted-color mb-1 comment-section" style="cursor: pointer;">
+              <span style="font-size: small">${
+                post.Comment_Count || 0
+              } Komentar</span> <!-- Menampilkan jumlah komentar yang sesuai dengan data -->
             </div>
           </div>
         </div>
       </div>
     `;
     postlist.insertAdjacentHTML("afterbegin", postHTML);
+
+    // Tambahkan event listener untuk tombol like
+    const likeButton = document.querySelector(`#${postId} .like-button`);
+    const loveCountSpan = document.querySelector(`#${postId} .love-count`);
+    var endpoitlik =
+      localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+
+    likeButton.addEventListener("click", async function () {
+      try {
+        // Kirim permintaan ke API untuk menambah like
+        const response = await fetch(
+          `https://api.bungtemin.net/FamgetAbsensi/likePost/${endpoitlik}/${post.id}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (response.ok) {
+          const data = await response.json();
+          // Update jumlah love di UI
+          loveCountSpan.textContent = parseInt(loveCountSpan.textContent) + 1;
+        } else {
+          console.error(`Failed to like post ${post.id}`);
+        }
+      } catch (error) {
+        console.error("Error liking post:", error);
+      }
+    });
+
+    // Event listener untuk membuka halaman single post ketika komentar di klik
+    const commentSection = document.querySelector(
+      `#${postId} .comment-section`
+    );
+    commentSection.addEventListener("click", function () {
+      // Redirect ke halaman singlepost.html dengan query parameter id
+      window.location.href = `singlepost.html?id=${post.id}`;
+    });
+
+    // Menambah view ketika elemen terlihat (intersection observer)
+    const viewCountSpan = document.querySelector(`#${postId} .view-count`);
+    const observer = new IntersectionObserver(async (entries) => {
+      if (entries[0].isIntersecting) {
+        try {
+          // Kirim permintaan ke API untuk menambah view
+          const response = await fetch(
+            `https://api.bungtemin.net/FamgetAbsensi/postview/${endpoitlik}/${post.id}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (response.ok) {
+            const data = await response.json();
+            // Update jumlah view di UI
+            viewCountSpan.textContent = `${data.new_view_count} Views`;
+          } else {
+            console.error(`Failed to update view count for post ${post.id}`);
+          }
+        } catch (error) {
+          console.error("Error updating view count:", error);
+        }
+        // Hentikan observer setelah satu kali hitungan view
+        observer.disconnect();
+      }
+    });
+
+    // Mulai observasi elemen
+    observer.observe(document.getElementById(postId));
   } else {
     console.log(`Post with ID ${post.id} already exists, skipping...`);
   }

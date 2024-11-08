@@ -36,7 +36,7 @@ function loginOrCreateAccount() {
 
   if (currentUser) {
     // Pengguna sudah login
-    alert("lo5gin_");
+
     console.log("Pengguna sudah login:", currentUser);
     // Tampilkan nama
     currentUser.getIdToken().then((token) => {
@@ -62,6 +62,7 @@ function loginOrCreateAccount() {
           console.log("Login berhasil:", userCredential.user);
           $("#rownama").text(storedDisplayName); // Tampilkan nama setelah login
           $("#namauser").text(localStorage.getItem("puserName"));
+          $("#ppcard").attr("src", storedPhotoURL);
           // Mendapatkan dan menyimpan token
           userCredential.user.getIdToken().then((token) => {
             localStorage.setItem("accessToken", token);
@@ -92,7 +93,6 @@ function loginOrCreateAccount() {
         .then((userCredential) => {
           // Akun berhasil dibuat
           console.log("Akun berhasil dibuat:", userCredential.user);
-       
 
           // Simpan email, password, dan nama ke localStorage
           localStorage.setItem("puserEmail", randomEmail);
@@ -116,8 +116,6 @@ function loginOrCreateAccount() {
                 localStorage.setItem("uid", userCredential.user.uid);
                 kirimTokenKeDatabase(userCredential.user, token);
               });
-
-              
             })
             .catch((error) => {
               console.error("Error saat memperbarui profil:", error.message);
@@ -139,7 +137,7 @@ function setCookie(name, value, minutes) {
 // Fungsi untuk mendapatkan nilai cookie
 function getCookie(name) {
   const nameEQ = name + "=";
-  const cookies = document.cookie.split(';');
+  const cookies = document.cookie.split(";");
   for (let i = 0; i < cookies.length; i++) {
     let cookie = cookies[i].trim();
     if (cookie.indexOf(nameEQ) === 0) {
@@ -152,7 +150,7 @@ function getCookie(name) {
 // Fungsi untuk menyimpan token ke Firebase Realtime Database (dengan pembatasan 30 menit)
 function kirimTokenKeDatabase(user, token) {
   // Cek apakah token sudah disimpan dalam 30 menit terakhir
-  const lastRun = getCookie('lastTokenSendTime');
+  const lastRun = getCookie("lastTokenSendTime");
   const now = Date.now();
 
   if (lastRun && now - parseInt(lastRun) < 30 * 60 * 1000) {
@@ -180,7 +178,7 @@ function kirimTokenKeDatabase(user, token) {
     .then(() => {
       console.log("Akses token disimpan ke Firebase Realtime Database.");
       // Simpan waktu saat fungsi berhasil dijalankan ke cookie
-      setCookie('lastTokenSendTime', now, 30); // Cookie disimpan untuk 30 menit
+      setCookie("lastTokenSendTime", now, 30); // Cookie disimpan untuk 30 menit
     })
     .catch((error) => {
       console.error("Gagal menyimpan token: " + error.message);
@@ -208,9 +206,6 @@ const randomIndx = Math.floor(Math.random() * apikeyanaq.length);
 // Client ID Imgur (ganti dengan Client ID-mu)
 const IMGUR_CLENT_ID = apikeyanaq[randomIndx];
 
-
-
-
 function uploadImage() {
   const file = document.getElementById("profile-image-upload").files[0];
   const preview = document.getElementById("foto");
@@ -227,7 +222,7 @@ function uploadImage() {
       preview.src = reader.result; // Show local preview while uploading
     };
     reader.readAsDataURL(file); // Read the file
-var IMGUNT_ID="f22aac7a4a746bc";
+    var IMGUNT_ID = "f22aac7a4a746bc";
     // Create FormData to send to Imgur
     const formData = new FormData();
     formData.append("image", file);
@@ -252,22 +247,8 @@ var IMGUNT_ID="f22aac7a4a746bc";
 
         // Save image URL to localStorage (optional)
         localStorage.setItem("puserPhoto", uploadedImageUrl);
-console.log(uploadedImageUrl);
+        console.log(uploadedImageUrl);
         // Update Firebase user profile with the new photo URL
-        const user = firebase.auth().currentUser;
-      
-          user
-            .updateProfile({
-              photoURL: uploadedImageUrl,
-            })
-            .then(() => {
-              console.log("User profile updated successfully.");
-              alert("Profile photo updated!");
-            })
-            .catch((error) => {
-              console.error("Error updating profile:", error);
-            });
-     
       })
       .catch((error) => {
         // Hide spinner and restore image if there's an error
@@ -278,4 +259,54 @@ console.log(uploadedImageUrl);
   } else {
     alert("Please select an image to upload.");
   }
+}
+
+function uploadImageToImgur(canvas) {
+  // Tampilkan spinner
+  document.getElementById("loadingSpinner").style.display = "block";
+
+  // Konversi canvas ke Blob untuk upload
+  canvas.toBlob(function (blob) {
+    const formData = new FormData();
+    formData.append("image", blob);
+
+    fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: {
+        Authorization: `Client-ID ${IMGUR_CLENT_ID}`, // Ganti dengan Client ID Anda
+      },
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        const uploadedImageUrl = data.data.link;
+
+        // Update gambar di UI dan simpan ke localStorage
+        document.getElementById("foto").src = uploadedImageUrl;
+        document.getElementById("ppcard").src = uploadedImageUrl;
+        localStorage.setItem("puserPhoto", uploadedImageUrl);
+
+        const user = firebase.auth().currentUser;
+
+        user
+          .updateProfile({
+            photoURL: uploadedImageUrl,
+          })
+          .then(() => {
+            console.log("User profile updated successfully.");
+            alert("Profile photo updated!");
+          })
+          .catch((error) => {
+            console.error("Error updating profile:", error);
+          });
+        // Sembunyikan spinner
+        document.getElementById("loadingSpinner").style.display = "none";
+        alert("Foto profil berhasil diperbarui!");
+      })
+      .catch((error) => {
+        console.error("Error uploading image:", error);
+        alert("Error uploading image: " + error.message);
+        document.getElementById("loadingSpinner").style.display = "none";
+      });
+  }, "image/jpeg");
 }

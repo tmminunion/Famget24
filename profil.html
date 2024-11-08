@@ -193,7 +193,7 @@
                       class="file-upload"
                       type="file"
                       accept="image/*"
-                      onchange="uploadImage()"
+                      onchange="processAndUploadImage()"
                     />
                   </div>
                 </div>
@@ -249,8 +249,6 @@
                   <div class="d-flex flex-column align-items-center mt-2">
                     <span class="font-weight-bold" id="namauser"></span>
                     <small class="text-primary pb-3" id="emailuser"></small>
-
-                  
                   </div>
                 </div>
               </div>
@@ -261,7 +259,7 @@
     </div>
 
     <!-- Modal Bootstrap -->
-    
+
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -275,49 +273,98 @@
 
     <script src="js/main.js"></script>
     <script src="js/userdata.js"></script>
-    
-<script>
-  // Fungsi untuk menampilkan nama dari localStorage ke form
-  document.addEventListener('DOMContentLoaded', function () {
-  const nameInput = document.getElementById('name');
-    const storedName = localStorage.getItem('puserName');
-    const storedPhoto = localStorage.getItem('puserPhoto') || "https://leocosta1.github.io/instagram-clone/assets/default-user.png";
 
-    if (storedName) {
-      nameInput.value = storedName; // Tampilkan nama di form
-      $("#namauser").text(storedName);
-    }
-    $("#ppcard").attr("src", storedPhoto);
-    $("#foto").attr("src", storedPhoto);
-  });
+    <script>
+      // Fungsi untuk memproses gambar dan crop menjadi 1:1 sebelum di-upload
+      function processAndUploadImage() {
+        const fileInput = document.getElementById("profile-image-upload");
+        const file = fileInput.files[0];
 
-  // Fungsi untuk menangani form submit
-  document.getElementById('editForm').addEventListener('submit', function (e) {
-    e.preventDefault();
+        if (file) {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
 
-    const newName = document.getElementById('name').value;
+          reader.onload = function (event) {
+            const img = new Image();
+            img.src = event.target.result;
 
-    // Simpan nama baru ke localStorage
-    localStorage.setItem('puserName', newName);
+            img.onload = function () {
+              const canvas = document.createElement("canvas");
+              const ctx = canvas.getContext("2d");
 
-    // Update nama di Firebase Authentication
-    const user = firebase.auth().currentUser;
-    if (user) {
-      user.updateProfile({
-        displayName: newName,
-      })
-      .then(() => {
-        alert('Nama berhasil diperbarui!');
-        $("#namauser").text(newName);
-      })
-      .catch((error) => {
-        console.error('Error updating profile:', error);
-        alert('Terjadi kesalahan saat memperbarui nama.');
+              const size = Math.min(img.width, img.height); // Ambil ukuran terkecil (untuk crop 1:1)
+              canvas.width = size;
+              canvas.height = size;
+
+              // Menggambar gambar di tengah canvas untuk crop 1:1
+              ctx.drawImage(
+                img,
+                (img.width - size) / 2,
+                (img.height - size) / 2,
+                size,
+                size,
+                0,
+                0,
+                size,
+                size
+              );
+
+              // Menampilkan preview gambar hasil cropping
+              document.getElementById("foto").src =
+                canvas.toDataURL("image/jpeg");
+
+              // Upload gambar yang sudah dicrop ke Imgur
+              uploadImageToImgur(canvas);
+            };
+          };
+        }
+      }
+      // Fungsi untuk menampilkan nama dari localStorage ke form
+      document.addEventListener("DOMContentLoaded", function () {
+        const nameInput = document.getElementById("name");
+        const storedName = localStorage.getItem("puserName");
+        const storedPhoto =
+          localStorage.getItem("puserPhoto") ||
+          "https://leocosta1.github.io/instagram-clone/assets/default-user.png";
+
+        if (storedName) {
+          nameInput.value = storedName; // Tampilkan nama di form
+          $("#namauser").text(storedName);
+        }
+        $("#ppcard").attr("src", storedPhoto);
+        $("#foto").attr("src", storedPhoto);
       });
-    } else {
-      alert('Tidak ada pengguna yang masuk.');
-    }
-  });
-</script>
+
+      // Fungsi untuk menangani form submit
+      document
+        .getElementById("editForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const newName = document.getElementById("name").value;
+
+          // Simpan nama baru ke localStorage
+          localStorage.setItem("puserName", newName);
+
+          // Update nama di Firebase Authentication
+          const user = firebase.auth().currentUser;
+          if (user) {
+            user
+              .updateProfile({
+                displayName: newName,
+              })
+              .then(() => {
+                alert("Nama berhasil diperbarui!");
+                $("#namauser").text(newName);
+              })
+              .catch((error) => {
+                console.error("Error updating profile:", error);
+                alert("Terjadi kesalahan saat memperbarui nama.");
+              });
+          } else {
+            alert("Tidak ada pengguna yang masuk.");
+          }
+        });
+    </script>
   </body>
 </html>
