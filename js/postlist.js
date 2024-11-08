@@ -2,11 +2,22 @@ let dblokal; // Variabel untuk menyimpan referensi ke IndexedDB
 
 function initDB() {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("API_DB", 1);
+    const request = indexedDB.open("API_DB", 2);
 
     request.onupgradeneeded = function (event) {
       dblokal = event.target.result;
-      const objectStore = dblokal.createObjectStore("posts", { keyPath: "id" });
+
+      // Membuat object store untuk menyimpan postingan
+      if (!dblokal.objectStoreNames.contains("posts")) {
+        const postStore = dblokal.createObjectStore("posts", { keyPath: "id" });
+      }
+
+      // Membuat object store untuk menyimpan postingan yang sudah dilihat
+      if (!dblokal.objectStoreNames.contains("viewedPosts")) {
+        const viewedPostStore = dblokal.createObjectStore("viewedPosts", { keyPath: "id" });
+      }
+
+      console.log("Object stores created/verified.");
     };
 
     request.onsuccess = function (event) {
@@ -29,7 +40,7 @@ function savePostsToDB(posts) {
   posts.forEach((post) => {
     const request = objectStore.put(post);
     request.onsuccess = function () {
-      console.log(`Post ${post.id} saved to DB.`);
+     // console.log(`Post ${post.id} saved to DB.`);
     };
     request.onerror = function () {
       console.error(`Error saving post ${post.id}: `, request.error);
@@ -64,6 +75,7 @@ function deletePostFromDB(postId) {
   };
 }
 
+
 async function fetchAndDisplayPosts() {
   try {
     await initDB(); // Tunggu hingga database siap
@@ -80,7 +92,7 @@ async function fetchAndDisplayPosts() {
 
     // Tampilkan postingan dari DB terlebih dahulu
     postsFromDB.forEach((post) => {
-      appendPostToHTML(postlist, post);
+      appendPostToHTML(post);
     });
 
     // Hapus postingan yang tidak ada di server
@@ -88,7 +100,7 @@ async function fetchAndDisplayPosts() {
 
     postsFromDB.forEach((post) => {
       if (!serverPostIds.has(post.id)) {
-        deletePostFromDB(post.id); // Hapus dari DB
+        //deletePostFromDB(post.id); // Hapus dari DB
         const postElement = document.getElementById(`post-${post.id}`);
         if (postElement) {
           postElement.remove(); // Hapus dari tampilan
@@ -101,25 +113,22 @@ async function fetchAndDisplayPosts() {
 
     // Tampilkan postingan baru dari server
     postsFromServer.forEach((post) => {
-      appendPostToHTML(postlist, post);
+      appendPostToHTML(post);
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 }
 
-function appendPostToHTML(postlist, post) {
-  // Set bahasa lokal Moment.js ke Indonesia
-  moment.locale("id");
 
-  // Buat ID untuk card berdasarkan post.id
+
+function appendPostToHTML(post, position = "afterbegin") {
+  const postlist = document.getElementById("postlist");
+  moment.locale("id");
   const postId = `post-${post.id}`;
 
-  // Periksa apakah card dengan ID tersebut sudah ada
   if (!document.getElementById(postId)) {
-    // Format waktu menggunakan Moment.js (dalam bahasa Indonesia)
-    const formattedTimeAgo = moment(post.CreatedAt).fromNow(); // Menggunakan 'fromNow' dengan bahasa Indonesia
-
+    const formattedTimeAgo = moment(post.CreatedAt).fromNow();
     const postHTML = `
       <div class="card mt-1" id="${postId}">
         <div class="d-flex justify-content-between p-2 px-3">
@@ -127,13 +136,11 @@ function appendPostToHTML(postlist, post) {
             <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
             <div class="d-flex flex-column ml-2">
               <span class="font-weight-bold">${post.nama}</span>
-              <small class="text-primary">${formattedTimeAgo}</small> <!-- Format waktu dengan time ago dalam Bahasa Indonesia -->
+              <small class="text-primary">${formattedTimeAgo}</small>
             </div>
           </div>
           <div class="d-flex flex-row mt-1 ellipsis">
-            <small class="mr-2 view-count">${
-              post.View_Count || 0
-            } Views</small> <!-- Default View Count atau dari data -->
+            <small class="mr-2 view-count">${post.View_Count || 0} Views</small>
           </div>
         </div>
          <img src="${post.imgid}" class="img-fluid" />
@@ -143,99 +150,131 @@ function appendPostToHTML(postlist, post) {
           <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex flex-row icons d-flex align-items-center mb-2 px-4">
               <i class="fa fa-heart like-button" style="font-size: x-large; color: red; cursor: pointer;"></i>
-              <span class="px-2 love-count">${
-                post.Like_Count || 0
-              }</span> <!-- Default loveCount atau dari data -->
+              <span class="px-2 love-count">${post.Like_Count || 0}</span>
             </div>
             <div class="d-flex flex-row muted-color mb-1 comment-section" style="cursor: pointer;">
-              <span style="font-size: small">${
-                post.Comment_Count || 0
-              } Komentar</span> <!-- Menampilkan jumlah komentar yang sesuai dengan data -->
+              <span style="font-size: small">${post.Comment_Count || 0} Komentar</span>
             </div>
           </div>
         </div>
       </div>
     `;
-    postlist.insertAdjacentHTML("afterbegin", postHTML);
 
-    // Tambahkan event listener untuk tombol like
-    const likeButton = document.querySelector(`#${postId} .like-button`);
-    const loveCountSpan = document.querySelector(`#${postId} .love-count`);
-    var endpoitlik =
-      localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+    // Sisipkan post ke dalam container
+    postlist.insertAdjacentHTML(position, postHTML);
 
-    likeButton.addEventListener("click", async function () {
-      try {
-        // Kirim permintaan ke API untuk menambah like
-        const response = await fetch(
-          `https://api.bungtemin.net/FamgetAbsensi/likePost/${endpoitlik}/${post.id}`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+    // Tambahkan event listener untuk like dan komentar
+    addEventListeners(postId, post);
 
-        if (response.ok) {
-          const data = await response.json();
-          // Update jumlah love di UI
-          loveCountSpan.textContent = parseInt(loveCountSpan.textContent) + 1;
-        } else {
-          console.error(`Failed to like post ${post.id}`);
-        }
-      } catch (error) {
-        console.error("Error liking post:", error);
+    // Mulai observasi view
+    observePostView(postId, post);
+  }
+}
+
+// Fungsi untuk menambahkan event listener like dan komentar
+function addEventListeners(postId, post) {
+  const likeButton = document.querySelector(`#${postId} .like-button`);
+  const loveCountSpan = document.querySelector(`#${postId} .love-count`);
+  const commentSection = document.querySelector(`#${postId} .comment-section`);
+  var endpoitlik = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+
+  likeButton.addEventListener("click", async function () {
+    try {
+      const response = await fetch(
+        `https://api.bungtemin.net/FamgetAbsensi/likePost/${endpoitlik}/${post.id}`,
+        { method: "POST", headers: { "Content-Type": "application/json" } }
+      );
+      if (response.ok) {
+        loveCountSpan.textContent = parseInt(loveCountSpan.textContent) + 1;
+      } else {
+        console.error(`Failed to like post ${post.id}`);
       }
-    });
+    } catch (error) {
+      console.error("Error liking post:", error);
+    }
+  });
 
-    // Event listener untuk membuka halaman single post ketika komentar di klik
-    const commentSection = document.querySelector(
-      `#${postId} .comment-section`
-    );
-    commentSection.addEventListener("click", function () {
-      // Redirect ke halaman singlepost.html dengan query parameter id
-      window.location.href = `singlepost.html?id=${post.id}`;
-    });
+  commentSection.addEventListener("click", function () {
+    window.location.href = `singlepost.html?id=${post.id}`;
+  });
+}
 
-    // Menambah view ketika elemen terlihat (intersection observer)
-    const viewCountSpan = document.querySelector(`#${postId} .view-count`);
-    const observer = new IntersectionObserver(async (entries) => {
-      if (entries[0].isIntersecting) {
+// Fungsi untuk observasi view
+function observePostView(postId, post) {
+  
+  const viewCountSpan = document.querySelector(`#${postId} .view-count`);
+  const observer = new IntersectionObserver(async (entries) => {
+
+    if (entries[0].isIntersecting) {
+
+      const alreadyViewed = await isPostViewed(post.id);
+      console.log(alreadyViewed);
+      if (!alreadyViewed) {
         try {
-          // Kirim permintaan ke API untuk menambah view
           const response = await fetch(
-            `https://api.bungtemin.net/FamgetAbsensi/postview/${endpoitlik}/${post.id}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
+            `https://api.bungtemin.net/FamgetAbsensi/postview/${localStorage.getItem("uid")}/${post.id}`,
+            { method: "POST", headers: { "Content-Type": "application/json" } }
           );
-
           if (response.ok) {
             const data = await response.json();
-            // Update jumlah view di UI
             viewCountSpan.textContent = `${data.new_view_count} Views`;
+            markPostAsViewed(post.id);
           } else {
             console.error(`Failed to update view count for post ${post.id}`);
           }
         } catch (error) {
           console.error("Error updating view count:", error);
         }
-        // Hentikan observer setelah satu kali hitungan view
-        observer.disconnect();
       }
-    });
-
-    // Mulai observasi elemen
-    observer.observe(document.getElementById(postId));
-  } else {
-    console.log(`Post with ID ${post.id} already exists, skipping...`);
-  }
+      observer.disconnect();
+    }
+  });
+  observer.observe(document.getElementById(postId));
 }
 
+// Fungsi untuk mengecek apakah post sudah pernah dilihat
+function isPostViewed(postId) {
+  console.log(`Checking if post ${postId} has been viewed...`); // Debugging awal
+
+  return new Promise((resolve, reject) => {
+    if (!dblokal) {
+      console.error("IndexedDB is not initialized.");
+      return reject("IndexedDB not initialized");
+    }
+
+    // Pastikan object store "viewedPosts" ada
+    if (!dblokal.objectStoreNames.contains("viewedPosts")) {
+      console.error("Object store 'viewedPosts' not found in IndexedDB.");
+      return reject("Object store 'viewedPosts' missing");
+    }
+
+    const transaction = dblokal.transaction(["viewedPosts"], "readonly");
+    const objectStore = transaction.objectStore("viewedPosts");
+    const request = objectStore.get(postId);
+
+    request.onsuccess = function () {
+      if (request.result) {
+        console.log(`Post ${postId} has been viewed.`, request.result); // Debugging ketika post ditemukan
+        resolve(true);
+      } else {
+        console.log(`Post ${postId} has not been viewed yet.`); // Debugging ketika post belum pernah dilihat
+        resolve(false);
+      }
+    };
+
+    request.onerror = function () {
+      console.error(`Error checking if post ${postId} is viewed:`, request.error); // Debugging error
+      reject(request.error);
+    };
+  });
+}
+// Fungsi untuk menandai post sebagai sudah dilihat
+function markPostAsViewed(postId) {
+  const transaction = dblokal.transaction(["viewedPosts"], "readwrite");
+  const objectStore = transaction.objectStore("viewedPosts");
+  console.log("tandai_");
+  objectStore.put({ id: postId });
+}
 // Panggil fungsi fetchAndDisplayPosts saat halaman dimuat
 document.addEventListener("DOMContentLoaded", fetchAndDisplayPosts);
 
@@ -359,3 +398,4 @@ document
       sendDataToApi(content);
     }
   });
+
