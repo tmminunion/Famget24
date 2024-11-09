@@ -58,6 +58,32 @@
       .modal {
         z-index: 1055 !important; /* z-index default untuk modal Bootstrap */
       }
+
+      .floating-button-scroll {
+        position: fixed;
+        bottom: 20px;
+        left: 20px; /* Ubah 'left' ke 'right' agar tombol di sudut kanan bawah, atau sesuaikan sesuai kebutuhan */
+        z-index: 999;
+        border-radius: 50%; /* Membuat tombol berbentuk lingkaran */
+        width: 50px;
+        height: 50px;
+        background-color: #007bff; /* Warna latar belakang biru */
+        color: #fff; /* Warna teks putih */
+        text-align: center;
+        display: flex; /* Menggunakan flexbox untuk memusatkan isi */
+        justify-content: center; /* Memusatkan secara horizontal */
+        align-items: center; /* Memusatkan secara vertikal */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Memberikan sedikit bayangan */
+        transition: background-color 0.3s ease; /* Menambahkan efek transisi saat hover */
+      }
+
+      .floating-button-scroll:hover {
+        background-color: #0056b3; /* Mengubah warna saat hover */
+      }
+
+      .floating-button-scroll i {
+        font-size: 20px; /* Ukuran ikon */
+      }
     </style>
   </head>
 
@@ -127,7 +153,9 @@
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
+                  <h5 class="modal-title" id="postModalLabel">
+                    Buat Postingan
+                  </h5>
                   <button
                     type="button"
                     class="close"
@@ -142,21 +170,21 @@
                   <form id="postForm">
                     <!-- Textarea fleksibel -->
                     <div class="form-group">
-                      <label for="postContent">What's on your mind?</label>
+                      <label for="postContent">Apa yang kamu fikirkan?</label>
                       <textarea
                         class="form-control"
                         id="postContent"
                         rows="4"
-                        placeholder="Write something..."
+                        placeholder="Tulis Sesuatu..."
+                        required
                       ></textarea>
                     </div>
 
                     <!-- Upload gambar -->
                     <div class="form-group">
-                      <label for="postImage">Upload an image</label>
                       <input
                         type="file"
-                        class="form-control-file"
+                        class="form-control"
                         id="postImage"
                         accept="image/*"
                       />
@@ -183,7 +211,7 @@
                       <div class="spinner-border" role="status">
                         <span class="sr-only">Loading...</span>
                       </div>
-                      <p>Please wait, your post is being submitted...</p>
+                      <p>Silahkan Tunggu, Sedang mengirim...</p>
                     </div>
                   </form>
                 </div>
@@ -208,40 +236,80 @@
           <div class="row justify-content-center">
             <!-- Konten utama (col-md-6) -->
 
-            <div class="col-md-7">
+            <div class="col-md-7 mb-5" id="toplist">
               <div id="postlist"></div>
+              <button id="loadMoreBtn" class="btn btn-primary btn-block my-5">
+                Postingan Sebelumnya
+              </button>
             </div>
 
             <!-- Sidebar profil yang sticky (col-md-3) -->
-            <div class="col-md-4">
-              <div class="card sticky-top" style="top: 10px">
+            <div class="col-md-4 sticky-top">
+              <div class="card" style="top: 10px">
                 <div class="d-flex flex-column align-items-center p-3">
                   <!-- Gambar Profil -->
-                  <a href="profil.html">
+                  <div class="profile-wrapper">
+                    <a href="profil.html">
+                      <img
+                        id="ppcard"
+                        src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
+                        width="100"
+                        class="rounded-circle"
+                    /></a>
                     <img
-                      id="ppcard"
-                      src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
-                      width="100"
-                      class="rounded-circle"
-                  /></a>
+                      id="verified-badge"
+                      src="images/veri.png"
+                      class="verified-icon-profile"
+                      alt="Verified"
+                      style="display: none"
+                    />
+                  </div>
 
                   <div class="d-flex flex-column align-items-center mt-2">
                     <a href="profil.html"
                       ><span class="font-weight-bold" id="namauser"></span
                     ></a>
                     <small class="text-primary pb-3" id="emailuser"></small>
-
                     <button
-                      type="button"
+                      id="copyButton"
+                      onclick="copyToClipboard()"
                       class="btn btn-primary"
-                      data-toggle="modal"
-                      data-target="#postModal"
                     >
-                      Create a Post
+                      Copy UID
                     </button>
                   </div>
                 </div>
               </div>
+              <div class="card">
+                <div class="card-header">Buat Postingan Baru</div>
+                <div class="d-flex flex-column align-items-center m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#postModal"
+                  >
+                    <i class="fa fa-pencil-alt"></i> Buat Postingan
+                  </button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">Daftar Menu</div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <a href="#">My Profil</a>
+                    <!-- <span class="badge badge-primary badge-pill">New</span> -->
+                  </li>
+                  <li class="list-group-item">
+                    <a href="profil.html">Edit Profil</a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="verri.html">Verifikasi Profil</a>
+                  </li>
+                </ul>
+              </div>
+
+              
             </div>
           </div>
         </div>
@@ -257,6 +325,22 @@
       <i class="fa fa-pencil-alt"></i>
     </a>
 
+    <a
+      href="#"
+      class="btn btn-primary floating-button-scroll"
+      onclick="scrollToToplist()"
+    >
+      <i class="fa fa-arrow-up"></i>
+      <!-- Ubah ikon menjadi scroll/up -->
+    </a>
+ <input
+                        type="hidden"
+                        class="form-control"
+                        id="name"
+                        placeholder="Enter your name"
+                        required
+                      />
+                    </div>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -271,20 +355,46 @@
     <script src="js/main.js"></script>
     <script src="js/userdata.js"></script>
     <script src="js/postlist.js"></script>
+    <script src="js/userdataui.js"></script>
     <script>
       // Fungsi untuk menampilkan nama dari localStorage ke form
-      document.addEventListener("DOMContentLoaded", function () {
-        const nameInput = document.getElementById("name");
-        const storedName = localStorage.getItem("puserName");
-        const storedPhoto =
-          localStorage.getItem("puserPhoto") ||
-          "https://leocosta1.github.io/instagram-clone/assets/default-user.png";
 
-        if (storedName) {
-          $("#namauser").text(storedName);
-          $("#ppcard").attr("src", storedPhoto);
+      async function fetchPostsFromAPIk(page) {
+        try {
+          var endpoit =
+            localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+          var url = `https://api.bungtemin.net/FamgetAbsensi/laststory/LxLqzVMNawW1ASF60gqPwcvdbQR2?page=${page}`;
+          console.log(url);
+          const response = await fetch(url);
+
+          const data = await response.json();
+          console.log(data);
+          return data.data; // Asumsikan respons berisi array post
+        } catch (error) {
+          console.error("Error fetching posts from API:", error);
+          return [];
         }
-      });
+      }
+
+      let currentPagem = 1;
+
+      document
+        .getElementById("loadMoreBtn")
+        .addEventListener("click", async function () {
+          console.log("klik load_");
+          currentPagem++; // Naikkan halaman
+
+          const posts = await fetchPostsFromAPIk(currentPagem);
+
+          if (posts.length > 0) {
+            posts.forEach((post) => appendPostToHTML(post, "beforeend")); // Append post di akhir daftar
+          } else {
+            // Jika tidak ada lagi data, sembunyikan tombol "Load More"
+            document.getElementById("loadMoreBtn").style.display = "none";
+          }
+        });
+
+      // Fungsi untuk menyembunyikan tombol saat halaman di-scroll ke bawah dan menampilkannya kembali saat di-scroll ke atas
     </script>
   </body>
 </html>

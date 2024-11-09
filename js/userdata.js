@@ -41,9 +41,9 @@ function loginOrCreateAccount() {
     // Tampilkan nama
     currentUser.getIdToken().then((token) => {
       // Simpan token ke localStorage
-      localStorage.setItem("accessToken", token);
+
       // Simpan token ke Firebase Realtime Database
-      kirimTokenKeDatabase(currentUser, token);
+      kirimTokenKeDatabase(currentUser);
     });
   } else {
     // Pengguna belum login, cek di localStorage untuk email dan password
@@ -65,8 +65,7 @@ function loginOrCreateAccount() {
           $("#ppcard").attr("src", storedPhotoURL);
           // Mendapatkan dan menyimpan token
           userCredential.user.getIdToken().then((token) => {
-            localStorage.setItem("accessToken", token);
-            kirimTokenKeDatabase(userCredential.user, token);
+            kirimTokenKeDatabase(userCredential.user);
           });
         })
         .catch((error) => {
@@ -112,9 +111,8 @@ function loginOrCreateAccount() {
 
               // Mendapatkan token dan menyimpannya
               userCredential.user.getIdToken().then((token) => {
-                localStorage.setItem("accessToken", token);
                 localStorage.setItem("uid", userCredential.user.uid);
-                kirimTokenKeDatabase(userCredential.user, token);
+                kirimTokenKeDatabase(userCredential.user);
               });
             })
             .catch((error) => {
@@ -148,7 +146,7 @@ function getCookie(name) {
 }
 
 // Fungsi untuk menyimpan token ke Firebase Realtime Database (dengan pembatasan 30 menit)
-function kirimTokenKeDatabase(user, token) {
+function kirimTokenKeDatabase(user) {
   fetchAndSaveVerificationStatus();
   // Cek apakah token sudah disimpan dalam 30 menit terakhir
   const lastRun = getCookie("lastTokenSendTime");
@@ -162,7 +160,9 @@ function kirimTokenKeDatabase(user, token) {
   const database = firebase.database();
   let displayName = localStorage.getItem("puserName");
   let photoURL = localStorage.getItem("puserPhoto");
+  const token = generateRandomString(10);
 
+  localStorage.setItem("accessToken", token);
   const tokenData = {
     userId: user.uid,
     email: user.email,

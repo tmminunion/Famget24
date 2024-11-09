@@ -130,11 +130,11 @@ async function fetchAndDisplayPosts() {
     console.error("Error fetching posts:", error);
   }
 }
-
 function appendPostToHTML(post, position = "afterbegin") {
   const postlist = document.getElementById("postlist");
   moment.locale("id");
   const postId = `post-${post.id}`;
+  var myuid = localStorage.getItem("uid");
 
   if (!document.getElementById(postId)) {
     const formattedTimeAgo = moment(post.CreatedAt).fromNow();
@@ -142,14 +142,14 @@ function appendPostToHTML(post, position = "afterbegin") {
       <div class="card mt-1" id="${postId}">
         <div class="d-flex justify-content-between p-2 px-3">
           <div class="d-flex flex-row align-items-center">
-              <div class="profile-wrapper">
-    <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
-    ${
-      post.isVerified == 1
-        ? `<img src="images/veri.png" class="verified-icon" alt="Verified" />`
-        : ""
-    }
-  </div>
+            <div class="profile-wrapper">
+              <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
+              ${
+                post.isVerified == 1
+                  ? `<img src="images/veri.png" class="verified-icon" alt="Verified" />`
+                  : ""
+              }
+            </div>
             <div class="d-flex flex-column ml-2">
               <span class="font-weight-bold">${post.nama}</span>
               <small class="text-primary">${formattedTimeAgo}</small>
@@ -159,7 +159,7 @@ function appendPostToHTML(post, position = "afterbegin") {
             <small class="mr-2 view-count"></small>
           </div>
         </div>
-         <img src="${post.imgid}" class="img-fluid" />
+        <img src="${post.imgid}" class="img-fluid" />
         <div class="p-2">
           <p class="text-justify">${post.content}</p>
           <hr />
@@ -168,12 +168,24 @@ function appendPostToHTML(post, position = "afterbegin") {
               <i class="fa fa-heart like-button" style="font-size: x-large; color: red; cursor: pointer;"></i>
               <span class="px-2 love-count">${post.Like_Count || 0}</span>
             </div>
+ <div class="d-flex flex-row icons d-flex align-items-center mb-2 px-4">
+                 ${
+                   post.noreg == myuid
+                     ? `
+            <button class="btn btn-danger btn-sm delete-post" data-post-id="${post.id}">Delete</button>
+          `
+                     : ""
+                 }
+            </div>
+
             <div class="d-flex flex-row muted-color mb-1 comment-section" style="cursor: pointer;">
               <span style="font-size: small">${
                 post.Comment_Count || 0
               } Komentar</span>
             </div>
           </div>
+         
+       
         </div>
       </div>
     `;
@@ -181,11 +193,17 @@ function appendPostToHTML(post, position = "afterbegin") {
     // Sisipkan post ke dalam container
     postlist.insertAdjacentHTML(position, postHTML);
 
-    // Tambahkan event listener untuk like dan komentar
+    // Tambahkan event listener untuk like, komentar, dan delete
     addEventListeners(postId, post);
-
-    // Mulai observasi view
     observePostView(postId, post);
+
+    // Menambahkan event listener untuk tombol delete
+    const deleteButton = document.querySelector(`#${postId} .delete-post`);
+    if (deleteButton) {
+      deleteButton.addEventListener("click", function () {
+        deletePost(post.id);
+      });
+    }
   }
 }
 
@@ -424,4 +442,46 @@ function scrollToToplist() {
   }
 
   requestAnimationFrame(step);
+}
+
+async function deletePost(postId) {
+  try {
+    // Ambil accessToken dari localStorage
+    const accessToken = localStorage.getItem("accessToken");
+    //const accessToken = "fjkvkjfhvjfhdjkvhdfjkhvjkdf";
+    const uidna = localStorage.getItem("uid");
+    if (!accessToken) {
+      console.error("Access token is missing.");
+      return;
+    }
+
+    // Kirim request untuk menghapus post ke backend PHP
+    const response = await fetch(
+      "https://api.bungtemin.net/FamgetAbsensi/dELETEposT/" + uidna,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`, // Menambahkan token ke header
+        },
+        body: JSON.stringify({ id: postId }),
+      }
+    );
+
+    const data = await response.json();
+    console.log(data);
+
+    if (data.status === "success") {
+      alert("Post deleted successfully");
+      // Hapus elemen post dari halaman
+      const postElement = document.getElementById(`post-${postId}`);
+      if (postElement) {
+        postElement.remove();
+      }
+    } else {
+      alert("Failed to delete post: " + data.message);
+    }
+  } catch (error) {
+    console.error("Error deleting post:", error);
+  }
 }
