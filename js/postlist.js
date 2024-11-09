@@ -288,6 +288,7 @@ function sendDataToApi(content, imageUrl = null) {
       fetchAndDisplayPosts();
       // Tutup modal
       $("#postModal").modal("hide");
+      scrollToToplist();
     })
     .catch((error) => {
       console.error("Error submitting post:", error);
@@ -381,8 +382,46 @@ async function incrementView(postId) {
 
     const data = await response.json();
     viewCountSpan.textContent = `${data.viewCount} Views`;
-    console.log(data);
+    // console.log(data);
   } catch (error) {
     console.error("Error updating view:", error);
   }
+}
+function scrollToToplist() {
+  const toplist = document.getElementById("toplist");
+  const toplistPosition =
+    toplist.getBoundingClientRect().top + window.pageYOffset;
+
+  const startPosition = window.pageYOffset;
+  const distance = toplistPosition - startPosition;
+  const duration = 1000; // Durasi scroll dalam milidetik (1 detik)
+  let start = null;
+
+  // Fungsi untuk membuat animasi scroll manual
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    const progress = timestamp - start;
+    const scrollAmount = easeInOutQuad(
+      progress,
+      startPosition,
+      distance,
+      duration
+    );
+
+    window.scrollTo(0, scrollAmount);
+
+    if (progress < duration) {
+      requestAnimationFrame(step);
+    }
+  }
+
+  // Fungsi easing untuk animasi smooth (menghindari gerakan linier)
+  function easeInOutQuad(t, b, c, d) {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
+  }
+
+  requestAnimationFrame(step);
 }

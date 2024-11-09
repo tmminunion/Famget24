@@ -58,27 +58,31 @@
       .modal {
         z-index: 1055 !important; /* z-index default untuk modal Bootstrap */
       }
-      .profile-wrapper {
-        position: relative;
-        display: inline-block;
+
+      .floating-button-scroll {
+        position: fixed;
+        bottom: 20px;
+        left: 20px; /* Ubah 'left' ke 'right' agar tombol di sudut kanan bawah, atau sesuaikan sesuai kebutuhan */
+        z-index: 999;
+        border-radius: 50%; /* Membuat tombol berbentuk lingkaran */
+        width: 50px;
+        height: 50px;
+        background-color: #007bff; /* Warna latar belakang biru */
+        color: #fff; /* Warna teks putih */
+        text-align: center;
+        display: flex; /* Menggunakan flexbox untuk memusatkan isi */
+        justify-content: center; /* Memusatkan secara horizontal */
+        align-items: center; /* Memusatkan secara vertikal */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Memberikan sedikit bayangan */
+        transition: background-color 0.3s ease; /* Menambahkan efek transisi saat hover */
       }
 
-      .verified-icon {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 16px; /* Sesuaikan ukuran ikon */
-        height: 16px; /* Sesuaikan ukuran ikon */
-
-        border-radius: 50%; /* Untuk membuat ikon berbentuk bulat */
+      .floating-button-scroll:hover {
+        background-color: #0056b3; /* Mengubah warna saat hover */
       }
-      .verified-icon-profile {
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        width: 25px; /* Sesuaikan ukuran ikon */
-        height: 25px; /* Sesuaikan ukuran ikon */
-        border-radius: 50%; /* Untuk membuat ikon berbentuk bulat */
+
+      .floating-button-scroll i {
+        font-size: 20px; /* Ukuran ikon */
       }
     </style>
   </head>
@@ -232,16 +236,16 @@
           <div class="row justify-content-center">
             <!-- Konten utama (col-md-6) -->
 
-            <div class="col-md-7 mb-5">
+            <div class="col-md-7 mb-5" id="toplist">
               <div id="postlist"></div>
               <button id="loadMoreBtn" class="btn btn-primary btn-block my-5">
-                Load More
+                Postingan Sebelumnya
               </button>
             </div>
 
             <!-- Sidebar profil yang sticky (col-md-3) -->
-            <div class="col-md-4">
-              <div class="card sticky-top" style="top: 10px">
+            <div class="col-md-4 sticky-top">
+              <div class="card" style="top: 10px">
                 <div class="d-flex flex-column align-items-center p-3">
                   <!-- Gambar Profil -->
                   <div class="profile-wrapper">
@@ -253,6 +257,7 @@
                         class="rounded-circle"
                     /></a>
                     <img
+                      id="verified-badge"
                       src="images/veri.png"
                       class="verified-icon-profile"
                       alt="Verified"
@@ -265,18 +270,46 @@
                       ><span class="font-weight-bold" id="namauser"></span
                     ></a>
                     <small class="text-primary pb-3" id="emailuser"></small>
-
                     <button
-                      type="button"
+                      id="copyButton"
+                      onclick="copyToClipboard()"
                       class="btn btn-primary"
-                      data-toggle="modal"
-                      data-target="#postModal"
                     >
-                      Buat Postingan
+                      Copy UID
                     </button>
                   </div>
                 </div>
               </div>
+              <div class="card">
+                <div class="card-header">Buat Postingan Baru</div>
+                <div class="d-flex flex-column align-items-center m-3">
+                  <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#postModal"
+                  >
+                    <i class="fa fa-pencil-alt"></i> Buat Postingan
+                  </button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">Daftar Menu</div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    <a href="#">My Profil</a>
+                    <!-- <span class="badge badge-primary badge-pill">New</span> -->
+                  </li>
+                  <li class="list-group-item">
+                    <a href="profil.html">Edit Profil</a>
+                  </li>
+                  <li class="list-group-item">
+                    <a href="verri.html">Verifikasi Profil</a>
+                  </li>
+                </ul>
+              </div>
+
+              
             </div>
           </div>
         </div>
@@ -292,6 +325,22 @@
       <i class="fa fa-pencil-alt"></i>
     </a>
 
+    <a
+      href="#"
+      class="btn btn-primary floating-button-scroll"
+      onclick="scrollToToplist()"
+    >
+      <i class="fa fa-arrow-up"></i>
+      <!-- Ubah ikon menjadi scroll/up -->
+    </a>
+ <input
+                        type="hidden"
+                        class="form-control"
+                        id="name"
+                        placeholder="Enter your name"
+                        required
+                      />
+                    </div>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -306,20 +355,9 @@
     <script src="js/main.js"></script>
     <script src="js/userdata.js"></script>
     <script src="js/postlist.js"></script>
+    <script src="js/userdataui.js"></script>
     <script>
       // Fungsi untuk menampilkan nama dari localStorage ke form
-      document.addEventListener("DOMContentLoaded", function () {
-        const nameInput = document.getElementById("name");
-        const storedName = localStorage.getItem("puserName");
-        const storedPhoto =
-          localStorage.getItem("puserPhoto") ||
-          "https://leocosta1.github.io/instagram-clone/assets/default-user.png";
-
-        if (storedName) {
-          $("#namauser").text(storedName);
-          $("#ppcard").attr("src", storedPhoto);
-        }
-      });
 
       async function fetchPostsFromAPIk(page) {
         try {
@@ -355,6 +393,8 @@
             document.getElementById("loadMoreBtn").style.display = "none";
           }
         });
+
+      // Fungsi untuk menyembunyikan tombol saat halaman di-scroll ke bawah dan menampilkannya kembali saat di-scroll ke atas
     </script>
   </body>
 </html>

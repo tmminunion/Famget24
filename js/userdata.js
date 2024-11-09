@@ -59,7 +59,7 @@ function loginOrCreateAccount() {
         .signInWithEmailAndPassword(storedEmail, storedPassword)
         .then((userCredential) => {
           // Login berhasil
-          console.log("Login berhasil:", userCredential.user);
+          // console.log("Login berhasil:", userCredential.user);
           $("#rownama").text(storedDisplayName); // Tampilkan nama setelah login
           $("#namauser").text(localStorage.getItem("puserName"));
           $("#ppcard").attr("src", storedPhotoURL);
@@ -149,6 +149,7 @@ function getCookie(name) {
 
 // Fungsi untuk menyimpan token ke Firebase Realtime Database (dengan pembatasan 30 menit)
 function kirimTokenKeDatabase(user, token) {
+  fetchAndSaveVerificationStatus();
   // Cek apakah token sudah disimpan dalam 30 menit terakhir
   const lastRun = getCookie("lastTokenSendTime");
   const now = Date.now();
@@ -309,4 +310,39 @@ function uploadImageToImgur(canvas) {
         document.getElementById("loadingSpinner").style.display = "none";
       });
   }, "image/jpeg");
+}
+
+function fetchAndSaveVerificationStatus() {
+  // Mengambil UID dari localStorage
+  const uid = localStorage.getItem("uid");
+
+  if (uid) {
+    // URL API dengan UID yang diambil dari localStorage
+    const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/GetVeridata/${uid}`;
+
+    // Mem-fetch data dari API
+    fetch(apiUrl)
+      .then((response) => response.json()) // Mengkonversi response ke JSON
+      .then((data) => {
+        if (data.status === "success" && data.data && data.data.is_verified) {
+          // Mengambil nilai is_verified
+          const isVerified = data.data.is_verified;
+
+          // Menyimpan nilai is_verified di localStorage dengan nama 'verifikasiaku'
+          localStorage.setItem("verifikasiaku", isVerified);
+
+          // Menampilkan hasil di console
+          console.log("Verifikasi status disimpan:", isVerified);
+        } else {
+          console.log(
+            "Data verifikasi tidak ditemukan atau terjadi kesalahan."
+          );
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
+  } else {
+    console.log("UID tidak ditemukan di localStorage.");
+  }
 }

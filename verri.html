@@ -154,89 +154,53 @@
             <!-- Konten utama (col-md-6) -->
             <div class="col-md-7" id="postlirst">
               <!-- Include Bootstrap CSS -->
-
               <div class="card">
                 <div class="card-header">
-                  <h5>Upload Profile Picture</h5>
-                </div>
-                <div class="card-body text-center">
-                  <!-- Image and Camera Icon Container -->
-                  <div class="d-flex flex-column align-items-center p-3">
-                    <div class="image-container">
-                      <!-- Gambar Profil -->
-                      <img
-                        id="foto"
-                        src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
-                        class="rounded-circle"
-                        onclick="document.getElementById('profile-image-upload').click()"
-                      />
-                      <!-- Loading Spinner -->
-                      <div id="loadingSpinner" class="loading-spinner">
-                        <i
-                          class="fa fa-spinner fa-spin"
-                          style="font-size: 24px; color: #007bff"
-                        ></i>
-                      </div>
-
-                      <!-- Camera Icon (Clickable) -->
-                      <div
-                        class="p-image"
-                        onclick="document.getElementById('profile-image-upload').click()"
-                      >
-                        <i class="fa fa-camera"></i>
-                      </div>
-                    </div>
-
-                    <!-- File Upload Input (Hidden) -->
-                    <input
-                      id="profile-image-upload"
-                      class="file-upload"
-                      type="file"
-                      accept="image/*"
-                      onchange="processAndUploadImage()"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-header">
-                  <h5>Edit Profile</h5>
+                  <h5 class="card-title">Keuntungan Akun Terverifikasi</h5>
                 </div>
                 <div class="card-body">
-                  <form id="editForm">
-                    <!-- Input for Name -->
-                    <div class="mb-3">
-                      <label for="name" class="form-label">Nama Lenkap</label>
-                      <input
-                        type="text"
-                        class="form-control"
-                        id="name"
-                        placeholder="Enter your name"
-                        required
-                      />
-                    </div>
-                    <!-- Buttons -->
-                    <div class="d-grid gap-2">
-                      <button type="submit" class="btn btn-primary">
-                        Save Changes
-                      </button>
-                      <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
+                  <h6 class="card-subtitle mb-2 text-muted">
+                    Mengapa Verifikasi Akun Itu Penting?
+                  </h6>
+                  <ul class="list-unstyled">
+                    <li>
+                      <b><strong>Postingan tanpa batas :</strong></b> Dapat
+                      mengirim postingan langsung tanpa Approved admin, yang
+                      hanya tersedia untuk akun terverifikasi.
+                    </li>
+                    <li>
+                      <b> <strong>Status Terpercaya :</strong></b> Meningkatkan
+                      kredibilitas Anda di platform, sehingga pengguna lain
+                      lebih percaya bahwa akun anda nyata dan terdapat lencana
+                      centang biru.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h5>1. Kirim UID ke admin</h5>
+                </div>
+                <div class="card-body text-center">
+                  <p>
+                    Untuk memverifikasi akun Anda, kirimkan UID Anda ke admin
+                    melalui WhatsApp.
+                  </p>
+                  <a
+                    id="sendUidButton"
+                    href="#"
+                    class="btn btn-success"
+                    target="_blank"
+                  >
+                    Kirim UID ke Admin via WhatsApp
+                  </a>
                 </div>
               </div>
             </div>
 
             <!-- Sidebar profil yang sticky (col-md-3) -->
-            <div class="col-md-4">
-              <div class="card sticky-top" style="top: 20px">
+            <div class="col-md-4 sticky-top">
+              <div class="card" style="top: 20px">
                 <div class="d-flex flex-column align-items-center p-3">
                   <!-- Gambar Profil -->
                   <div class="profile-wrapper">
@@ -291,7 +255,14 @@
     </div>
 
     <!-- Modal Bootstrap -->
-
+ <input
+                        type="hidden"
+                        class="form-control"
+                        id="name"
+                        placeholder="Enter your name"
+                        required
+                      />
+                    </div>
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/popper.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -307,81 +278,21 @@
     <script src="js/userdata.js"></script>
     <script src="js/userdataui.js"></script>
     <script>
-      // Fungsi untuk memproses gambar dan crop menjadi 1:1 sebelum di-upload
-      function processAndUploadImage() {
-        const fileInput = document.getElementById("profile-image-upload");
-        const file = fileInput.files[0];
+      document.addEventListener("DOMContentLoaded", function () {
+        // Mengambil UID dari localStorage
+        const uid = localStorage.getItem("uid");
 
-        if (file) {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-
-          reader.onload = function (event) {
-            const img = new Image();
-            img.src = event.target.result;
-
-            img.onload = function () {
-              const canvas = document.createElement("canvas");
-              const ctx = canvas.getContext("2d");
-
-              const size = Math.min(img.width, img.height); // Ambil ukuran terkecil (untuk crop 1:1)
-              canvas.width = size;
-              canvas.height = size;
-
-              // Menggambar gambar di tengah canvas untuk crop 1:1
-              ctx.drawImage(
-                img,
-                (img.width - size) / 2,
-                (img.height - size) / 2,
-                size,
-                size,
-                0,
-                0,
-                size,
-                size
-              );
-
-              // Menampilkan preview gambar hasil cropping
-              document.getElementById("foto").src =
-                canvas.toDataURL("image/jpeg");
-
-              // Upload gambar yang sudah dicrop ke Imgur
-              uploadImageToImgur(canvas);
-            };
-          };
+        if (uid) {
+          // Membuat tautan WhatsApp dengan UID yang didapat
+          const waLink = document.getElementById("sendUidButton");
+          const message = `${uid}`;
+          waLink.href = `https://wa.me/6285882620035?text=${encodeURIComponent(
+            message
+          )}`;
+        } else {
+          console.log("UID tidak ditemukan di localStorage.");
         }
-      }
-
-      // Fungsi untuk menangani form submit
-      document
-        .getElementById("editForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
-
-          const newName = document.getElementById("name").value;
-
-          // Simpan nama baru ke localStorage
-          localStorage.setItem("puserName", newName);
-
-          // Update nama di Firebase Authentication
-          const user = firebase.auth().currentUser;
-          if (user) {
-            user
-              .updateProfile({
-                displayName: newName,
-              })
-              .then(() => {
-                alert("Nama berhasil diperbarui!");
-                $("#namauser").text(newName);
-              })
-              .catch((error) => {
-                console.error("Error updating profile:", error);
-                alert("Terjadi kesalahan saat memperbarui nama.");
-              });
-          } else {
-            alert("Tidak ada pengguna yang masuk.");
-          }
-        });
+      });
     </script>
   </body>
 </html>

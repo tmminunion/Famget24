@@ -1970,3 +1970,34 @@ h1, h2, h3, h4, h5,
   line-height: 1.5; }
   .event-29191 h3 a {
     color: #000; }
+
+
+            .profile-wrapper {
+              position: relative;
+              display: inline-block;
+            }
+      
+            .verified-icon {
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              width: 16px;
+              /* Sesuaikan ukuran ikon */
+              height: 16px;
+              /* Sesuaikan ukuran ikon */
+      
+              border-radius: 50%;
+              /* Untuk membuat ikon berbentuk bulat */
+            }
+      
+            .verified-icon-profile {
+              position: absolute;
+              bottom: 0;
+              right: 0;
+              width: 25px;
+              /* Sesuaikan ukuran ikon */
+              height: 25px;
+              /* Sesuaikan ukuran ikon */
+              border-radius: 50%;
+              /* Untuk membuat ikon berbentuk bulat */
+            }
