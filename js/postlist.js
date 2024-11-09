@@ -156,7 +156,7 @@ function appendPostToHTML(post, position = "afterbegin") {
             </div>
           </div>
           <div class="d-flex flex-row mt-1 ellipsis">
-            <small class="mr-2 view-count">${post.View_Count || 0} Views</small>
+            <small class="mr-2 view-count"></small>
           </div>
         </div>
          <img src="${post.imgid}" class="img-fluid" />
@@ -221,81 +221,17 @@ function addEventListeners(postId, post) {
 // Fungsi untuk observasi view
 function observePostView(postId, post) {
   const viewCountSpan = document.querySelector(`#${postId} .view-count`);
+
   const observer = new IntersectionObserver(async (entries) => {
     if (entries[0].isIntersecting) {
-      const alreadyViewed = await isPostViewed(post.id);
-      console.log(alreadyViewed);
-      if (!alreadyViewed) {
-        try {
-          const response = await fetch(
-            `https://api.bungtemin.net/FamgetAbsensi/postview/${localStorage.getItem(
-              "uid"
-            )}/${post.id}`,
-            { method: "POST", headers: { "Content-Type": "application/json" } }
-          );
-          if (response.ok) {
-            const data = await response.json();
-            viewCountSpan.textContent = `${data.new_view_count} Views`;
-            markPostAsViewed(post.id);
-          } else {
-            console.error(`Failed to update view count for post ${post.id}`);
-          }
-        } catch (error) {
-          console.error("Error updating view count:", error);
-        }
-      }
+      incrementView(postId);
+
       observer.disconnect();
     }
   });
   observer.observe(document.getElementById(postId));
 }
 
-// Fungsi untuk mengecek apakah post sudah pernah dilihat
-function isPostViewed(postId) {
-  console.log(`Checking if post ${postId} has been viewed...`); // Debugging awal
-
-  return new Promise((resolve, reject) => {
-    if (!dblokal) {
-      console.error("IndexedDB is not initialized.");
-      return reject("IndexedDB not initialized");
-    }
-
-    // Pastikan object store "viewedPosts" ada
-    if (!dblokal.objectStoreNames.contains("viewedPosts")) {
-      console.error("Object store 'viewedPosts' not found in IndexedDB.");
-      return reject("Object store 'viewedPosts' missing");
-    }
-
-    const transaction = dblokal.transaction(["viewedPosts"], "readonly");
-    const objectStore = transaction.objectStore("viewedPosts");
-    const request = objectStore.get(postId);
-
-    request.onsuccess = function () {
-      if (request.result) {
-        console.log(`Post ${postId} has been viewed.`, request.result); // Debugging ketika post ditemukan
-        resolve(true);
-      } else {
-        console.log(`Post ${postId} has not been viewed yet.`); // Debugging ketika post belum pernah dilihat
-        resolve(false);
-      }
-    };
-
-    request.onerror = function () {
-      console.error(
-        `Error checking if post ${postId} is viewed:`,
-        request.error
-      ); // Debugging error
-      reject(request.error);
-    };
-  });
-}
-// Fungsi untuk menandai post sebagai sudah dilihat
-function markPostAsViewed(postId) {
-  const transaction = dblokal.transaction(["viewedPosts"], "readwrite");
-  const objectStore = transaction.objectStore("viewedPosts");
-  console.log("tandai_");
-  objectStore.put({ id: postId });
-}
 // Panggil fungsi fetchAndDisplayPosts saat halaman dimuat
 document.addEventListener("DOMContentLoaded", fetchAndDisplayPosts);
 
@@ -425,3 +361,28 @@ document
       sendDataToApi(content);
     }
   });
+
+async function incrementView(postId) {
+  const viewCountSpan = document.querySelector(`#${postId} .view-count`);
+  try {
+    const postIdNumber = postId.match(/\d+/)[0];
+    const response = await fetch(
+      "https://script.google.com/macros/s/AKfycbyimpTGFiuamFlEb4BIlG2vsaVqXH_p1oLEFUkTsro2--pHMQNVm5cUWXDO2KT2t_w/exec",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({
+          postId: postIdNumber,
+        }),
+      }
+    );
+
+    const data = await response.json();
+    viewCountSpan.textContent = `${data.viewCount} Views`;
+    console.log(data);
+  } catch (error) {
+    console.error("Error updating view:", error);
+  }
+}

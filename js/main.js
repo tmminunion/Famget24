@@ -10,6 +10,7 @@ const navMenu = `
       <li><a href="admin.html" class="nav-link">Admin</a></li>
       <li><a href="/fotobingkai/index.html" class="nav-link">Foto Bingkai</a></li>
       <li><a href="sarasehan.html" class="nav-link">Estory</a></li>
+       <li><a href="profil.html" class="nav-link">MyProfil</a></li>
    </ul>
 
 `;
