@@ -14,7 +14,9 @@ function initDB() {
 
       // Membuat object store untuk menyimpan postingan yang sudah dilihat
       if (!dblokal.objectStoreNames.contains("viewedPosts")) {
-        const viewedPostStore = dblokal.createObjectStore("viewedPosts", { keyPath: "id" });
+        const viewedPostStore = dblokal.createObjectStore("viewedPosts", {
+          keyPath: "id",
+        });
       }
 
       console.log("Object stores created/verified.");
@@ -40,7 +42,7 @@ function savePostsToDB(posts) {
   posts.forEach((post) => {
     const request = objectStore.put(post);
     request.onsuccess = function () {
-     // console.log(`Post ${post.id} saved to DB.`);
+      // console.log(`Post ${post.id} saved to DB.`);
     };
     request.onerror = function () {
       console.error(`Error saving post ${post.id}: `, request.error);
@@ -62,6 +64,7 @@ function getPostsFromDB() {
     };
   });
 }
+
 function deletePostFromDB(postId) {
   const transaction = dblokal.transaction(["posts"], "readwrite");
   const objectStore = transaction.objectStore("posts");
@@ -75,13 +78,23 @@ function deletePostFromDB(postId) {
   };
 }
 
+async function lokaldata() {
+  try {
+    await initDB(); // Tunggu hingga database siap
+    const postsFromDB = await getPostsFromDB();
+    postsFromDB.forEach((post) => {
+      appendPostToHTML(post);
+    });
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+  }
+}
 
 async function fetchAndDisplayPosts() {
   try {
     await initDB(); // Tunggu hingga database siap
     const postsFromDB = await getPostsFromDB();
     const postlist = document.getElementById("postlist");
-
     // Ambil data dari API
     var endpoit = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
     const response = await fetch(
@@ -91,16 +104,13 @@ async function fetchAndDisplayPosts() {
     const postsFromServer = postsFrom.data;
 
     // Tampilkan postingan dari DB terlebih dahulu
-    postsFromDB.forEach((post) => {
-      appendPostToHTML(post);
-    });
-
+    lokaldata();
     // Hapus postingan yang tidak ada di server
     const serverPostIds = new Set(postsFromServer.map((post) => post.id));
 
     postsFromDB.forEach((post) => {
       if (!serverPostIds.has(post.id)) {
-        //deletePostFromDB(post.id); // Hapus dari DB
+        deletePostFromDB(post.id); // Hapus dari DB
         const postElement = document.getElementById(`post-${post.id}`);
         if (postElement) {
           postElement.remove(); // Hapus dari tampilan
@@ -113,14 +123,13 @@ async function fetchAndDisplayPosts() {
 
     // Tampilkan postingan baru dari server
     postsFromServer.forEach((post) => {
+      postlist.innerHTML = "";
       appendPostToHTML(post);
     });
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 }
-
-
 
 function appendPostToHTML(post, position = "afterbegin") {
   const postlist = document.getElementById("postlist");
@@ -133,7 +142,14 @@ function appendPostToHTML(post, position = "afterbegin") {
       <div class="card mt-1" id="${postId}">
         <div class="d-flex justify-content-between p-2 px-3">
           <div class="d-flex flex-row align-items-center">
-            <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
+              <div class="profile-wrapper">
+    <img src="${post.fotoprofil}" width="50" class="rounded-circle" />
+    ${
+      post.isVerified == 1
+        ? `<img src="images/veri.png" class="verified-icon" alt="Verified" />`
+        : ""
+    }
+  </div>
             <div class="d-flex flex-column ml-2">
               <span class="font-weight-bold">${post.nama}</span>
               <small class="text-primary">${formattedTimeAgo}</small>
@@ -153,7 +169,9 @@ function appendPostToHTML(post, position = "afterbegin") {
               <span class="px-2 love-count">${post.Like_Count || 0}</span>
             </div>
             <div class="d-flex flex-row muted-color mb-1 comment-section" style="cursor: pointer;">
-              <span style="font-size: small">${post.Comment_Count || 0} Komentar</span>
+              <span style="font-size: small">${
+                post.Comment_Count || 0
+              } Komentar</span>
             </div>
           </div>
         </div>
@@ -176,7 +194,8 @@ function addEventListeners(postId, post) {
   const likeButton = document.querySelector(`#${postId} .like-button`);
   const loveCountSpan = document.querySelector(`#${postId} .love-count`);
   const commentSection = document.querySelector(`#${postId} .comment-section`);
-  var endpoitlik = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+  var endpoitlik =
+    localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
 
   likeButton.addEventListener("click", async function () {
     try {
@@ -201,18 +220,17 @@ function addEventListeners(postId, post) {
 
 // Fungsi untuk observasi view
 function observePostView(postId, post) {
-  
   const viewCountSpan = document.querySelector(`#${postId} .view-count`);
   const observer = new IntersectionObserver(async (entries) => {
-
     if (entries[0].isIntersecting) {
-
       const alreadyViewed = await isPostViewed(post.id);
       console.log(alreadyViewed);
       if (!alreadyViewed) {
         try {
           const response = await fetch(
-            `https://api.bungtemin.net/FamgetAbsensi/postview/${localStorage.getItem("uid")}/${post.id}`,
+            `https://api.bungtemin.net/FamgetAbsensi/postview/${localStorage.getItem(
+              "uid"
+            )}/${post.id}`,
             { method: "POST", headers: { "Content-Type": "application/json" } }
           );
           if (response.ok) {
@@ -263,7 +281,10 @@ function isPostViewed(postId) {
     };
 
     request.onerror = function () {
-      console.error(`Error checking if post ${postId} is viewed:`, request.error); // Debugging error
+      console.error(
+        `Error checking if post ${postId} is viewed:`,
+        request.error
+      ); // Debugging error
       reject(request.error);
     };
   });
@@ -323,6 +344,9 @@ function sendDataToApi(content, imageUrl = null) {
 
       // Reset form setelah submit
       document.getElementById("postForm").reset();
+      const submitButton = document.getElementById("submitPost");
+      submitButton.disabled = false;
+      submitButton.classList.remove("disabled");
       document.getElementById("previewImage").style.display = "none";
       document.getElementById("loader").style.display = "none";
       fetchAndDisplayPosts();
@@ -363,11 +387,14 @@ document
     const content = document.getElementById("postContent").value;
     const fileInput = document.getElementById("postImage");
     const file = fileInput.files[0];
-    document.getElementById("loader").style.display = "block";
+    const submitButton = document.getElementById("submitPost");
 
-    if (content === "") {
-      alert("Please enter some content before posting!");
+    if (content === "" && !file) {
+      alert("silahkan Tuliskan Konten");
     } else if (file) {
+      submitButton.disabled = true;
+      submitButton.classList.add("disabled");
+      document.getElementById("loader").style.display = "block";
       // Logika untuk mengunggah gambar ke Imgur
       const formData = new FormData();
       formData.append("image", file);
@@ -398,4 +425,3 @@ document
       sendDataToApi(content);
     }
   });
-

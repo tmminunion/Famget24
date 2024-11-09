@@ -58,6 +58,28 @@
       .modal {
         z-index: 1055 !important; /* z-index default untuk modal Bootstrap */
       }
+      .profile-wrapper {
+        position: relative;
+        display: inline-block;
+      }
+
+      .verified-icon {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 16px; /* Sesuaikan ukuran ikon */
+        height: 16px; /* Sesuaikan ukuran ikon */
+
+        border-radius: 50%; /* Untuk membuat ikon berbentuk bulat */
+      }
+      .verified-icon-profile {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        width: 25px; /* Sesuaikan ukuran ikon */
+        height: 25px; /* Sesuaikan ukuran ikon */
+        border-radius: 50%; /* Untuk membuat ikon berbentuk bulat */
+      }
     </style>
   </head>
 
@@ -127,7 +149,9 @@
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="postModalLabel">Create a Post</h5>
+                  <h5 class="modal-title" id="postModalLabel">
+                    Buat Postingan
+                  </h5>
                   <button
                     type="button"
                     class="close"
@@ -142,21 +166,21 @@
                   <form id="postForm">
                     <!-- Textarea fleksibel -->
                     <div class="form-group">
-                      <label for="postContent">What's on your mind?</label>
+                      <label for="postContent">Apa yang kamu fikirkan?</label>
                       <textarea
                         class="form-control"
                         id="postContent"
                         rows="4"
-                        placeholder="Write something..."
+                        placeholder="Tulis Sesuatu..."
+                        required
                       ></textarea>
                     </div>
 
                     <!-- Upload gambar -->
                     <div class="form-group">
-                      <label for="postImage">Upload an image</label>
                       <input
                         type="file"
-                        class="form-control-file"
+                        class="form-control"
                         id="postImage"
                         accept="image/*"
                       />
@@ -183,7 +207,7 @@
                       <div class="spinner-border" role="status">
                         <span class="sr-only">Loading...</span>
                       </div>
-                      <p>Please wait, your post is being submitted...</p>
+                      <p>Silahkan Tunggu, Sedang mengirim...</p>
                     </div>
                   </form>
                 </div>
@@ -208,9 +232,11 @@
           <div class="row justify-content-center">
             <!-- Konten utama (col-md-6) -->
 
-            <div class="col-md-7">
+            <div class="col-md-7 mb-5">
               <div id="postlist"></div>
-              <button id="loadMoreBtn" class="btn btn-primary btn-block mt-3">Load More</button>
+              <button id="loadMoreBtn" class="btn btn-primary btn-block my-5">
+                Load More
+              </button>
             </div>
 
             <!-- Sidebar profil yang sticky (col-md-3) -->
@@ -218,13 +244,21 @@
               <div class="card sticky-top" style="top: 10px">
                 <div class="d-flex flex-column align-items-center p-3">
                   <!-- Gambar Profil -->
-                  <a href="profil.html">
+                  <div class="profile-wrapper">
+                    <a href="profil.html">
+                      <img
+                        id="ppcard"
+                        src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
+                        width="100"
+                        class="rounded-circle"
+                    /></a>
                     <img
-                      id="ppcard"
-                      src="https://leocosta1.github.io/instagram-clone/assets/default-user.png"
-                      width="100"
-                      class="rounded-circle"
-                  /></a>
+                      src="images/veri.png"
+                      class="verified-icon-profile"
+                      alt="Verified"
+                      style="display: none"
+                    />
+                  </div>
 
                   <div class="d-flex flex-column align-items-center mt-2">
                     <a href="profil.html"
@@ -238,7 +272,7 @@
                       data-toggle="modal"
                       data-target="#postModal"
                     >
-                      Create a Post
+                      Buat Postingan
                     </button>
                   </div>
                 </div>
@@ -286,46 +320,41 @@
           $("#ppcard").attr("src", storedPhoto);
         }
       });
-      
-  
-async function fetchPostsFromAPIk(page) {
-  try {
-    var endpoit = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
-    var url   =`https://api.bungtemin.net/FamgetAbsensi/laststory/LxLqzVMNawW1ASF60gqPwcvdbQR2?page=${page}`;
-    console.log(url);
-    const response = await fetch(url);
-  
-    const data = await response.json();
-    console.log(data);
-    return data.data; // Asumsikan respons berisi array post
-  } catch (error) {
-    console.error('Error fetching posts from API:', error);
-    return [];
-  }
-}
 
-let currentPagem = 1;
+      async function fetchPostsFromAPIk(page) {
+        try {
+          var endpoit =
+            localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+          var url = `https://api.bungtemin.net/FamgetAbsensi/laststory/LxLqzVMNawW1ASF60gqPwcvdbQR2?page=${page}`;
+          console.log(url);
+          const response = await fetch(url);
 
+          const data = await response.json();
+          console.log(data);
+          return data.data; // Asumsikan respons berisi array post
+        } catch (error) {
+          console.error("Error fetching posts from API:", error);
+          return [];
+        }
+      }
 
-   document.getElementById("loadMoreBtn").addEventListener("click", async function () {
-     console.log("klik load_");
-  currentPagem++; // Naikkan halaman
-  
+      let currentPagem = 1;
 
-  const posts = await fetchPostsFromAPIk(currentPagem);
+      document
+        .getElementById("loadMoreBtn")
+        .addEventListener("click", async function () {
+          console.log("klik load_");
+          currentPagem++; // Naikkan halaman
 
-  if (posts.length > 0) {
-    posts.forEach(post => appendPostToHTML(post, "beforeend")); // Append post di akhir daftar
-  } else {
-    // Jika tidak ada lagi data, sembunyikan tombol "Load More"
-    document.getElementById("loadMoreBtn").style.display = 'none';
-  }
-});
+          const posts = await fetchPostsFromAPIk(currentPagem);
 
-
-
-
-
+          if (posts.length > 0) {
+            posts.forEach((post) => appendPostToHTML(post, "beforeend")); // Append post di akhir daftar
+          } else {
+            // Jika tidak ada lagi data, sembunyikan tombol "Load More"
+            document.getElementById("loadMoreBtn").style.display = "none";
+          }
+        });
     </script>
   </body>
 </html>
