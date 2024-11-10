@@ -11,7 +11,7 @@ console.log("NORIT");
 const messaging = getMessaging(app);
 getToken(messaging)
   .then((currentToken) => {
-    console.log(currentToken);
+    // console.log(currentToken);
     if (currentToken) {
       const topikna = "famget";
 
