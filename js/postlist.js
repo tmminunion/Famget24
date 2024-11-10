@@ -91,6 +91,7 @@ async function lokaldata() {
 }
 
 async function fetchAndDisplayPosts() {
+  $("#preloader").show();
   try {
     await initDB(); // Tunggu hingga database siap
     const postsFromDB = await getPostsFromDB();
@@ -104,7 +105,7 @@ async function fetchAndDisplayPosts() {
     const postsFromServer = postsFrom.data;
     //console.log(postsFromServer);
     // Tampilkan postingan dari DB terlebih dahulu
-    // lokaldata();
+    lokaldata();
     // Hapus postingan yang tidak ada di server
     const serverPostIds = new Set(postsFromServer.map((post) => post.id));
 
@@ -219,6 +220,7 @@ function appendPostToHTML(post, position = "afterbegin") {
       });
     }
   }
+  $("#preloader").hide();
 }
 
 // Fungsi untuk menambahkan event listener like dan komentar

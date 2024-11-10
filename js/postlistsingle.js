@@ -1,4 +1,5 @@
 async function fetchAndDisplayPosts() {
+  $("#preloader").show();
   try {
     // Ambil id dari parameter URL (contoh: singlepost.html?id=133)
     const urlParams = new URLSearchParams(window.location.search);
@@ -220,6 +221,7 @@ async function getComments(postId) {
         commentsList.insertAdjacentHTML("beforeend", commentHTML);
       });
     }
+    $("#preloader").hide();
   } catch (error) {
     console.error("Error fetching comments:", error);
   }
