@@ -20,6 +20,23 @@ document.addEventListener("DOMContentLoaded", function () {
   if (isVerified === "1") {
     // Display verified badge if user is verified
     document.getElementById("verified-badge").style.display = "block";
+    // Ambil referensi ke elemen <ul>
+    const ul = document.querySelector(".list-group");
+
+    // Cek apakah elemen <ul> ditemukan
+    if (ul) {
+      // HTML yang ingin ditambahkan
+      const newItemHTML = `
+    <li class="list-group-item">
+      <a href="saradmin.html">Aproved Postingan</a>
+    </li>
+  `;
+
+      // Sisipkan HTML baru di akhir <ul>
+      ul.insertAdjacentHTML("beforeend", newItemHTML);
+    } else {
+      console.log("Elemen <ul> tidak ditemukan.");
+    }
   }
 });
 

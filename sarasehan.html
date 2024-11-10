@@ -385,7 +385,7 @@
           currentPagem++; // Naikkan halaman
 
           const posts = await fetchPostsFromAPIk(currentPagem);
-
+ savePostsToDB(posts); 
           if (posts.length > 0) {
             posts.forEach((post) => appendPostToHTML(post, "beforeend")); // Append post di akhir daftar
           } else {

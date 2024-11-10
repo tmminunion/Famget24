@@ -1,133 +1,41 @@
-let dblokal; // Variabel untuk menyimpan referensi ke IndexedDB
-
-function initDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("API_DB", 2);
-
-    request.onupgradeneeded = function (event) {
-      dblokal = event.target.result;
-
-      // Membuat object store untuk menyimpan postingan
-      if (!dblokal.objectStoreNames.contains("posts")) {
-        const postStore = dblokal.createObjectStore("posts", { keyPath: "id" });
-      }
-
-      // Membuat object store untuk menyimpan postingan yang sudah dilihat
-      if (!dblokal.objectStoreNames.contains("viewedPosts")) {
-        const viewedPostStore = dblokal.createObjectStore("viewedPosts", {
-          keyPath: "id",
-        });
-      }
-
-      console.log("Object stores created/verified.");
-    };
-
-    request.onsuccess = function (event) {
-      dblokal = event.target.result;
-      console.log("Database initialized.");
-      resolve(); // Menyelesaikan Promise setelah database siap
-    };
-
-    request.onerror = function (event) {
-      console.error("Database error: ", event.target.errorCode);
-      reject(event.target.errorCode); // Menyelesaikan Promise dengan error
-    };
-  });
-}
-
-function savePostsToDB(posts) {
-  const transaction = dblokal.transaction(["posts"], "readwrite");
-  const objectStore = transaction.objectStore("posts");
-
-  posts.forEach((post) => {
-    const request = objectStore.put(post);
-    request.onsuccess = function () {
-      // console.log(`Post ${post.id} saved to DB.`);
-    };
-    request.onerror = function () {
-      console.error(`Error saving post ${post.id}: `, request.error);
-    };
-  });
-}
-
-function getPostsFromDB() {
-  return new Promise((resolve, reject) => {
-    const transaction = dblokal.transaction(["posts"], "readonly");
-    const objectStore = transaction.objectStore("posts");
-    const request = objectStore.getAll();
-
-    request.onsuccess = function () {
-      resolve(request.result);
-    };
-    request.onerror = function () {
-      reject(request.error);
-    };
-  });
-}
-
-function deletePostFromDB(postId) {
-  const transaction = dblokal.transaction(["posts"], "readwrite");
-  const objectStore = transaction.objectStore("posts");
-  const request = objectStore.delete(postId);
-
-  request.onsuccess = function () {
-    console.log(`Post ${postId} deleted from DB.`);
-  };
-  request.onerror = function () {
-    console.error(`Error deleting post ${postId}: `, request.error);
-  };
-}
-
-async function lokaldata() {
-  try {
-    await initDB(); // Tunggu hingga database siap
-    const postsFromDB = await getPostsFromDB();
-    postsFromDB.forEach((post) => {
-      appendPostToHTML(post);
-    });
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-  }
-}
-
 async function fetchAndDisplayPosts() {
   try {
-    await initDB(); // Tunggu hingga database siap
-    const postsFromDB = await getPostsFromDB();
-    const postlist = document.getElementById("postlist");
-    // Ambil data dari API
-    var endpoit = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+    // Ambil id dari parameter URL (contoh: singlepost.html?id=133)
+    const urlParams = new URLSearchParams(window.location.search);
+    const postId = urlParams.get("id"); // Ambil id dari query parameter 'id'
+    console.log(postId);
+    if (!postId) {
+      console.error("ID parameter tidak ditemukan di URL");
+      window.location.href = "sarasehan.html"; // Redirect jika tidak ada ID
+      return;
+    }
+
+    // Ambil uid dari localStorage atau gunakan default
+    var endpoint =
+      localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+
+    // Fetch data berdasarkan id post
     const response = await fetch(
-      "https://api.bungtemin.net/FamgetAbsensi/laststory/" + endpoit
+      `https://api.bungtemin.net/FamgetAbsensi/lastsingle/${endpoint}?id=${postId}`
     );
+
     const postsFrom = await response.json();
+
+    // Cek jika data tidak ditemukan atau kosong
+    if (!postsFrom || !postsFrom.data) {
+      console.error("Post tidak ditemukan");
+      window.location.href = "sarasehan.html"; // Redirect jika postingan tidak ditemukan
+      return;
+    }
+
     const postsFromServer = postsFrom.data;
-    //console.log(postsFromServer);
-    // Tampilkan postingan dari DB terlebih dahulu
-    // lokaldata();
-    // Hapus postingan yang tidak ada di server
-    const serverPostIds = new Set(postsFromServer.map((post) => post.id));
+    console.log(postsFromServer);
 
-    postsFromDB.forEach((post) => {
-      if (!serverPostIds.has(post.id)) {
-        deletePostFromDB(post.id);
-        const postElement = document.getElementById(`post-${post.id}`);
-        if (postElement) {
-          postElement.remove();
-        }
-      }
-    });
-
-    // Simpan postingan baru ke IndexedDB
-    savePostsToDB(postsFromServer); // Simpan ke IndexedDB
-    postsFromServer.sort((a, b) => a.id - b.id);
     // Tampilkan postingan baru dari server
-    postsFromServer.forEach((post) => {
-      //  postlist.innerHTML = "";
-      appendPostToHTML(post);
-    });
+    appendPostToHTML(postsFromServer);
   } catch (error) {
     console.error("Error fetching posts:", error);
+    window.location.href = "sarasehan.html"; // Redirect jika terjadi error
   }
 }
 
@@ -155,7 +63,7 @@ function appendPostToHTML(post, position = "afterbegin") {
       : ""; // Tidak menampilkan img jika imgid kosong
 
     const postHTML = `
-      <div class="card mt-1" id="${postId}">
+      <div class="card" id="${postId}">
         <div class="d-flex justify-content-between p-2 px-3">
           <div class="d-flex flex-row align-items-center">
             <div class="profile-wrapper">
@@ -181,11 +89,11 @@ function appendPostToHTML(post, position = "afterbegin") {
           <p class="text-justify">${post.content}</p>
           <hr />
           <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex flex-row icons d-flex align-items-center mb-2 px-4">
+            <div class="d-flex flex-row icons d-flex align-items-center px-4">
               <i class="fa fa-heart like-button" style="font-size: x-large; color: red; cursor: pointer;"></i>
               <span class="px-2 love-count">${post.Like_Count || 0}</span>
             </div>
-            <div class="d-flex flex-row icons d-flex align-items-center mb-2 px-4">
+            <div class="d-flex flex-row icons d-flex align-items-center px-4">
                  ${
                    post.noreg == myuid || verifiedAccount == "1" // Tambahkan pengecekan akun verifikasi
                      ? `
@@ -194,11 +102,24 @@ function appendPostToHTML(post, position = "afterbegin") {
                      : ""
                  }
             </div>
-            <div class="d-flex flex-row muted-color mb-1 comment-section" style="cursor: pointer;">
+            <div class="d-flex flex-row muted-color comment-section" style="cursor: pointer;">
               <span style="font-size: small">${
                 post.Comment_Count || 0
               } Komentar</span>
             </div>
+          </div>
+        </div>
+        <!-- Card Footer - Tempat untuk menampilkan komentar -->
+        <div class="card-footer">
+          <div class="comments-section">
+          <div class="comments-list mt-3" id="comments-list">
+              <!-- Komentar-komentar yang sudah ada akan tampil di sini -->
+            </div>
+            <div class="comment-input">
+              <textarea id="newdodol" class="form-control" placeholder="Tulis komentar..."></textarea>
+              <button class="btn btn-primary mt-2 comment-submit">Kirim</button>
+            </div>
+            
           </div>
         </div>
       </div>
@@ -206,7 +127,7 @@ function appendPostToHTML(post, position = "afterbegin") {
 
     // Sisipkan post ke dalam container
     postlist.insertAdjacentHTML(position, postHTML);
-
+    getComments(postId);
     // Tambahkan event listener untuk like, komentar, dan delete
     addEventListeners(postId, post);
     observePostView(postId, post);
@@ -218,6 +139,176 @@ function appendPostToHTML(post, position = "afterbegin") {
         deletePost(post.id);
       });
     }
+
+    // Menambahkan event listener untuk tombol kirim komentar
+    const commentSubmitButton = document.querySelector(
+      `#${postId} .comment-submit`
+    );
+    if (commentSubmitButton) {
+      commentSubmitButton.addEventListener("click", function () {
+        const commentText = document.querySelector(
+          `#${postId} .comment-input textarea`
+        ).value;
+        if (commentText.trim() !== "") {
+          addNewComment(post.id, commentText);
+        }
+      });
+    }
+  }
+}
+
+// Fungsi untuk mengambil komentar dari API dan menampilkan
+async function getComments(postId) {
+  try {
+    // Ekstraksi angka dari postId (misal: "post-132" menjadi "132")
+    const numericPostId = postId.replace(/\D/g, ""); // Hanya mengambil angka
+
+    // Ambil data komentar dari API
+    var endpoitlik =
+      localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+    const response = await fetch(
+      `https://api.bungtemin.net/FamgetAbsensi/getComments/${endpoitlik}/${numericPostId}`
+    );
+    const data = await response.json();
+    console.log(data);
+
+    if (data && data.comments) {
+      const commentsList = document.getElementById(`comments-list`);
+      commentsList.innerHTML = ""; // Kosongkan dulu komentar yang ada
+      var myuid = localStorage.getItem("uid");
+      var verifiedAccount = localStorage.getItem("verifikasiaku"); // Tambahkan pengecekan akun verifikasi
+      // Urutkan komentar berdasarkan id dari 1 ke 10 (ascending order)
+      data.comments.sort((a, b) => a.id - b.id);
+
+      // Menampilkan komentar yang ada dari API
+      data.comments.forEach((comment) => {
+        const formattedTimeAgo = moment(comment.CreatedAt).fromNow(); // Format waktu menggunakan Moment.js
+
+        const commentHTML = `
+  <div class="card p-2 shadow-sm rounded-lg" id="comment-${comment.id}">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="user d-flex flex-row align-items-center">
+        <img src="${
+          comment.fotoprofil || "https://i.imgur.com/hczKIze.jpg"
+        }" width="30" class="user-img rounded-circle mx-2">
+        <span class="mx-1">
+          <small class="font-weight-bold text-primary">${
+            comment.nama
+          }</small><br>
+          <small class="font-weight-bold">${comment.content}</small>
+        </span>
+      </div>
+    </div>
+
+    <div class="action d-flex justify-content-between mt-3 align-items-center">
+      <div class="reply d-flex align-items-center">
+        <small class="mr-3 text-muted">${formattedTimeAgo}</small>
+      </div>
+
+      <div class="icons align-items-center">
+        ${
+          // Tampilkan tombol "Hapus" jika pengguna adalah pemilik komentar atau akunnya sudah diverifikasi
+          comment.noreg == myuid || verifiedAccount == "1"
+            ? `<small class="text-muted" onclick="deleteComment(${comment.id})">Hapus</small>`
+            : ""
+        }
+      </div>
+    </div>
+  </div>
+`;
+
+        commentsList.insertAdjacentHTML("beforeend", commentHTML);
+      });
+    }
+  } catch (error) {
+    console.error("Error fetching comments:", error);
+  }
+}
+// Fungsi untuk menghapus komentar
+async function deleteComment(commentId) {
+  try {
+    const confirmDelete = confirm(
+      "Apakah Anda yakin ingin menghapus komentar ini?"
+    );
+    if (!confirmDelete) return;
+
+    const endpoitlik =
+      localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+    const accessToken = localStorage.getItem("accessToken");
+
+    // Pastikan ada token akses sebelum melakukan permintaan
+    if (!accessToken) {
+      console.error("Access token tidak ditemukan");
+      return;
+    }
+
+    // Kirim permintaan delete ke API (dengan POST dan Authorization header)
+    const response = await fetch(
+      `https://api.bungtemin.net/FamgetAbsensi/deleteComment/${endpoitlik}/${commentId}`,
+      {
+        method: "POST", // Menggunakan POST untuk penghapusan
+        headers: {
+          "Content-Type": "application/json", // Tipe konten JSON
+          Authorization: `Bearer ${accessToken}`, // Menambahkan token akses di header
+        },
+        body: JSON.stringify({ commentId: commentId }), // Mengirim ID komentar yang akan dihapus
+      }
+    );
+
+    console.log(response);
+
+    if (response.ok) {
+      // Hapus elemen komentar dari DOM
+      const commentElement = document.getElementById(`comment-${commentId}`);
+      if (commentElement) {
+        commentElement.remove();
+      }
+      console.log(`Comment with ID ${commentId} deleted`);
+    } else {
+      console.error(`Failed to delete comment with ID ${commentId}`);
+    }
+  } catch (error) {
+    console.error("Error deleting comment:", error);
+  }
+}
+
+async function addNewComment(postId, commentText) {
+  const accessToken = localStorage.getItem("accessToken");
+  var endpoitlik =
+    localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+  var ennama = localStorage.getItem("puserName");
+  var eprofil = localStorage.getItem("puserPhoto");
+  try {
+    // Kirim komentar baru ke API
+    const response = await fetch(
+      `https://api.bungtemin.net/FamgetAbsensi/addComment/${endpoitlik}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`, // Menambahkan token ke header
+        },
+        body: JSON.stringify({
+          postId: postId,
+          commentText: commentText,
+          noreg: localStorage.getItem("uid"),
+          nama: ennama, // Ganti dengan nama yang sesuai
+          fotoprofil: eprofil, // Menyertakan UID user (jika ada)
+        }),
+      }
+    );
+
+    const data = await response.json();
+    console.log(data);
+    if ((data.status = "success")) {
+      // Jika berhasil, muat ulang komentar
+      getComments(postId);
+      document.querySelector(`#newdodol`).value = "";
+    } else {
+      alert("Gagal menambahkan komentar");
+    }
+  } catch (error) {
+    console.error("Error posting comment:", error);
   }
 }
 

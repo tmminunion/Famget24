@@ -231,9 +231,8 @@
 
         // Combine kode and sheetName to form the localStorage key
         const localStorageKey = kode + sheetName; // e.g., 'tuiminggu'
+        const localStorageTimestampKey = localStorageKey + "_timestamp"; // For storing the last updated time
         $("#preloader").show();
-        // Check if data already exists in localStorage
-        const localData = localStorage.getItem(localStorageKey);
 
         // Function to populate the table with data
         function populateTable(data) {
@@ -257,30 +256,60 @@
           });
         }
 
-        if (localData) {
-          // If data exists in localStorage, use it
-          const parsedData = JSON.parse(localData);
-          populateTable(parsedData);
-        } else {
-          // If data does not exist, fetch it from the API
-          const apiUrl = `https://script.google.com/macros/s/AKfycbxgMPLZDQ_kq_n7OibpZqyBdXLaNONoUtIsDQONqkB0Hly8GfuFO5tbBN8LHLOcXdE/exec?sheet=${sheetName}`;
-
-          $.ajax({
-            url: apiUrl,
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-              // Populate table with the data
-              populateTable(data);
-
-              // Save the data to localStorage as a string
-              localStorage.setItem(localStorageKey, JSON.stringify(data));
-            },
-            error: function (xhr, status, error) {
-              console.log("An error occurred: " + error);
-            },
-          });
+        // Function to get the current time in milliseconds
+        function getCurrentTime() {
+          return new Date().getTime();
         }
+
+        // Function to check and update the rundown data every 30 minutes
+        function updateDataIfNeeded() {
+          const localData = localStorage.getItem(localStorageKey);
+          const lastUpdated = localStorage.getItem(localStorageTimestampKey);
+
+          // Check if data exists in localStorage and if it's older than 30 minutes
+          if (
+            localData &&
+            lastUpdated &&
+            getCurrentTime() - parseInt(lastUpdated) < 30 * 60 * 1000
+          ) {
+            // If data is recent (less than 30 minutes old), use it
+            const parsedData = JSON.parse(localData);
+            populateTable(parsedData);
+          } else {
+            // If no data or data is older than 30 minutes, fetch new data from API
+            const apiUrl = `https://script.google.com/macros/s/AKfycbxgMPLZDQ_kq_n7OibpZqyBdXLaNONoUtIsDQONqkB0Hly8GfuFO5tbBN8LHLOcXdE/exec?sheet=${sheetName}`;
+
+            $.ajax({
+              url: apiUrl,
+              method: "GET",
+              dataType: "json",
+              success: function (data) {
+                // Populate the table with the new data
+                populateTable(data);
+
+                // Save the new data to localStorage
+                localStorage.setItem(localStorageKey, JSON.stringify(data));
+
+                // Save the timestamp of the update to localStorage
+                localStorage.setItem(
+                  localStorageTimestampKey,
+                  getCurrentTime().toString()
+                );
+              },
+              error: function (xhr, status, error) {
+                console.log("An error occurred: " + error);
+              },
+            });
+          }
+        }
+
+        // Initialize by checking and updating data
+        updateDataIfNeeded();
+
+        // Set an interval to check and update data every 30 minutes
+        setInterval(function () {
+          updateDataIfNeeded();
+        }, 30 * 60 * 1000); // 30 minutes interval
       });
     </script>
   </body>

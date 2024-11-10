@@ -1,125 +1,12 @@
-let dblokal; // Variabel untuk menyimpan referensi ke IndexedDB
-
-function initDB() {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open("API_DB", 2);
-
-    request.onupgradeneeded = function (event) {
-      dblokal = event.target.result;
-
-      // Membuat object store untuk menyimpan postingan
-      if (!dblokal.objectStoreNames.contains("posts")) {
-        const postStore = dblokal.createObjectStore("posts", { keyPath: "id" });
-      }
-
-      // Membuat object store untuk menyimpan postingan yang sudah dilihat
-      if (!dblokal.objectStoreNames.contains("viewedPosts")) {
-        const viewedPostStore = dblokal.createObjectStore("viewedPosts", {
-          keyPath: "id",
-        });
-      }
-
-      console.log("Object stores created/verified.");
-    };
-
-    request.onsuccess = function (event) {
-      dblokal = event.target.result;
-      console.log("Database initialized.");
-      resolve(); // Menyelesaikan Promise setelah database siap
-    };
-
-    request.onerror = function (event) {
-      console.error("Database error: ", event.target.errorCode);
-      reject(event.target.errorCode); // Menyelesaikan Promise dengan error
-    };
-  });
-}
-
-function savePostsToDB(posts) {
-  const transaction = dblokal.transaction(["posts"], "readwrite");
-  const objectStore = transaction.objectStore("posts");
-
-  posts.forEach((post) => {
-    const request = objectStore.put(post);
-    request.onsuccess = function () {
-      // console.log(`Post ${post.id} saved to DB.`);
-    };
-    request.onerror = function () {
-      console.error(`Error saving post ${post.id}: `, request.error);
-    };
-  });
-}
-
-function getPostsFromDB() {
-  return new Promise((resolve, reject) => {
-    const transaction = dblokal.transaction(["posts"], "readonly");
-    const objectStore = transaction.objectStore("posts");
-    const request = objectStore.getAll();
-
-    request.onsuccess = function () {
-      resolve(request.result);
-    };
-    request.onerror = function () {
-      reject(request.error);
-    };
-  });
-}
-
-function deletePostFromDB(postId) {
-  const transaction = dblokal.transaction(["posts"], "readwrite");
-  const objectStore = transaction.objectStore("posts");
-  const request = objectStore.delete(postId);
-
-  request.onsuccess = function () {
-    console.log(`Post ${postId} deleted from DB.`);
-  };
-  request.onerror = function () {
-    console.error(`Error deleting post ${postId}: `, request.error);
-  };
-}
-
-async function lokaldata() {
-  try {
-    await initDB(); // Tunggu hingga database siap
-    const postsFromDB = await getPostsFromDB();
-    postsFromDB.forEach((post) => {
-      appendPostToHTML(post);
-    });
-  } catch (error) {
-    console.error("Error fetching posts:", error);
-  }
-}
-
 async function fetchAndDisplayPosts() {
   try {
-    await initDB(); // Tunggu hingga database siap
-    const postsFromDB = await getPostsFromDB();
-    const postlist = document.getElementById("postlist");
     // Ambil data dari API
     var endpoit = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
     const response = await fetch(
-      "https://api.bungtemin.net/FamgetAbsensi/laststory/" + endpoit
+      "https://api.bungtemin.net/FamgetAbsensi/laststorydraft/" + endpoit
     );
     const postsFrom = await response.json();
     const postsFromServer = postsFrom.data;
-    //console.log(postsFromServer);
-    // Tampilkan postingan dari DB terlebih dahulu
-    // lokaldata();
-    // Hapus postingan yang tidak ada di server
-    const serverPostIds = new Set(postsFromServer.map((post) => post.id));
-
-    postsFromDB.forEach((post) => {
-      if (!serverPostIds.has(post.id)) {
-        deletePostFromDB(post.id);
-        const postElement = document.getElementById(`post-${post.id}`);
-        if (postElement) {
-          postElement.remove();
-        }
-      }
-    });
-
-    // Simpan postingan baru ke IndexedDB
-    savePostsToDB(postsFromServer); // Simpan ke IndexedDB
     postsFromServer.sort((a, b) => a.id - b.id);
     // Tampilkan postingan baru dari server
     postsFromServer.forEach((post) => {
@@ -187,9 +74,10 @@ function appendPostToHTML(post, position = "afterbegin") {
             </div>
             <div class="d-flex flex-row icons d-flex align-items-center mb-2 px-4">
                  ${
-                   post.noreg == myuid || verifiedAccount == "1" // Tambahkan pengecekan akun verifikasi
+                   verifiedAccount == "1" // Tambahkan pengecekan akun verifikasi
                      ? `
-            <button class="btn btn-danger btn-sm delete-post" data-post-id="${post.id}">Delete</button>
+            <button class="btn btn-danger btn-sm delete-post mx-2" data-post-id="${post.id}">Delete</button>
+            <button class="btn btn-primary btn-sm approved-post mx-2" data-post-id="${post.id}">Approved</button>
           `
                      : ""
                  }
@@ -216,6 +104,13 @@ function appendPostToHTML(post, position = "afterbegin") {
     if (deleteButton) {
       deleteButton.addEventListener("click", function () {
         deletePost(post.id);
+      });
+    }
+
+    const aprovedButton = document.querySelector(`#${postId} .approved-post`);
+    if (aprovedButton) {
+      aprovedButton.addEventListener("click", function () {
+        aprovedPost(post.id);
       });
     }
   }
@@ -465,6 +360,57 @@ function scrollToToplist() {
   }
 
   requestAnimationFrame(step);
+}
+
+async function aprovedPost(id) {
+  console.log(id);
+  const isConfirmed = confirm(
+    "Apakah Anda yakin ingin Menyetujui postingan ini?"
+  );
+
+  // Jika pengguna menekan "Cancel", batalkan penghapusan
+  if (!isConfirmed) {
+    return;
+  }
+  try {
+    // Ambil accessToken dari localStorage
+    const accessToken = localStorage.getItem("accessToken");
+    //const accessToken = "fjkvkjfhvjfhdjkvhdfjkhvjkdf";
+    const uidna = localStorage.getItem("uid");
+    if (!accessToken) {
+      console.error("Access token is missing.");
+      return;
+    }
+
+    // Kirim request untuk menghapus post ke backend PHP
+    const response = await fetch(
+      "https://api.bungtemin.net/FamgetAbsensi/Approvedpost/" + uidna,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`, // Menambahkan token ke header
+        },
+        body: JSON.stringify({ id: id }),
+      }
+    );
+
+    const data = await response.json();
+    console.log(data);
+
+    if (data.status === "success") {
+      //alert("Post deleted successfully");
+      // Hapus elemen post dari halaman
+      const postElement = document.getElementById(`post-${id}`);
+      if (postElement) {
+        postElement.remove();
+      }
+    } else {
+      alert("Failed to delete post: " + data.message);
+    }
+  } catch (error) {
+    console.error("Error deleting post:", error);
+  }
 }
 
 async function deletePost(postId) {

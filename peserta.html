@@ -215,15 +215,34 @@
           return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
 
-        // Get the 'date' parameter from URL and set default if not provided
-
         const kode = localStorage.getItem("kode") + "peserta";
-        const localStorageKey = kode + "sheetName";
+        const cookieDataKey = kode + "sheetName"; // Cookie key for storing data
+        const cookieTimestampKey = cookieDataKey + "_lastUpdated"; // Cookie key for storing the timestamp of last update
+        const updateInterval = 30 * 60 * 1000; // 30 minutes in milliseconds
+
         $("#preloader").show();
-        const localData = localStorage.getItem(localStorageKey);
+
+        // Function to get a cookie value by name
+        function getCookie(name) {
+          const match = document.cookie.match(
+            new RegExp("(^| )" + name + "=([^;]+)")
+          );
+          if (match) return match[2];
+          return null;
+        }
+
+        // Function to set a cookie with a specific expiration time (in minutes)
+        function setCookie(name, value, minutes) {
+          const date = new Date();
+          date.setTime(date.getTime() + minutes * 60 * 1000); // Add minutes to the current time
+          const expires = "expires=" + date.toUTCString();
+          document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
 
         // Function to populate the table with data
         function populateTable(data) {
+          $("#dataTable tbody").empty(); // Clear the table before adding new data
+
           $.each(data, function (index, user) {
             var line = Linenya[user.Lineid];
             $("#dataTable tbody").append(
@@ -241,17 +260,15 @@
                 user.BusSeat +
                 "</td></tr>"
             );
-            $("#preloader").hide();
           });
 
-          // Setelah data ditambahkan, inisialisasi DataTable
+          $("#preloader").hide();
+          // After data is added, initialize DataTable
           $("#dataTable").DataTable();
         }
 
-        if (localData) {
-          const parsedData = JSON.parse(localData);
-          populateTable(parsedData);
-        } else {
+        // Function to fetch data from API
+        function fetchDataFromAPI() {
           const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApi`;
 
           $.ajax({
@@ -260,13 +277,34 @@
             dataType: "json",
             success: function (data) {
               populateTable(data);
-              localStorage.setItem(localStorageKey, JSON.stringify(data));
+              setCookie(cookieDataKey, JSON.stringify(data), 30); // Save the data in cookie for 30 minutes
+              setCookie(cookieTimestampKey, Date.now(), 30); // Save the current timestamp
             },
             error: function (xhr, status, error) {
               console.log("An error occurred: " + error);
             },
           });
         }
+
+        // Check if cookie data exists and is not older than 30 minutes
+        const cookieData = getCookie(cookieDataKey);
+        const lastUpdated = getCookie(cookieTimestampKey);
+
+        if (
+          cookieData &&
+          lastUpdated &&
+          Date.now() - parseInt(lastUpdated) < updateInterval
+        ) {
+          const parsedData = JSON.parse(cookieData);
+          populateTable(parsedData);
+        } else {
+          fetchDataFromAPI();
+        }
+
+        // Set an interval to update the data every 30 minutes
+        setInterval(function () {
+          fetchDataFromAPI();
+        }, updateInterval);
       });
     </script>
   </body>

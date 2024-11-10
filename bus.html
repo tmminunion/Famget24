@@ -576,8 +576,8 @@
           return decodeURIComponent(results[2].replace(/\+/g, " "));
         }
 
-        // Get the 'date' parameter from URL and set default if not provided
-        const sheetName = getParameterByName("sheet") || "1"; // Default to 'sabtu' if not provided
+        // Get the 'sheet' parameter from URL, default to '1' if not provided
+        const sheetName = getParameterByName("sheet") || "1"; // Default to '1' if not provided
         if (sheetName) {
           const activeTd = document.getElementById(`bus-${sheetName}`);
           if (activeTd) {
@@ -585,15 +585,29 @@
             activeTd.classList.add("activer");
           }
         }
-        $("#manifest").text("MANIFEST BUS " + sheetName);
-        // Example var "kode"
-        const kode = "aswewdfsdfseassdd"; // This can be anything that you want
 
-        // Combine kode and sheetName to form the localStorage key
-        const localStorageKey = kode + sheetName; // e.g., 'tuiminggu'
-        $("#preloader").show();
-        // Check if data already exists in localStorage
-        const localData = localStorage.getItem(localStorageKey);
+        $("#manifest").text("MANIFEST BUS " + sheetName);
+
+        // Function to get a cookie value by name
+        function getCookie(name) {
+          const match = document.cookie.match(
+            new RegExp("(^| )" + name + "=([^;]+)")
+          );
+          if (match) return match[2];
+          return null;
+        }
+
+        // Function to set a cookie with a specific expiration time (in minutes)
+        function setCookie(name, value, minutes) {
+          const date = new Date();
+          date.setTime(date.getTime() + minutes * 60 * 1000); // Add minutes to the current time
+          const expires = "expires=" + date.toUTCString();
+          document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        // Combine sheetName to form the cookie key
+        const cookieDataKey = "data-" + sheetName; // e.g., 'data-1'
+        const cookieTimestampKey = cookieDataKey + "_lastUpdated"; // Cookie key for storing the timestamp
 
         // Function to populate the table with data
         function populateTable(data) {
@@ -637,12 +651,20 @@
           );
         }
 
-        if (localData) {
-          // If data exists in localStorage, use it
-          const parsedData = JSON.parse(localData);
+        // Check if data exists in cookie and if it's not older than 30 minutes
+        const cookieData = getCookie(cookieDataKey);
+        const lastUpdated = getCookie(cookieTimestampKey);
+
+        // Update the data if cookie is older than 30 minutes or if no cookie data exists
+        if (
+          cookieData &&
+          lastUpdated &&
+          Date.now() - parseInt(lastUpdated) < 30 * 60 * 1000
+        ) {
+          const parsedData = JSON.parse(cookieData);
           populateTable(parsedData);
         } else {
-          // If data does not exist, fetch it from the API
+          // If cookie data is missing or too old, fetch data from the API
           const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
 
           $.ajax({
@@ -650,8 +672,9 @@
             method: "GET",
             dataType: "json",
             success: function (data) {
-              // Save the data to localStorage as a string
-              localStorage.setItem(localStorageKey, JSON.stringify(data));
+              // Save the data to cookies for 30 minutes
+              setCookie(cookieDataKey, JSON.stringify(data), 30); // Save data in cookie
+              setCookie(cookieTimestampKey, Date.now(), 30); // Save timestamp in cookie
               populateTable(data);
             },
             error: function (xhr, status, error) {
@@ -659,6 +682,27 @@
             },
           });
         }
+
+        // Set an interval to update data every 30 minutes
+        setInterval(function () {
+          // Fetch the data again from the server and update the cookies
+          const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
+
+          $.ajax({
+            url: apiUrl,
+            method: "GET",
+            dataType: "json",
+            success: function (data) {
+              // Save the new data to cookies for 30 minutes
+              setCookie(cookieDataKey, JSON.stringify(data), 30); // Save data in cookie
+              setCookie(cookieTimestampKey, Date.now(), 30); // Save timestamp in cookie
+              populateTable(data);
+            },
+            error: function (xhr, status, error) {
+              console.log("An error occurred: " + error);
+            },
+          });
+        }, 30 * 60 * 1000); // 30 minutes interval
       });
     </script>
   </body>
