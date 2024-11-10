@@ -45,7 +45,7 @@ self.addEventListener("notificationclick", function (event) {
   const clickedNotification = event.notification;
   clickedNotification.close();
   // Contoh: membuka URL
-  const urlToOpen = new URL("https://famget.nufat");
+  const urlToOpen = new URL("https://famget.nufat.id");
   const promiseChain = clients.openWindow(urlToOpen);
   event.waitUntil(promiseChain);
 });

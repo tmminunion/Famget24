@@ -1,5 +1,4 @@
-const currentPage = window.location.pathname.split("/").pop();
-
+const currentPagess = window.location.pathname.split("/").pop();
 const navMenu = `
   <ul class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block">
       <li><a href="index.html" class="nav-link">Home</a></li>
@@ -8,21 +7,64 @@ const navMenu = `
       <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
       <li><a href="absensi.html" class="nav-link">Absensi</a></li>
       <li><a href="admin.html" class="nav-link">Admin</a></li>
-      <li><a href="sarasehan.html" class="nav-link">Fstory</a></li>
+     <li>
+       <a href="sarasehan.html" class="nav-link">
+         Fstory
+         <span id="fory-badge" class="badge badge-pill badge-danger" style="margin-left: 5px;">0</span>
+       </a>
+     </li>
       <li><a href="/fotobingkai/index.html" class="nav-link">Foto Bingkai</a></li>
    </ul>
-
 `;
 
+// Generate menu di DOM
 document.getElementById("menuk").innerHTML = navMenu;
+
 const menuItems = document.querySelectorAll(".nav-link");
 
 // Menambahkan kelas 'active' ke item menu yang cocok dengan halaman saat ini
 menuItems.forEach((item) => {
-  if (item.getAttribute("href") === currentPage) {
+  if (item.getAttribute("href") === currentPagess) {
     item.parentElement.classList.add("active");
   }
 });
+
+const isVerified = localStorage.getItem("verifikasiaku");
+if (isVerified === "1") {
+  setTimeout(() => {
+    getDATaproved(); // Panggil fungsi ini setelah menu ada di DOM
+  }, 3000);
+}
+// Memanggil getDATaproved setelah menu dirender
+
+// Fungsi untuk memperbarui badge Fstory
+async function getDATaproved() {
+  try {
+    var endpoit = localStorage.getItem("uid") || "LxLqzVMNawW1ASF60gqPwcvdbQR2";
+    const response = await fetch(
+      "https://api.bungtemin.net/FamgetAbsensi/laststorydraft/" + endpoit
+    );
+    const postsFrom = await response.json();
+    const postsFromServer = postsFrom.data;
+
+    // Update badge Fstory dengan jumlah data
+    const fstoryBadge = document.getElementById("fory-badge");
+    // console.log("Badge ditemukan:", fstoryBadge); // Menambahkan log untuk cek
+    if (fstoryBadge) {
+      if (postsFromServer.length > 0) {
+        fstoryBadge.textContent = postsFromServer.length;
+        fstoryBadge.style.display = "block"; // Tampilkan badge
+        fstoryBadge.style.backgroundColor = "red"; // Tes apakah badge terlihat
+      } else {
+        fstoryBadge.style.display = "none"; // Sembunyikan badge
+      }
+    }
+
+    console.log(postsFromServer.length);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+  }
+}
 
 AOS.init({
   duration: 800,
