@@ -10,7 +10,7 @@ const navMenu = `
      <li>
        <a href="sarasehan.html" class="nav-link">
          Fstory
-         <span id="fory-badge" class="badge badge-pill badge-danger" style="margin-left: 5px;">0</span>
+         <span id="fory-badge" class="badge badge-pill badge-danger" style="display: none; margin-left: 5px;">0</span>
        </a>
      </li>
       <li><a href="/fotobingkai/index.html" class="nav-link">Foto Bingkai</a></li>
