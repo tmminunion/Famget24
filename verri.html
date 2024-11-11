@@ -285,7 +285,7 @@
         if (uid) {
           // Membuat tautan WhatsApp dengan UID yang didapat
           const waLink = document.getElementById("sendUidButton");
-          const message = `${uid}`;
+          const message = `myuid ${uid}`;
           waLink.href = `https://wa.me/6285882620035?text=${encodeURIComponent(
             message
           )}`;
