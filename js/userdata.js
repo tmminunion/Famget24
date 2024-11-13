@@ -41,7 +41,7 @@ function loginOrCreateAccount() {
     // Tampilkan nama
     currentUser.getIdToken().then((token) => {
       // Simpan token ke localStorage
-
+      localStorage.setItem("ptoken", token);
       // Simpan token ke Firebase Realtime Database
       kirimTokenKeDatabase(currentUser);
     });
@@ -66,6 +66,7 @@ function loginOrCreateAccount() {
           // Mendapatkan dan menyimpan token
           userCredential.user.getIdToken().then((token) => {
             kirimTokenKeDatabase(userCredential.user);
+            localStorage.setItem("ptoken", token);
           });
         })
         .catch((error) => {
@@ -113,6 +114,7 @@ function loginOrCreateAccount() {
               userCredential.user.getIdToken().then((token) => {
                 localStorage.setItem("uid", userCredential.user.uid);
                 kirimTokenKeDatabase(userCredential.user);
+                localStorage.setItem("ptoken", token);
               });
             })
             .catch((error) => {
