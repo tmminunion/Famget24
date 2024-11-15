@@ -269,22 +269,38 @@
 
         // Function to fetch data from API
         function fetchDataFromAPI() {
-          const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApi`;
+  const apiUrlPrimary = `https://api.bungtemin.net/FamgetAbsensi/dataApi`;
+  const apiUrlSecondary = `https://api.bungtemin.net/data/data_peserta.json`; // URL cadangan
 
-          $.ajax({
-            url: apiUrl,
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-              populateTable(data);
-              setCookie(cookieDataKey, JSON.stringify(data), 30); // Save the data in cookie for 30 minutes
-              setCookie(cookieTimestampKey, Date.now(), 30); // Save the current timestamp
-            },
-            error: function (xhr, status, error) {
-              console.log("An error occurred: " + error);
-            },
-          });
+  $.ajax({
+    url: apiUrlPrimary,
+    method: "GET",
+    dataType: "json",
+    success: function (data) {
+      populateTable(data);
+      setCookie(cookieDataKey, JSON.stringify(data), 30); // Simpan data dalam cookie selama 30 menit
+      setCookie(cookieTimestampKey, Date.now(), 30); // Simpan timestamp saat ini
+    },
+    error: function (xhr, status, error) {
+      console.log("Gagal menggunakan URL utama, mencoba URL kedua: " + error);
+
+      // Coba URL cadangan jika gagal
+      $.ajax({
+        url: apiUrlSecondary,
+        method: "GET",
+        dataType: "json",
+        success: function (data) {
+          populateTable(data);
+          setCookie(cookieDataKey, JSON.stringify(data), 30);
+          setCookie(cookieTimestampKey, Date.now(), 30);
+        },
+        error: function (xhr, status, error) {
+          console.log("An error occurred with the secondary URL: " + error);
         }
+      });
+    }
+  });
+}
 
         // Check if cookie data exists and is not older than 30 minutes
         const cookieData = getCookie(cookieDataKey);
