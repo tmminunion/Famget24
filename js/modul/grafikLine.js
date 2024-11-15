@@ -101,3 +101,20 @@ export function fetchDataline(acara) {
       console.error("Error fetching data:", error);
     });
 }
+
+export function fetchDatalinebackup(acara) {
+  fetch("https://api.bungtemin.net/data/grafik/" + acara) // Ganti dengan URL API yang sesuai
+    .then((response) => response.json()) // Mengubah response menjadi JSON
+    .then((data) => {
+      // Ambil data hadir dan tidak hadir
+      const hadirDataline = data.map((bus) => bus.hadir);
+      const tidakHadirDataline = data.map((bus) => bus.tidakHadir);
+
+      // Update chart dengan data yang baru
+      updateChartLINE(hadirDataline, tidakHadirDataline);
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+}
+
