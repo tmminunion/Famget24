@@ -665,7 +665,8 @@
           populateTable(parsedData);
         } else {
           // If cookie data is missing or too old, fetch data from the API
-          const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
+         // const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
+          const apiUrl = `https://api.bungtemin.net/data/data_bus_${sheetName}.json`;
 
           $.ajax({
             url: apiUrl,
