@@ -1,5 +1,5 @@
 import { updateSeatsFromArray, updateBadge } from "./allfungction.js";
-import {  Linenya } from "./listacara.js";
+import { Linenya } from "./listacara.js";
 
 function populateTable(datak) {
   const tbody = document.querySelector("#dataTable tbody");
@@ -53,6 +53,22 @@ function fetchDataFromAPI(sheetName, Acara) {
     });
 }
 
+function fetchDataFromAPIdua(sheetName, Acara) {
+  // Mengembalikan Promise dari hasil fetch
+  const apiUrlBase = "https://nextfire-two-ruby.vercel.app/api/getabsen";
+  return fetch(`${apiUrlBase}/${sheetName}/${Acara}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Fetch error: ", error);
+      throw error;
+    });
+}
+
 export function getData(sheetName, acara) {
   // Use the modular fetch function to get data from API
   fetchDataFromAPI(sheetName, acara)
@@ -61,9 +77,17 @@ export function getData(sheetName, acara) {
       populateTable(data);
     })
     .catch((error) => {
-      console.error("An error occurred: ", error);
+      fetchDataFromAPIdua(sheetName, acara)
+        .then((data) => {
+          // Populate table with the data
+          populateTable(data);
+        })
+        .catch((error) => {
+          console.error("An error occurred: ", error);
+        });
     });
 }
+
 export function getDataALLsudah(sheetName, acara) {
   // Use the modular fetch function to get data from API
   fetchDataFromAPIALL(sheetName, acara)
@@ -111,7 +135,7 @@ function populateTableALL(datak) {
     newRow.innerHTML =
       `<td class='text-right'>${index + 1}</td>` + // Menampilkan index (dimulai dari 1)
       `<td>${user.Nama}</td>` +
-        `<td>${inline}</td>` +
+      `<td>${inline}</td>` +
       `<td class='text-center'>${user.TotalPeserta}</td>` +
       `<td>${user.BusSeat}</td>` +
       `<td class='text-center'>${icon}</td>` +

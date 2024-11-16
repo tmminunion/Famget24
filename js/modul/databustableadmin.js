@@ -104,6 +104,22 @@ function fetchDataFromAPI(sheetName, acara) {
     });
 }
 
+function fetchDataFromAPIba(sheetName, acara) {
+  const apiUrlBase = "https://nextfire-two-ruby.vercel.app/api/admingetabsen";
+  // Mengembalikan Promise dari hasil fetch
+  return fetch(`${apiUrlBase}/${sheetName}/${acara}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Fetch error: ", error);
+      throw error;
+    });
+}
+
 export function getData(sheetName, apiUrlBase) {
   // Use the modular fetch function to get data from API
   fetchDataFromAPI(sheetName, apiUrlBase)
@@ -113,6 +129,14 @@ export function getData(sheetName, apiUrlBase) {
     })
     .catch((error) => {
       console.error("An error occurred: ", error);
+      fetchDataFromAPIba(sheetName, apiUrlBase)
+        .then((data) => {
+          // Populate table with the data
+          populateTable(data);
+        })
+        .catch((error) => {
+          console.error("An error occurred: ", error);
+        });
     });
 }
 

@@ -99,11 +99,14 @@ export function fetchDataline(acara) {
     })
     .catch((error) => {
       console.error("Error fetching data:", error);
+      fetchDatalinebackup(acara);
     });
 }
 
 export function fetchDatalinebackup(acara) {
-  fetch("https://api.bungtemin.net/data/grafik/" + acara) // Ganti dengan URL API yang sesuai
+  var url = "https://nextfire-two-ruby.vercel.app/api/dataline/" + acara;
+  // var url = "https://api.bungtemin.net/data/grafik/" + acara;
+  fetch(url) // Ganti dengan URL API yang sesuai
     .then((response) => response.json()) // Mengubah response menjadi JSON
     .then((data) => {
       // Ambil data hadir dan tidak hadir
@@ -117,4 +120,3 @@ export function fetchDatalinebackup(acara) {
       console.error("Error fetching data:", error);
     });
 }
-
