@@ -102,6 +102,7 @@ export function getDataALLsudah(sheetName, acara) {
 function fetchDataFromAPIALL(sheetName, Acara) {
   // Mengembalikan Promise dari hasil fetch
   const apiUrlBase = "https://api.bungtemin.net/FamgetAbsensi/GetabsenALL";
+  const newapiUrlBase = "https://nextfire-two-ruby.vercel.app/api/getAll";
   return fetch(`${apiUrlBase}/${sheetName}/${Acara}`)
     .then((response) => {
       if (!response.ok) {
@@ -111,7 +112,19 @@ function fetchDataFromAPIALL(sheetName, Acara) {
     })
     .catch((error) => {
       console.error("Fetch error: ", error);
-      throw error;
+      return fetch(`${newapiUrlBase}/${sheetName}/${Acara}`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(
+              "Network response was not ok " + response.statusText
+            );
+          }
+          return response.json();
+        })
+        .catch((error) => {
+          console.error("Fetch error: ", error);
+          throw error;
+        });
     });
 }
 
