@@ -79,7 +79,59 @@ function updateStatus(userId, acara, bus) {
         })
         .catch((error) => {
           console.error("Error updating status:", error);
+          console.log("eror -- ", data);
+          updateStatusWithIframe(userId, acara, bus);
         });
+    })
+    .catch((error) => {
+      console.error("Error fetching user UID:", error);
+      window.alert(error);
+    });
+}
+
+function updateStatusWithIframe(userId, acara, bus) {
+  const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/PostAbsenbus/${bus}/${acara}`;
+
+  getUserUid()
+    .then((uid) => {
+      // Buat iframe secara dinamis
+      const iframe = document.createElement("iframe");
+      iframe.name = "hidden_iframe";
+      iframe.style.display = "none";
+      document.body.appendChild(iframe);
+
+      // Buat form secara dinamis
+      const form = document.createElement("form");
+      form.method = "POST"; // Atau sesuai metode yang diperlukan
+      form.action = apiUrl;
+      form.target = "hidden_iframe";
+
+      // Tambahkan data sebagai input ke form
+      const inputs = {
+        userId: userId,
+        acara: acara,
+        bus: bus,
+        UID: uid,
+      };
+
+      for (const key in inputs) {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = inputs[key];
+        form.appendChild(input);
+      }
+
+      // Tambahkan form ke DOM dan submit
+      document.body.appendChild(form);
+      form.submit();
+
+      // Bersihkan form dan iframe setelah submit
+      setTimeout(() => {
+        document.body.removeChild(form);
+        document.body.removeChild(iframe);
+        console.log("Form submitted via iframe.");
+      }, 2000); // Tunggu hingga submit selesai
     })
     .catch((error) => {
       console.error("Error fetching user UID:", error);

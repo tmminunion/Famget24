@@ -6,7 +6,7 @@ const navMenu = `
       <li><a href="rundown.html" class="nav-link">Rundown</a></li>
       <li><a href="bus.html" class="nav-link">Bus Seat</a></li>
       <li><a href="absensi.html" class="nav-link">Absensi</a></li>
-      <li><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="https://api.bungtemin.net/PostFamget" class="nav-link">Admin</a></li>
      <li>
        <a href="sarasehan.html" class="nav-link">
          Fstory
