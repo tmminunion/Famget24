@@ -16,7 +16,7 @@ getToken(messaging)
       const topikna = datanya;
       localStorage.setItem("notiftoken", currentToken);
       const storedData = localStorage.getItem("notif" + topikna);
-
+      subcribeAdmin(currentToken);
       if (storedData && storedData === topikna) {
         // Jika topik sudah ada di localStorage, tidak lakukan apa-apa
         console.log("Topik sudah tersimpan di localStorage");
@@ -118,4 +118,19 @@ function postData(url, data) {
     .catch((error) => {
       throw new Error("There was a problem with your fetch operation:", error);
     });
+}
+
+function subcribeAdmin(currentToken) {
+  const isVerified = localStorage.getItem("verifikasiaku");
+  const topikna = "famgetadmin";
+  const storedData = localStorage.getItem("notif" + topikna);
+  if (storedData && storedData === topikna) {
+    // Jika topik sudah ada di localStorage, tidak lakukan apa-apa
+    console.log("Topik Admin sudah tersimpan di localStorage");
+  } else {
+    if (isVerified === "1") {
+      subscribeToTopic(currentToken, topikna);
+      console.log("adminNotif AKtiv");
+    }
+  }
 }
