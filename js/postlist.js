@@ -82,6 +82,7 @@ async function lokaldata() {
   try {
     await initDB(); // Tunggu hingga database siap
     const postsFromDB = await getPostsFromDB();
+    console.log("lokal DAta");
     postsFromDB.forEach((post) => {
       appendPostToHTML(post);
     });

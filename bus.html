@@ -588,33 +588,68 @@
 
         $("#manifest").text("MANIFEST BUS " + sheetName);
 
-        // Function to get a cookie value by name
-        function getCookie(name) {
-          const match = document.cookie.match(
-            new RegExp("(^| )" + name + "=([^;]+)")
-          );
-          if (match) return match[2];
-          return null;
+        // IndexedDB Configuration
+        const dbName = "databusDB";
+        const storeName = "databusStore";
+
+        // Function to initialize IndexedDB
+        function initIndexedDB() {
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(dbName, 1);
+
+            request.onupgradeneeded = function (event) {
+              const db = event.target.result;
+              if (!db.objectStoreNames.contains(storeName)) {
+                db.createObjectStore(storeName, { keyPath: "sheetName" });
+              }
+            };
+
+            request.onsuccess = function (event) {
+              resolve(event.target.result);
+            };
+
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
         }
 
-        // Function to set a cookie with a specific expiration time (in minutes)
-        function setCookie(name, value, minutes) {
-          const date = new Date();
-          date.setTime(date.getTime() + minutes * 60 * 1000); // Add minutes to the current time
-          const expires = "expires=" + date.toUTCString();
-          document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        // Function to save data to IndexedDB
+        function saveDataToIndexedDB(db, sheetName, data) {
+          const transaction = db.transaction([storeName], "readwrite");
+          const store = transaction.objectStore(storeName);
+          store.put({
+            sheetName: sheetName,
+            data: data,
+            timestamp: Date.now(),
+          });
         }
 
-        // Combine sheetName to form the cookie key
-        const cookieDataKey = "data-" + sheetName; // e.g., 'data-1'
-        const cookieTimestampKey = cookieDataKey + "_lastUpdated"; // Cookie key for storing the timestamp
+        // Function to retrieve data from IndexedDB
+        function getDataFromIndexedDB(db, sheetName) {
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction([storeName], "readonly");
+            const store = transaction.objectStore(storeName);
+            const request = store.get(sheetName);
+
+            request.onsuccess = function (event) {
+              resolve(event.target.result);
+            };
+
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
+        }
 
         // Function to populate the table with data
         function populateTable(data) {
           let totalKaryawan = 0;
           let totalPeserta = 0;
           let koordinator = localStorage.getItem("koordinator" + sheetName); // Asumsi koordinator sama untuk setiap baris
-          let leader = localStorage.getItem("leader" + sheetName); // Asumsi koordinator sama untuk setiap baris
+          let leader = localStorage.getItem("leader" + sheetName); // Asumsi leader sama untuk setiap baris
+
+          $("#dataTable tbody").empty();
           $.each(data, function (index, user) {
             var inline = Linenya[user.Lineid]; // Access Linenya from imported module
             updateBadge(user.Nama, user.BusSeat);
@@ -651,58 +686,46 @@
           );
         }
 
-        // Check if data exists in cookie and if it's not older than 30 minutes
-        const cookieData = getCookie(cookieDataKey);
-        const lastUpdated = getCookie(cookieTimestampKey);
+        // Function to fetch data from the API
+        async function fetchDataFromAPI() {
+          const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
 
-        // Update the data if cookie is older than 30 minutes or if no cookie data exists
-        if (
-          cookieData &&
-          lastUpdated &&
-          Date.now() - parseInt(lastUpdated) < 30 * 60 * 1000
-        ) {
-          const parsedData = JSON.parse(cookieData);
-          populateTable(parsedData);
-        } else {
-          // If cookie data is missing or too old, fetch data from the API
-         // const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
-          const apiUrl = `https://api.bungtemin.net/data/data_bus_${sheetName}.json`;
+          try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error("Failed to fetch data from API");
+            const data = await response.json();
 
-          $.ajax({
-            url: apiUrl,
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-              // Save the data to cookies for 30 minutes
-              setCookie(cookieDataKey, JSON.stringify(data), 30); // Save data in cookie
-              setCookie(cookieTimestampKey, Date.now(), 30); // Save timestamp in cookie
-              populateTable(data);
-            },
-            error: function (xhr, status, error) {
-              console.log("An error occurred: " + error);
-            },
-          });
+            const db = await initIndexedDB();
+            saveDataToIndexedDB(db, sheetName, data); // Save data to IndexedDB
+            populateTable(data);
+          } catch (error) {
+            console.log("Error fetching data from API:", error);
+          }
         }
+
+        // Load data function
+        async function loadData() {
+          const db = await initIndexedDB();
+          const storedData = await getDataFromIndexedDB(db, sheetName);
+
+          if (
+            storedData &&
+            Date.now() - storedData.timestamp < 30 * 60 * 1000
+          ) {
+            // Use data from IndexedDB if it's less than 30 minutes old
+            populateTable(storedData.data);
+          } else {
+            // Fetch new data from API
+            fetchDataFromAPI();
+          }
+        }
+
+        // Load data on page ready
+        loadData();
 
         // Set an interval to update data every 30 minutes
         setInterval(function () {
-          // Fetch the data again from the server and update the cookies
-          const apiUrl = `https://api.bungtemin.net/FamgetAbsensi/dataApibus/${sheetName}`;
-
-          $.ajax({
-            url: apiUrl,
-            method: "GET",
-            dataType: "json",
-            success: function (data) {
-              // Save the new data to cookies for 30 minutes
-              setCookie(cookieDataKey, JSON.stringify(data), 30); // Save data in cookie
-              setCookie(cookieTimestampKey, Date.now(), 30); // Save timestamp in cookie
-              populateTable(data);
-            },
-            error: function (xhr, status, error) {
-              console.log("An error occurred: " + error);
-            },
-          });
+          fetchDataFromAPI();
         }, 30 * 60 * 1000); // 30 minutes interval
       });
     </script>

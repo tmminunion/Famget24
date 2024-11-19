@@ -89,3 +89,70 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
+
+// Service Worker
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "update-data") {
+    event.waitUntil(fetchAndUpdateData());
+  }
+});
+
+async function fetchAndUpdateData() {
+  const url =
+    "https://script.google.com/macros/s/AKfycbyVFQ3Ojb-5wPHB5T4GE8RAoGMt9SZJBXuugzxv3oQK9X5HMBoIHt9qkWwO9ItuXXgv/exec";
+
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Simpan ke IndexedDB
+    await saveToIndexedDB(data);
+
+    console.log("Data berhasil diperbarui dan disimpan.");
+  } catch (error) {
+    console.error("Gagal memperbarui data:", error);
+  }
+}
+
+// Fungsi untuk menyimpan data ke IndexedDB
+async function saveToIndexedDB(data) {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open("my-database", 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      if (!db.objectStoreNames.contains("data-store")) {
+        db.createObjectStore("data-store", { keyPath: "nama" });
+      }
+    };
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      const transaction = db.transaction("data-store", "readwrite");
+      const store = transaction.objectStore("data-store");
+
+      data.forEach((item) => {
+        store.put(item); // Menyimpan setiap item
+      });
+
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    };
+
+    request.onerror = () => reject(request.error);
+  });
+}
+
+// Daftarkan Background Sync dari halaman utama
+if ("serviceWorker" in navigator && "SyncManager" in window) {
+  navigator.serviceWorker.ready
+    .then(function (swRegistration) {
+      return swRegistration.sync.register("sync-data");
+    })
+    .then(function () {
+      console.log("Background Sync berhasil didaftarkan.");
+    })
+    .catch(function (err) {
+      console.error("Background Sync gagal:", err);
+    });
+}

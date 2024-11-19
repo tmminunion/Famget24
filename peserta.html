@@ -204,7 +204,7 @@
       import { listacara, Linenya } from "./js/modul/listacara.js";
 
       $(document).ready(function () {
-        // Function to get URL parameters
+        // Fungsi untuk mendapatkan parameter URL
         function getParameterByName(name) {
           const url = window.location.href;
           name = name.replace(/[\[\]]/g, "\\$&");
@@ -216,32 +216,61 @@
         }
 
         const kode = localStorage.getItem("kode") + "peserta";
-        const cookieDataKey = kode + "sheetName"; // Cookie key for storing data
-        const cookieTimestampKey = cookieDataKey + "_lastUpdated"; // Cookie key for storing the timestamp of last update
-        const updateInterval = 30 * 60 * 1000; // 30 minutes in milliseconds
+        const dbName = "dataPesertaDB";
+        const storeName = "dataPesertaStore";
+        const updateInterval = 30 * 60 * 1000; // 30 menit dalam milidetik
 
         $("#preloader").show();
 
-        // Function to get a cookie value by name
-        function getCookie(name) {
-          const match = document.cookie.match(
-            new RegExp("(^| )" + name + "=([^;]+)")
-          );
-          if (match) return match[2];
-          return null;
+        // Fungsi untuk inisialisasi IndexedDB
+        function initIndexedDB() {
+          return new Promise((resolve, reject) => {
+            const request = indexedDB.open(dbName, 1);
+
+            request.onupgradeneeded = function (event) {
+              const db = event.target.result;
+              if (!db.objectStoreNames.contains(storeName)) {
+                db.createObjectStore(storeName, { keyPath: "id" });
+              }
+            };
+
+            request.onsuccess = function (event) {
+              resolve(event.target.result);
+            };
+
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
         }
 
-        // Function to set a cookie with a specific expiration time (in minutes)
-        function setCookie(name, value, minutes) {
-          const date = new Date();
-          date.setTime(date.getTime() + minutes * 60 * 1000); // Add minutes to the current time
-          const expires = "expires=" + date.toUTCString();
-          document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        // Fungsi untuk menyimpan data ke IndexedDB
+        function saveDataToIndexedDB(db, data) {
+          const transaction = db.transaction([storeName], "readwrite");
+          const store = transaction.objectStore(storeName);
+          store.put({ id: kode, data: data, timestamp: Date.now() });
         }
 
-        // Function to populate the table with data
+        // Fungsi untuk mengambil data dari IndexedDB
+        function getDataFromIndexedDB(db) {
+          return new Promise((resolve, reject) => {
+            const transaction = db.transaction([storeName], "readonly");
+            const store = transaction.objectStore(storeName);
+            const request = store.get(kode);
+
+            request.onsuccess = function (event) {
+              resolve(event.target.result);
+            };
+
+            request.onerror = function (event) {
+              reject(event.target.error);
+            };
+          });
+        }
+
+        // Fungsi untuk mengisi tabel dengan data
         function populateTable(data) {
-          $("#dataTable tbody").empty(); // Clear the table before adding new data
+          $("#dataTable tbody").empty(); // Kosongkan tabel sebelum menambahkan data baru
 
           $.each(data, function (index, user) {
             var line = Linenya[user.Lineid];
@@ -263,61 +292,62 @@
           });
 
           $("#preloader").hide();
-          // After data is added, initialize DataTable
+          // Inisialisasi DataTable setelah data ditambahkan
           $("#dataTable").DataTable();
         }
 
-        // Function to fetch data from API
-        function fetchDataFromAPI() {
-  const apiUrlPrimary = `https://api.bungtemin.net/FamgetAbsensi/dataApi`;
-  const apiUrlSecondary = `https://api.bungtemin.net/data/data_peserta.json`; // URL cadangan
+        // Fungsi untuk mengambil data dari API
+        async function fetchDataFromAPI() {
+          const apiUrlPrimary = `https://api.bungtemin.net/FamgetAbsensi/dataApi`;
+          const apiUrlSecondary = `https://api.bungtemin.net/data/data_peserta.json`; // URL cadangan
 
-  $.ajax({
-    url: apiUrlPrimary,
-    method: "GET",
-    dataType: "json",
-    success: function (data) {
-      populateTable(data);
-      setCookie(cookieDataKey, JSON.stringify(data), 30); // Simpan data dalam cookie selama 30 menit
-      setCookie(cookieTimestampKey, Date.now(), 30); // Simpan timestamp saat ini
-    },
-    error: function (xhr, status, error) {
-      console.log("Gagal menggunakan URL utama, mencoba URL kedua: " + error);
+          try {
+            const response = await fetch(apiUrlPrimary);
+            if (!response.ok) throw new Error("Gagal dari URL utama");
+            const data = await response.json();
 
-      // Coba URL cadangan jika gagal
-      $.ajax({
-        url: apiUrlSecondary,
-        method: "GET",
-        dataType: "json",
-        success: function (data) {
-          populateTable(data);
-          setCookie(cookieDataKey, JSON.stringify(data), 30);
-          setCookie(cookieTimestampKey, Date.now(), 30);
-        },
-        error: function (xhr, status, error) {
-          console.log("An error occurred with the secondary URL: " + error);
-        }
-      });
-    }
-  });
-}
+            const db = await initIndexedDB();
+            saveDataToIndexedDB(db, data); // Simpan data ke IndexedDB
+            populateTable(data);
+          } catch (error) {
+            console.log(
+              "Gagal menggunakan URL utama, mencoba URL kedua:",
+              error
+            );
 
-        // Check if cookie data exists and is not older than 30 minutes
-        const cookieData = getCookie(cookieDataKey);
-        const lastUpdated = getCookie(cookieTimestampKey);
+            try {
+              const response = await fetch(apiUrlSecondary);
+              if (!response.ok) throw new Error("Gagal dari URL cadangan");
+              const data = await response.json();
 
-        if (
-          cookieData &&
-          lastUpdated &&
-          Date.now() - parseInt(lastUpdated) < updateInterval
-        ) {
-          const parsedData = JSON.parse(cookieData);
-          populateTable(parsedData);
-        } else {
-          fetchDataFromAPI();
+              const db = await initIndexedDB();
+              saveDataToIndexedDB(db, data); // Simpan data ke IndexedDB
+              populateTable(data);
+            } catch (error) {
+              console.log("Gagal memuat data dari kedua URL:", error);
+            }
+          }
         }
 
-        // Set an interval to update the data every 30 minutes
+        // Fungsi utama untuk memuat data
+        async function loadData() {
+          const db = await initIndexedDB();
+          const storedData = await getDataFromIndexedDB(db);
+
+          if (
+            storedData &&
+            Date.now() - storedData.timestamp < updateInterval
+          ) {
+            populateTable(storedData.data);
+          } else {
+            fetchDataFromAPI();
+          }
+        }
+
+        // Muat data saat halaman siap
+        loadData();
+
+        // Set interval untuk memperbarui data setiap 30 menit
         setInterval(function () {
           fetchDataFromAPI();
         }, updateInterval);

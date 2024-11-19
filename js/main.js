@@ -10,7 +10,6 @@ const navMenu = `
      <li>
        <a href="sarasehan.html" class="nav-link">
          Fstory
-         <span id="fory-badge" class="badge badge-pill badge-danger" style="display: none; margin-left: 5px;">0</span>
        </a>
      </li>
       <li><a href="/fotobingkai/index.html" class="nav-link">Foto Bingkai</a></li>
@@ -50,15 +49,15 @@ async function getDATaproved() {
     // Update badge Fstory dengan jumlah data
     const fstoryBadge = document.getElementById("fory-badge");
     // console.log("Badge ditemukan:", fstoryBadge); // Menambahkan log untuk cek
-    if (fstoryBadge) {
-      if (postsFromServer.length > 0) {
-        fstoryBadge.textContent = postsFromServer.length;
-        fstoryBadge.style.display = "block"; // Tampilkan badge
-        fstoryBadge.style.backgroundColor = "red"; // Tes apakah badge terlihat
-      } else {
-        fstoryBadge.style.display = "none"; // Sembunyikan badge
-      }
-    }
+    // if (fstoryBadge) {
+    //   if (postsFromServer.length > 0) {
+    //     fstoryBadge.textContent = postsFromServer.length;
+    //     fstoryBadge.style.display = "block"; // Tampilkan badge
+    //     fstoryBadge.style.backgroundColor = "red"; // Tes apakah badge terlihat
+    //   } else {
+    //     fstoryBadge.style.display = "none"; // Sembunyikan badge
+    //   }
+    // }
 
     console.log(postsFromServer.length);
   } catch (error) {
