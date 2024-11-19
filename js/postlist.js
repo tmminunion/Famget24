@@ -323,11 +323,15 @@ function sendDataToApi(content, imageUrl = null) {
       // Tutup modal
       $("#postModal").modal("hide");
       scrollToToplist();
-
+      var topic = "famgetadmin";
       if (result.display == 1) {
         fetchAndDisplayPosts();
+        var title = "POSTINGAN BARU";
+        sendNotif(topic, title, content);
       } else {
+        var title = "POSTINGAN BELUM DI APPROVED";
         appendPostToHTML(result.data);
+        sendNotif(topic, title, content);
         alert(
           "Karena akun anda tidak centang biru maka Postingan Menunggu Persetujuan Admin"
         );
