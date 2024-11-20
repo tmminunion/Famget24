@@ -138,6 +138,7 @@
 ipt>
   <!-- Gun.js -->
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+
 <script>
   // Ambil nama pengguna dari localStorage
   const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
@@ -153,16 +154,26 @@ ipt>
     attribution: '&copy; OpenStreetMap contributors'
   }).addTo(map);
 
-  // Daftar marker untuk setiap pengguna
-  let markers = {};
+  // Layer group untuk menyimpan marker
+  const allMarkers = L.layerGroup().addTo(map);
+
+  // Daftar paths untuk jejak pergerakan
   let paths = {};  // Untuk menyimpan jejak pergerakan
 
-  // Fungsi untuk mengupdate lokasi pengguna
+  // Fungsi untuk mengupdate lokasi pengguna dengan pergerakan acak
   function updateLocation() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
+        // Ambil lokasi terakhir jika ada, atau set ke lokasi awal
+        let lat = position.coords.latitude;
+        let lng = position.coords.longitude;
+
+        // Menambahkan angka random untuk mensimulasikan pergerakan
+        const randomOffsetLat = (Math.random() - 0.5) * 0.01;  // Offset random di sekitar -0.005 hingga 0.005 derajat
+        const randomOffsetLng = (Math.random() - 0.5) * 0.01;  // Offset random di sekitar -0.005 hingga 0.005 derajat
+
+        lat += randomOffsetLat;
+        lng += randomOffsetLng;
 
         // Kirim lokasi dan nama pengguna ke Gun.js
         gun.get('users').get(pname).put({ lat, lng, name: pname });
@@ -171,8 +182,9 @@ ipt>
         if (markers[pname]) {
           markers[pname].setLatLng([lat, lng]);
         } else {
-          // Jika marker belum ada, buat marker baru
-          markers[pname] = L.marker([lat, lng]).addTo(map).bindPopup(pname);
+          // Jika marker belum ada, buat marker baru dan tambahkan ke Layer Group
+          markers[pname] = L.marker([lat, lng]).bindPopup(pname);
+          markers[pname].addTo(allMarkers); // Menambahkan marker ke layer group
         }
 
         // Tambahkan ke jejak pergerakan (polyline)
@@ -194,7 +206,8 @@ ipt>
     if (data && data.lat && data.lng && data.name) {
       // Jika marker belum ada untuk pengguna ini, tambahkan marker baru
       if (!markers[key]) {
-        markers[key] = L.marker([data.lat, data.lng]).addTo(map).bindPopup(data.name);
+        markers[key] = L.marker([data.lat, data.lng]).bindPopup(data.name);
+        markers[key].addTo(allMarkers); // Menambahkan marker ke layer group
       } else {
         // Jika marker sudah ada, update lokasi marker
         markers[key].setLatLng([data.lat, data.lng]);
@@ -210,9 +223,11 @@ ipt>
     }
   });
 
-  // Panggil updateLocation setiap 10 detik untuk mengirimkan lokasi baru
+  // Panggil updateLocation setiap 10 detik untuk mengirimkan lokasi baru dengan pergerakan acak
   setInterval(updateLocation, 10000);
 </script>
+
+
   </body>
 
 </html>
