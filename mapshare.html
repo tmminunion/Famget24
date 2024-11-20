@@ -138,66 +138,63 @@
 ipt>
   <!-- Gun.js -->
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+<script>
+  // Ambil nama pengguna dari localStorage
+  const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
 
+  // Menyimpan nama pengguna ke Gun.js
+  const gun = Gun(["https://gun.bungtemin.net/gun"]);
 
-  <script>
-    // Ambil nama pengguna dari localStorage
-    const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
+  // Inisialisasi peta
+  const map = L.map('map').setView([0, 0], 13); // Lokasi default
 
-    // Menyimpan nama pengguna ke Gun.js
-    const gun = Gun(["https://gun.bungtemin.net/gun"]);
+  // Tile layer OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
 
-    // Inisialisasi peta
-    const map = L.map('map').setView([0, 0], 13); // Lokasi default
+  // Daftar marker untuk setiap pengguna
+  let markers = {};
 
-    // Tile layer OpenStreetMap
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+  // Fungsi untuk mengupdate lokasi pengguna
+  function updateLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
 
-    // Daftar marker untuk setiap pengguna
-    let markers = {};
+        // Kirim lokasi dan nama pengguna ke Gun.js
+        gun.get('users').get(pname).put({ lat, lng, name: pname });
 
-    // Fungsi untuk mengupdate lokasi pengguna
-    function updateLocation() {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition((position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
+        // Update peta dan marker
+        if (markers[pname]) {
+          markers[pname].setLatLng([lat, lng]);
+        } else {
+          markers[pname] = L.marker([lat, lng]).addTo(map).bindPopup(pname);
+        }
+        
+        // Pusatkan peta di lokasi pengguna
+        map.setView([lat, lng], 13);
+      });
+    }
+  }
 
-          // Kirim lokasi dan nama pengguna ke Gun.js
-          gun.get('users').get(pname).put({ lat, lng, name: pname });
-
-          // Update peta dan marker
-          if (markers[pname]) {
-            markers[pname].setLatLng([lat, lng]);
-          } else {
-            markers[pname] = L.marker([lat, lng]).addTo(map).bindPopup(pname);
-          }
-          
-          // Pusatkan peta di lokasi pengguna
-          map.setView([lat, lng], 13);
-        });
+  // Ambil data lokasi dan nama dari Gun.js dan update marker di peta
+  gun.get('users').on((data, key) => {
+    if (data && data.lat && data.lng && data.name) {
+      // Jika marker belum ada untuk pengguna ini, tambahkan marker baru
+      if (!markers[key]) {
+        markers[key] = L.marker([data.lat, data.lng]).addTo(map).bindPopup(data.name);
+      } else {
+        // Jika marker sudah ada, update lokasi marker
+        markers[key].setLatLng([data.lat, data.lng]);
       }
     }
+  });
 
-    // Ambil data lokasi dan nama dari Gun.js dan update marker di peta
-    gun.get('users').on((data, key) => {
-      console.log(data);
-      if (data.lat && data.lng && data.name) {
-        // Menambahkan marker untuk setiap pengguna
-        if (!markers[key]) {
-          markers[key] = L.marker([data.lat, data.lng]).addTo(map).bindPopup(data.name);
-        } else {
-          markers[key].setLatLng([data.lat, data.lng]);
-        }
-      }
-    });
-
-    // Panggil updateLocation setiap 10 detik untuk mengirimkan lokasi baru
-    setInterval(updateLocation, 10000);
-
-  </script>
+  // Panggil updateLocation setiap 10 detik untuk mengirimkan lokasi baru
+  setInterval(updateLocation, 10000);
+</script>
   </body>
 
 </html>
