@@ -142,10 +142,10 @@ ipt>
 
   <script>
     // Ambil nama pengguna dari localStorage
-    const pname = localStorage.getItem('_pname') || 'User_' + Math.floor(Math.random() * 1000);
+    const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
 
     // Menyimpan nama pengguna ke Gun.js
-    const gun = Gun();
+    const gun = Gun(["https://gun.bungtemin.net/gun"]);
 
     // Inisialisasi peta
     const map = L.map('map').setView([0, 0], 13); // Lokasi default
@@ -183,6 +183,7 @@ ipt>
 
     // Ambil data lokasi dan nama dari Gun.js dan update marker di peta
     gun.get('users').on((data, key) => {
+      console.log(data);
       if (data.lat && data.lng && data.name) {
         // Menambahkan marker untuk setiap pengguna
         if (!markers[key]) {
