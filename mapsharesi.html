@@ -169,7 +169,7 @@ function getSVGIcon(color, fillColor) {
 }
 
   // Ambil nama pengguna dari localStorage
-  const pname = localStorage.getItem('puserName');
+  const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
 const pnameuid = localStorage.getItem('uid');
   // Menyimpan nama pengguna ke Gun.js
   const gun = Gun(["https://gun.bungtemin.net/gun"]);
@@ -190,51 +190,62 @@ const pnameuid = localStorage.getItem('uid');
 
   // Daftar paths untuk jejak pergerakan
   let paths = {};  // Untuk menyimpan jejak pergerakan
+let randomOffsetLat = 0;
+let randomOffsetLng = 0;
 
-  // Fungsi untuk mengupdate lokasi pengguna dengan pergerakan acak
-  function updateLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        // Ambil lokasi terakhir jika ada, atau set ke lokasi awal
-        let lat = position.coords.latitude;
-        let lng = position.coords.longitude;
+function randir(offset) {
+  return (Math.random() - 0.5) * 0.01 + offset; // Menambahkan offset secara bertahap
+}
 
-        // Menambahkan angka random untuk mensimulasikan pergerakan
-        const randomOffsetLat = (Math.random() - 0.5) * 0.01;  // Offset random di sekitar -0.005 hingga 0.005 derajat
-        const randomOffsetLng = (Math.random() - 0.5) * 0.01;  // Offset random di sekitar -0.005 hingga 0.005 derajat
+// Fungsi untuk mengupdate lokasi pengguna dengan pergerakan acak
+function updateLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition((position) => {
+      // Ambil lokasi terakhir jika ada, atau set ke lokasi awal
+      let lat = position.coords.latitude;
+      let lng = position.coords.longitude;
 
-        lat += randomOffsetLat;
-        lng += randomOffsetLng;
- const timestamp = Date.now(); // Waktu sekarang dalam milidetik
-        // Kirim lokasi dan nama pengguna ke Gun.js
-       gun.get('users').get(pnameuid).put({ lat, lng, name: pname, timestamp });
+      // Menambahkan angka random untuk mensimulasikan pergerakan
+      randomOffsetLat = randir(randomOffsetLat);  // Offset random di sekitar -0.005 hingga 0.005 derajat
+      randomOffsetLng = randir(randomOffsetLng);  // Offset random di sekitar -0.005 hingga 0.005 derajat
 
-        // Update peta dan marker
-        if (markers[pnameuid]) {
-          markers[pnameuid].setLatLng([lat, lng]);
-        } else {
-          // Jika marker belum ada, buat marker baru dan tambahkan ke Layer Group
-          markers[pnameuid] = L.marker([lat, lng]).bindPopup(pnameuid);
-          markers[pnameuid].addTo(allMarkers); // Menambahkan marker ke layer group
-        }
+      lat += randomOffsetLat;
+      lng += randomOffsetLng;
 
-        // Tambahkan ke jejak pergerakan (polyline)
-        if (!paths[pnameuid]) {
-          paths[pnameuid] = L.polyline([], { color: 'blue' }).addTo(map);
-        }
+      // Kirim lokasi dan nama pengguna ke Gun.js
+      const timestamp = Date.now();
+      gun.get('mapusers').get(pnameuid).put({ lat, lng, name: pname, timestamp });
 
-     
-       
-      });
-    }
+      // Update peta dan marker
+      if (markers[pnameuid]) {
+        markers[pnameuid].setLatLng([lat, lng]);
+      } else {
+        // Jika marker belum ada, buat marker baru dan tambahkan ke Layer Group
+        markers[pnameuid] = L.marker([lat, lng]).bindPopup(pname);
+        markers[pnameuid].addTo(allMarkers); // Menambahkan marker ke layer group
+      }
+
+      // Tambahkan ke jejak pergerakan (polyline)
+      if (!paths[pnameuid]) {
+        paths[pnameuid] = L.polyline([], { color: 'blue' }).addTo(map);
+      }
+
+      // Update jejak pergerakan dengan lokasi baru
+      paths[pnameuid].addLatLng([lat, lng]);
+
+      // Pusatkan peta di lokasi pengguna
+      map.setView([lat, lng], 13);
+    });
   }
-gun.get('users').map().on((data, key) => {
+}
+
+gun.get('mapusers').map().on((data, key) => {
  // console.log(`Key: ${key}, Data:`, data);
-   const randomColor = getRandomColor(); 
+const randomColor = getRandomColor();
   if (data && data.lat && data.lng && data.name) {
     // Jika marker belum ada untuk pengguna ini, tambahkan marker baru
     if (!markers[key]) {
-     // Dapatkan warna acak
+      // Dapatkan warna acak
       markers[key] = L.marker([data.lat, data.lng], {
         icon: getSVGIcon(randomColor) // Gunakan ikon dengan warna acak
       }).bindPopup(data.name);
@@ -246,7 +257,7 @@ gun.get('users').map().on((data, key) => {
 
     // Tambahkan ke jejak pergerakan (polyline)
     if (!paths[key]) {
-      
+    
       paths[key] = L.polyline([], { color: randomColor }).addTo(map);
     }
 
@@ -255,10 +266,11 @@ gun.get('users').map().on((data, key) => {
   }
 });
 
+
 function cleanupExpiredData(expirationTime = 60000) {
   const currentTime = Date.now();
 
-  gun.get('users').map().once((data, key) => {
+  gun.get('mapusers').map().once((data, key) => {
     if (
       (!data.timestamp && !data.lat && !data.lng) || // Tidak ada timestamp atau lokasi
       (data.timestamp && currentTime - data.timestamp > expirationTime) // Data kadaluarsa
@@ -276,13 +288,9 @@ function cleanupExpiredData(expirationTime = 60000) {
     }
   });
 }
-
-// Bersihkan data kadaluarsa setiap 1 menit
 setInterval(() => {
-  cleanupExpiredData(60000); // Kadaluarsa 60 detik
+  cleanupExpiredData(60000);
 }, 60000);
-
-
   // Panggil updateLocation setiap 10 detik untuk mengirimkan lokasi baru dengan pergerakan acak
   setInterval(updateLocation, 10000);
 </script>
