@@ -135,11 +135,39 @@
 
     <script src="js/main.js"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-ipt>
   <!-- Gun.js -->
   <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
 
 <script>
+function getSVGIcon(color, fillColor) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="35" height="35" viewBox="0 0 256 256" xml:space="preserve">
+
+<defs>
+</defs>
+<g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;" transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)" >
+	<path d="M 45 90 c -1.415 0 -2.725 -0.748 -3.444 -1.966 l -4.385 -7.417 C 28.167 65.396 19.664 51.02 16.759 45.189 c -2.112 -4.331 -3.175 -8.955 -3.175 -13.773 C 13.584 14.093 27.677 0 45 0 c 17.323 0 31.416 14.093 31.416 31.416 c 0 4.815 -1.063 9.438 -3.157 13.741 c -0.025 0.052 -0.053 0.104 -0.08 0.155 c -2.961 5.909 -11.41 20.193 -20.353 35.309 l -4.382 7.413 C 47.725 89.252 46.415 90 45 90 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: ${color}; fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+	<path d="M 45 45.678 c -8.474 0 -15.369 -6.894 -15.369 -15.368 S 36.526 14.941 45 14.941 c 8.474 0 15.368 6.895 15.368 15.369 S 53.474 45.678 45 45.678 z" style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(255,255,255); fill-rule: nonzero; opacity: 1;" transform=" matrix(1 0 0 1 0 0) " stroke-linecap="round" />
+</g>
+</svg>`;
+  return L.divIcon({
+    className: 'custom-svg-marker',
+    html: svg,
+    iconSize: [24, 24],
+    iconAnchor: [12, 24], // Anchor to bottom center
+    popupAnchor: [0, -24],
+  });
+}
+
+
+  function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
   // Ambil nama pengguna dari localStorage
   const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
 
@@ -156,6 +184,9 @@ ipt>
 
   // Layer group untuk menyimpan marker
   const allMarkers = L.layerGroup().addTo(map);
+
+  // Objek untuk menyimpan semua marker
+  let markers = {}; // Pastikan variabel ini dideklarasikan
 
   // Daftar paths untuk jejak pergerakan
   let paths = {};  // Untuk menyimpan jejak pergerakan
@@ -174,9 +205,9 @@ ipt>
 
         lat += randomOffsetLat;
         lng += randomOffsetLng;
-
+ const timestamp = Date.now(); // Waktu sekarang dalam milidetik
         // Kirim lokasi dan nama pengguna ke Gun.js
-        gun.get('users').get(pname).put({ lat, lng, name: pname });
+       gun.get('users').get(pname).put({ lat, lng, name: pname, timestamp });
 
         // Update peta dan marker
         if (markers[pname]) {
@@ -200,32 +231,55 @@ ipt>
       });
     }
   }
+gun.get('users').map().on((data, key) => {
+  console.log(`Key: ${key}, Data:`, data);
+   const randomColor = getRandomColor(); 
+  if (data && data.lat && data.lng && data.name) {
+    // Jika marker belum ada untuk pengguna ini, tambahkan marker baru
+    if (!markers[key]) {
+     // Dapatkan warna acak
+      markers[key] = L.marker([data.lat, data.lng], {
+        icon: getSVGIcon(randomColor) // Gunakan ikon dengan warna acak
+      }).bindPopup(data.name);
+      markers[key].addTo(allMarkers); // Menambahkan marker ke layer group
+    } else {
+      // Jika marker sudah ada, update lokasi marker
+      markers[key].setLatLng([data.lat, data.lng]);
+    }
 
-  // Ambil data lokasi dan nama dari Gun.js dan update marker di peta
-  gun.get('users').on((data, key) => {
-    if (data && data.lat && data.lng && data.name) {
-      // Jika marker belum ada untuk pengguna ini, tambahkan marker baru
-      if (!markers[key]) {
-        markers[key] = L.marker([data.lat, data.lng]).bindPopup(data.name);
-        markers[key].addTo(allMarkers); // Menambahkan marker ke layer group
-      } else {
-        // Jika marker sudah ada, update lokasi marker
-        markers[key].setLatLng([data.lat, data.lng]);
-      }
+    // Tambahkan ke jejak pergerakan (polyline)
+    if (!paths[key]) {
+      
+      paths[key] = L.polyline([], { color: randomColor }).addTo(map);
+    }
 
-      // Tambahkan ke jejak pergerakan (polyline)
-      if (!paths[key]) {
-        paths[key] = L.polyline([], { color: 'blue' }).addTo(map);
-      }
+    // Update jejak pergerakan dengan lokasi baru
+    paths[key].addLatLng([data.lat, data.lng]);
+  }
+});
 
-      // Update jejak pergerakan dengan lokasi baru
-      paths[key].addLatLng([data.lat, data.lng]);
+function cleanupExpiredData(expirationTime = 60000) { // Default 60 detik
+  const currentTime = Date.now();
+
+  gun.get('users').map().once((data, key) => {
+    if (data && data.timestamp && currentTime - data.timestamp > expirationTime) {
+      // Jika data sudah kadaluarsa, hapus data dari Gun.js
+      gun.get('users').get(key).put(null);
+      console.log(`Data user ${key} telah dihapus karena kadaluarsa.`);
     }
   });
+}
+
+// Bersihkan data kadaluarsa setiap 1 menit
+setInterval(() => {
+  cleanupExpiredData(60000); // Kadaluarsa 60 detik
+}, 60000);
+
 
   // Panggil updateLocation setiap 10 detik untuk mengirimkan lokasi baru dengan pergerakan acak
   setInterval(updateLocation, 10000);
 </script>
+
 
 
   </body>
