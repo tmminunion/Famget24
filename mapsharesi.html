@@ -169,8 +169,8 @@ function getSVGIcon(color, fillColor) {
 }
 
   // Ambil nama pengguna dari localStorage
-  const pname = localStorage.getItem('puserName') || 'User_' + Math.floor(Math.random() * 1000);
-
+  const pname = localStorage.getItem('puserName');
+const pnameuid = localStorage.getItem('uid');
   // Menyimpan nama pengguna ke Gun.js
   const gun = Gun(["https://gun.bungtemin.net/gun"]);
 
@@ -207,32 +207,29 @@ function getSVGIcon(color, fillColor) {
         lng += randomOffsetLng;
  const timestamp = Date.now(); // Waktu sekarang dalam milidetik
         // Kirim lokasi dan nama pengguna ke Gun.js
-       gun.get('users').get(pname).put({ lat, lng, name: pname, timestamp });
+       gun.get('users').get(pnameuid).put({ lat, lng, name: pname, timestamp });
 
         // Update peta dan marker
-        if (markers[pname]) {
-          markers[pname].setLatLng([lat, lng]);
+        if (markers[pnameuid]) {
+          markers[pnameuid].setLatLng([lat, lng]);
         } else {
           // Jika marker belum ada, buat marker baru dan tambahkan ke Layer Group
-          markers[pname] = L.marker([lat, lng]).bindPopup(pname);
-          markers[pname].addTo(allMarkers); // Menambahkan marker ke layer group
+          markers[pnameuid] = L.marker([lat, lng]).bindPopup(pnameuid);
+          markers[pnameuid].addTo(allMarkers); // Menambahkan marker ke layer group
         }
 
         // Tambahkan ke jejak pergerakan (polyline)
-        if (!paths[pname]) {
-          paths[pname] = L.polyline([], { color: 'blue' }).addTo(map);
+        if (!paths[pnameuid]) {
+          paths[pnameuid] = L.polyline([], { color: 'blue' }).addTo(map);
         }
 
-        // Update jejak pergerakan dengan lokasi baru
-        paths[pname].addLatLng([lat, lng]);
-
-        // Pusatkan peta di lokasi pengguna
-        map.setView([lat, lng], 13);
+     
+       
       });
     }
   }
 gun.get('users').map().on((data, key) => {
-  console.log(`Key: ${key}, Data:`, data);
+ // console.log(`Key: ${key}, Data:`, data);
    const randomColor = getRandomColor(); 
   if (data && data.lat && data.lng && data.name) {
     // Jika marker belum ada untuk pengguna ini, tambahkan marker baru
@@ -258,14 +255,24 @@ gun.get('users').map().on((data, key) => {
   }
 });
 
-function cleanupExpiredData(expirationTime = 60000) { // Default 60 detik
+function cleanupExpiredData(expirationTime = 60000) {
   const currentTime = Date.now();
 
   gun.get('users').map().once((data, key) => {
-    if (data && data.timestamp && currentTime - data.timestamp > expirationTime) {
-      // Jika data sudah kadaluarsa, hapus data dari Gun.js
+    if (
+      (!data.timestamp && !data.lat && !data.lng) || // Tidak ada timestamp atau lokasi
+      (data.timestamp && currentTime - data.timestamp > expirationTime) // Data kadaluarsa
+    ) {
       gun.get('users').get(key).put(null);
-      console.log(`Data user ${key} telah dihapus karena kadaluarsa.`);
+      if (markers[key]) {
+        map.removeLayer(markers[key]);
+        delete markers[key];
+      }
+      if (paths[key]) {
+        map.removeLayer(paths[key]);
+        delete paths[key];
+      }
+      console.log(`Data user ${key} telah dihapus.`);
     }
   });
 }
